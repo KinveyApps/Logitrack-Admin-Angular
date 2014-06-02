@@ -1,7 +1,6 @@
-
 #register-btn {
     height: 26px;
-    top: 27px;
+    top: 33px;
     right: 20px;
     position: absolute;
     border-radius: 6px;
@@ -11,6 +10,17 @@
     background-color: #A1C0E1;
     font-weight: bold;
     border: none;
+    text-align: center;
+    vertical-align: middle;
+    line-height: 26px;
+}
+
+#register-btn:hover {
+    opacity: 0.9;
+}
+
+#register-btn:active {
+    opacity: 0.6;
 }
 
 a {

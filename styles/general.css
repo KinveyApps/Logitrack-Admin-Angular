@@ -57,6 +57,14 @@ span{
     height: 25px;
 }
 
+.submitted-btn:hover{
+    opacity: 0.9;
+}
+
+.submitted-btn:active{
+    opacity: 0.6;
+}
+
 p{
     cursor: default;
 }
