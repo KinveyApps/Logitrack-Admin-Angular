@@ -14,4 +14,42 @@
 var controllers = angular.module('controllers', []);
 controllers.controller('LoginController',
     ['$scope', '$kinvey', "$location", function ($scope, $kinvey, $location) {
- }]);
+        //Kinvey login starts
+        $scope.login = function(){
+            var isFormInvalid = false;
+            $scope.submittedError=false;
+            //check is form valid
+            if ($scope.loginForm.username.$error.required) {
+                $scope.submittedUsername = true;
+                isFormInvalid = true;
+            } else {
+                $scope.submittedUsername = false;
+            }
+            if ($scope.loginForm.password.$error.required) {
+                $scope.submittedPassword = true;
+                isFormInvalid = true;
+            } else {
+                $scope.submittedPassword = false;
+            }
+            if (isFormInvalid) {
+                return;
+            }
+            var promise = $kinvey.User.login({
+                username: $scope.username,
+                password: $scope.password
+            });
+            promise.then(
+                function (response) {
+                    //Kinvey login finished with success
+                    $scope.submittedError = false;
+                    $location.path('/templates/main');
+                },
+                function (error) {
+                    //Kinvey login finished with error
+                    $scope.submittedError = true;
+                    $scope.errorDescription = error.description;
+                    console.log("Error login " + error.description);//
+                }
+            );
+        }
+    }]);

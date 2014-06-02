@@ -16,8 +16,22 @@ the License.
         <button id="register-btn">Register</button>
     </div>
     <div id="login-content">
-        <input ng-model="username" class="login-input" placeholder="username"/>
-        <input ng-model="password" id="password-input" type="password" class="login-input" placeholder="password"/>
-        <h4 id="login-btn" ng-click="login()">Log In</h4>
+        <form name="loginForm" novalidate>
+            <div class="login-input-div">
+                <input id="login-username" name="username" ng-model="username" class="login-input"
+                       placeholder="username" required/>
+                <span class="login-span" ng-show="submittedUsername">A username is required.</span>
+            </div>
+            <div class="login-input-div">
+                <input id="login-password" name="password" ng-model="password" id="password-input" type="password"
+                       class="login-input"
+                       placeholder="password" required/>
+                <span class="login-span" ng-show="submittedPassword">A password is required.</span>
+            </div>
+        </form>
+        <div>
+            <h4 id="login-btn" ng-click="login()">Log In</h4>
+            <span ng-show="submittedError">{{errorDescription}}</span>
+        </div>
     </div>
 </div>
