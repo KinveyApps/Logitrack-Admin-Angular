@@ -52,7 +52,6 @@ app.run(['$location', '$kinvey', '$rootScope', function($location, $kinvey, $roo
 function determineBehavior($kinvey, $location, $rootScope) {
     var activeUser = $kinvey.getActiveUser();
     console.log("$location.$$url: " + $location.$$url);
-    alert("$location.$$url: " + $location.$$url);
     if (activeUser != null) {
         console.log("activeUser not null determine behavior");
         if ($location.$$url != '/templates/main') {

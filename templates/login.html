@@ -10,8 +10,14 @@ is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND
 or implied. See the License for the specific language governing permissions and limitations under
 the License.
 -->
-<div>
-    <div ng-controller="LoginController">
-        <h1>Login</h1>
+<div ng-controller="LoginController" xmlns="http://www.w3.org/1999/html">
+    <div id="login-header">
+        <h3 id="login-title">LOGITRACK ADMINISTRATION PORTAL</h3>
+        <button id="register-btn">Register</button>
+    </div>
+    <div id="login-content">
+        <input ng-model="username" class="login-input" placeholder="username"/>
+        <input ng-model="password" id="password-input" type="password" class="login-input" placeholder="password"/>
+        <h4 id="login-btn" ng-click="login()">Log In</h4>
     </div>
 </div>
