@@ -27,6 +27,10 @@ app.config(['$routeProvider', function($routeProvider) {
             templateUrl: 'templates/main.html',
             controller: 'MainController'
         }).
+        when('/templates/password_reset', {
+            templateUrl: 'templates/password_reset.html',
+            controller: 'PasswordResetController'
+        }).
        otherwise({
             redirectTo: '/templates/splash'
         });
@@ -44,7 +48,7 @@ app.run(['$location', '$kinvey', '$rootScope','$timeout', function($location, $k
         console.log("Kinvey init with success");
             $timeout(function(){
                 determineBehavior($kinvey, $location, $rootScope);
-            },3000);
+            },1000);
     }, function(errorCallback) {
         // Kinvey initialization finished with error
         console.log("Kinvey init with error: " + JSON.stringify(errorCallback));
@@ -65,6 +69,7 @@ function determineBehavior($kinvey, $location, $rootScope) {
     } else {
         console.log("activeUser null redirecting");
         if ($location.$$url != '/templates/login') {
+            //Todo uncomment
            $location.path('/templates/login');
         }
     }

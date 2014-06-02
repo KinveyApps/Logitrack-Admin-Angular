@@ -11,27 +11,31 @@ or implied. See the License for the specific language governing permissions and 
 the License.
 -->
 <div ng-controller="LoginController" xmlns="http://www.w3.org/1999/html">
-    <div id="login-header">
-        <h3 id="login-title">LOGITRACK ADMINISTRATION PORTAL</h3>
+    <div class="header">
+        <h3 class="header-title">LOGITRACK ADMINISTRATION PORTAL</h3>
         <button id="register-btn">Register</button>
     </div>
-    <div id="login-content">
+    <div class="sign-content">
         <form name="loginForm" novalidate>
-            <div class="login-input-div">
-                <input id="login-username" name="username" ng-model="username" class="login-input"
+            <div class="sign-input-div">
+                <input id="login-username" name="username" ng-model="username" class="sign-input"
                        placeholder="username" required/>
                 <span class="login-span" ng-show="submittedUsername">A username is required.</span>
             </div>
-            <div class="login-input-div">
+            <div class="sign-input-div">
                 <input id="login-password" name="password" ng-model="password" id="password-input" type="password"
-                       class="login-input"
+                       class="sign-input"
                        placeholder="password" required/>
                 <span class="login-span" ng-show="submittedPassword">A password is required.</span>
             </div>
         </form>
         <div>
-            <h4 id="login-btn" ng-click="login()">Log In</h4>
-            <span ng-show="submittedError">{{errorDescription}}</span>
+            <h4 class="submitted-btn" ng-click="login()">Log In</h4>
+
+            <div ng-show="submittedError">
+                <span>{{errorDescription}}</span>
+                <a ng-click="forgetPassword()">Forgot your password?</a>
+            </div>
         </div>
     </div>
 </div>

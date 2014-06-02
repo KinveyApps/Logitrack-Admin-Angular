@@ -52,4 +52,28 @@ controllers.controller('LoginController',
                 }
             );
         }
+        $scope.forgetPassword = function(){
+            $location.path('/templates/password_reset');
+        }
+    }]);
+
+controllers.controller('PasswordResetController',
+    ['$scope', '$kinvey', "$location", function ($scope, $kinvey, $location) {
+        $scope.resetPassword = function(){
+            console.log("click reset");
+            if ($scope.resetPasswordForm.email.$error.email || $scope.resetPasswordForm.email.$error.required) {
+                $scope.submittedEmail = true;
+                return;
+            }else{
+                $scope.submittedEmail = false;
+            }
+            //Kinvey reset password starts
+            var promise = $kinvey.User.resetPassword($scope.email);
+            promise.then(
+                function () {
+                    //Kinvey reset password finished with success
+                    console.log("resetPassword");
+                    $location.path("templates/login");
+                });
+        }
     }]);

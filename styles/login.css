@@ -1,18 +1,3 @@
-#login-header {
-    background-color: #5893CC;
-    height: 80px;
-}
-
-#login-title {
-    margin-left: 20px;
-    display: inline-block;
-    color: white;
-    margin-top: auto;
-    margin-bottom: auto;
-    line-height: 80px;
-    float: left;
-    cursor: default;
-}
 
 #register-btn {
     height: 26px;
@@ -28,42 +13,15 @@
     border: none;
 }
 
-#login-content {
-    text-align: center;
-    margin-top: 150px;
-}
-
-.login-input-div{
-    width: 200px;
-    margin-left: auto;
-    margin-right: auto;
-}
-
-.login-input {
+a {
     display: block;
-    margin-top: 10px;
-    width: 200px;
-    height: 25px;
-    padding-left: 5px;
-    border: 2px solid  #DCDCDC;
-}
-
-#login-btn {
-    color:#5893CC;
-    cursor: default;
-    margin-top: 25px;
-    height: 25px;
-}
-
-span{
-    color: #b94a48;
+    color: #318CE8;
+    text-decoration: none;
     font-size: 12px;
-    height: 25px;
-    line-height: 25px;
-    vertical-align: middle;
+    cursor: pointer;
 }
 
-.login-span{
-    float: left;
-    margin-left: 2px;
+a:hover {
+    color: #1259A1;
+    text-decoration : underline;
 }
