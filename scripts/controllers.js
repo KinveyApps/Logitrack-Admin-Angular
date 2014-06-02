@@ -55,6 +55,9 @@ controllers.controller('LoginController',
         $scope.forgetPassword = function(){
             $location.path('/templates/password_reset');
         }
+        $scope.registerUser = function(){
+            $location.path('/templates/sign_up');
+        }
     }]);
 
 controllers.controller('PasswordResetController',
@@ -76,4 +79,87 @@ controllers.controller('PasswordResetController',
                     $location.path("templates/login");
                 });
         }
+    }]);
+
+controllers.controller('SignUpController',
+    ['$scope', '$kinvey', "$location", function ($scope, $kinvey, $location) {
+        //Kinvey login starts
+        $scope.signUp = function(){
+            var isFormInvalid = false;
+            $scope.submittedError=false;
+            //check is form valid
+            if ($scope.signUpForm.first_name.$error.required) {
+                $scope.submittedFirstName= true;
+                isFormInvalid = true;
+            } else {
+                $scope.submittedFirstName = false;
+            }
+            if ($scope.signUpForm.last_name.$error.required) {
+                $scope.submittedLastName = true;
+                isFormInvalid = true;
+            } else {
+                $scope.submittedLastName = false;
+            }
+            if ($scope.signUpForm.username.$error.required) {
+                $scope.submittedUsername = true;
+                isFormInvalid = true;
+            } else {
+                $scope.submittedUsername = false;
+            }
+            if ($scope.signUpForm.password.$error.required) {
+                $scope.submittedPassword = true;
+                isFormInvalid = true;
+            } else {
+                $scope.submittedPassword = false;
+            }
+            if ($scope.signUpForm.telephone_number.$error.required) {
+                $scope.submittedTelephoneNumber = true;
+                isFormInvalid = true;
+            } else {
+                $scope.submittedTelephoneNumber = false;
+            }
+            if ($scope.signUpForm.email.$error.email || $scope.signUpForm.email.$error.required) {
+                $scope.submittedEmail = true;
+                isFormInvalid = true;
+                return;
+            }else{
+                $scope.submittedEmail = false;
+            }
+            if (isFormInvalid) {
+                return;
+            }
+            var promise = $kinvey.User.signup({
+                username: $scope.username,
+                password: $scope.password,
+                email: $scope.email,
+                first_name: $scope.first_name,
+                last_name: $scope.last_name,
+                mobile_number: $scope.telephone_number
+            });
+            console.log("signup promise");
+            promise.then(
+                function () {
+                    //Kinvey signup finished with success
+                    $scope.submittedError = false;
+                    console.log("signup success");
+                    $location.path("templates/main");
+                },
+                function(error) {
+                    //Kinvey signup finished with error
+                    $scope.submittedError = true;
+                    $scope.errorDescription = error.description;
+                    console.log("signup error: " + error.description);
+                }
+            );
+        }
+        $scope.phoneNumberPattern = (function() {
+            var regexp = /^\(?(\d{3})\)?[ .-]?(\d{3})[ .-]?(\d{4})$/;
+            return {
+                test: function(value) {
+                    console.log("pattern " + ($scope.requireTel === false));
+                    if( $scope.requireTel === false ) return true;
+                    else return regexp.test(value);
+                }
+            };
+        })();
     }]);

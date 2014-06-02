@@ -13,20 +13,20 @@ the License.
 <div ng-controller="LoginController" xmlns="http://www.w3.org/1999/html">
     <div class="header">
         <h3 class="header-title">LOGITRACK ADMINISTRATION PORTAL</h3>
-        <button id="register-btn">Register</button>
+        <button id="register-btn" ng-click="registerUser()">Register</button>
     </div>
     <div class="sign-content">
         <form name="loginForm" novalidate>
             <div class="sign-input-div">
                 <input id="login-username" name="username" ng-model="username" class="sign-input"
                        placeholder="username" required/>
-                <span class="login-span" ng-show="submittedUsername">A username is required.</span>
+                <span class="sign-span" ng-show="submittedUsername">A username is required.</span>
             </div>
             <div class="sign-input-div">
                 <input id="login-password" name="password" ng-model="password" id="password-input" type="password"
                        class="sign-input"
                        placeholder="password" required/>
-                <span class="login-span" ng-show="submittedPassword">A password is required.</span>
+                <span class="sign-span" ng-show="submittedPassword">A password is required.</span>
             </div>
         </form>
         <div>

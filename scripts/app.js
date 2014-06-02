@@ -31,6 +31,10 @@ app.config(['$routeProvider', function($routeProvider) {
             templateUrl: 'templates/password_reset.html',
             controller: 'PasswordResetController'
         }).
+        when('/templates/sign_up', {
+            templateUrl: 'templates/sign_up.html',
+            controller: 'SignUpController'
+        }).
        otherwise({
             redirectTo: '/templates/splash'
         });
