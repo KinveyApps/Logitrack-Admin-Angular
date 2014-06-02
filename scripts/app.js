@@ -16,6 +16,9 @@ var app = angular.module('Logitrack-Angular', [ 'kinvey', 'ngRoute', 'controller
 //inject Providers into config block
 app.config(['$routeProvider', function($routeProvider) {
     $routeProvider.
+        when('/templates/splash', {
+            templateUrl: 'templates/splash.html'
+        }).
         when('/templates/login', {
             templateUrl: 'templates/login.html',
             controller: 'LoginController'
@@ -25,12 +28,12 @@ app.config(['$routeProvider', function($routeProvider) {
             controller: 'MainController'
         }).
        otherwise({
-            redirectTo: '/templates/login'
+            redirectTo: '/templates/splash'
         });
 }]);
 
 //inject instances (not Providers) into run blocks
-app.run(['$location', '$kinvey', '$rootScope', function($location, $kinvey, $rootScope) {
+app.run(['$location', '$kinvey', '$rootScope','$timeout', function($location, $kinvey, $rootScope,$timeout) {
     // Kinvey initialization starts
     var promise = $kinvey.init({
         appKey : 'kid_VTpS9qbe7q',
@@ -39,7 +42,9 @@ app.run(['$location', '$kinvey', '$rootScope', function($location, $kinvey, $roo
     promise.then(function() {
         // Kinvey initialization finished with success
         console.log("Kinvey init with success");
-        determineBehavior($kinvey, $location, $rootScope);
+            $timeout(function(){
+                determineBehavior($kinvey, $location, $rootScope);
+            },3000);
     }, function(errorCallback) {
         // Kinvey initialization finished with error
         console.log("Kinvey init with error: " + JSON.stringify(errorCallback));
@@ -60,7 +65,7 @@ function determineBehavior($kinvey, $location, $rootScope) {
     } else {
         console.log("activeUser null redirecting");
         if ($location.$$url != '/templates/login') {
-            $location.path('/templates/login');
+           $location.path('/templates/login');
         }
     }
 }
