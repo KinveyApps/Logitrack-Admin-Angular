@@ -21,61 +21,65 @@ the License.
                 <div class="dispatch-btn" id="new-btn">New</div>
                 <p class="box-title">Open Requests</p>
             </div>
-            <div class="list-item">
-                <div class="list-item-div-a">
-                    <div class="top-div">
-                        <p class="p-title">Client</p>
+            <ul ng-repeat="shipment in shipments">
+                <li class="list-item">
+                    <div class="list-item-div-a">
+                        <div class="top-div">
+                            <p class="p-title">Client</p>
 
-                        <p class="p-info">Steph Sarte</p>
-                    </div>
-                    <div class="bottom-div">
-                        <p class="p-title">Date</p>
+                            <p class="p-info">{{shipment.client.first_name + " " + shipment.client.last_name}}</p>
+                        </div>
+                        <div class="bottom-div">
+                            <p class="p-title">Date</p>
 
-                        <p class="p-info">May 22, 2014</p>
+                            <p class="p-info">May 22, 2014</p>
+                        </div>
                     </div>
-                </div>
-                <div class="list-item-div-b">
-                    <div class="top-div">
-                        <p class="p-title">Trip</p>
+                    <div class="list-item-div-b">
+                        <div class="top-div">
+                            <p class="p-title">Trip</p>
 
-                        <p class="p-info">Begin: 1222 wyouming ave, melrose ma</p>
+                            <p class="p-info">Begin: {{shipment.route.start}}</p>
 
-                        <p class="p-info">End: 88 summer street, melrose ma</p>
-                    </div>
-                    <div class="bottom-div">
-                        <p class="p-title">Request Time</p>
+                            <p class="p-info">End: {{shipment.route.finish}}</p>
+                        </div>
+                        <div class="bottom-div">
+                            <p class="p-title">Request Time</p>
 
-                        <p class="p-info">1:45 pm</p>
+                            <p class="p-info">1:45 pm</p>
+                        </div>
                     </div>
-                </div>
-                <div class="list-item-div-c">
-                    <div class="div-shipment-info">
-                        <p class="p-title">Shipment Info</p>
+                    <div class="list-item-div-c">
+                        <div class="div-shipment-info">
+                            <p class="p-title">Shipment Info</p>
 
-                        <p class="p-info">10" by 24" by 3" box</p>
+                            <p class="p-info">10" by 24" by 3" box</p>
+                        </div>
                     </div>
-                </div>
-                <div class="driver-div">
-                    <div id="select-driver-div">
-                        <p class="p-title">Driver</p>
-                        <select>
-                        </select>
+                    <div class="driver-div">
+                        <div class="select-driver-div">
+                            <p class="p-title">Driver</p>
+                            <select>
+                            </select>
+                        </div>
+                        <div class="edit-save-btns-div">
+                            <div class="dispatch-btn">Edit</div>
+                            <div class="dispatch-btn">Save</div>
+                        </div>
                     </div>
-                    <div class="edit-save-btns-div">
-                        <div class="dispatch-btn">Edit</div>
-                        <div class="dispatch-btn">Save</div>
-                    </div>
-                </div>
-            </div>
+                </li>
+            </ul>
             <div class="new-btn-div">
                 <p class="box-title">In Progress</p>
             </div>
-            <div class="list-item">
+            <ul ng-repeat="shipment in progress_shipments" >
+                <li class="list-item" >
+            <div >
                 <div class="list-item-div-a">
                     <div class="top-div">
                         <p class="p-title">Client</p>
 
-                        <p class="p-info">Steph Sarte</p>
+                        <p class="p-info">{{shipment.client.first_name + " " + shipment.client.last_name}}</p>
                     </div>
                     <div class="bottom-div">
                         <p class="p-title">Date</p>
@@ -87,9 +91,9 @@ the License.
                     <div class="top-div">
                         <p class="p-title">Trip</p>
 
-                        <p class="p-info">Begin: 1222 wyouming ave, melrose ma</p>
+                        <p class="p-info">Begin: {{shipment.route.start}}</p>
 
-                        <p class="p-info">End: 88 summer street, melrose ma</p>
+                        <p class="p-info">End: {{shipment.route.finish}}</p>
                     </div>
                     <div class="bottom-div">
                         <p class="p-title">Request Time</p>
@@ -105,8 +109,9 @@ the License.
                     </div>
                 </div>
                 <div class="driver-div">
-                    <div id="select-driver-div">
+                    <div class="select-driver-div">
                         <p class="p-title">Driver</p>
+
                         <p class="p-info">George Pastos</p>
                     </div>
                     <div class="edit-save-btns-div">
@@ -114,6 +119,7 @@ the License.
                     </div>
                 </div>
             </div>
+            </ul>
         </tab>
         <tab class="tabs">
             <tab-heading class="tab-header">Logistics</tab-heading>

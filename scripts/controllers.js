@@ -156,9 +156,25 @@ controllers.controller('SignUpController',
 
 controllers.controller('MainController',
     ['$scope', '$kinvey', "$location", function ($scope, $kinvey, $location) {
-        $scope.items = [
-            'The first choice!',
-            'And another choice for you.',
-            'but wait! A third!'
-        ];
+        var promise = $kinvey.DataStore.find('shipment', null, {relations: { route: 'route',
+            client: "clients"}});
+        promise.then(
+            function (response) {
+                $scope.shipments = [];
+                $scope.progress_shipments = [];
+                for (var i in response) {
+                    if (response[i].user_status !== "in progress") {
+                        $scope.shipments.push(response[i]);
+                    } else {
+                        $scope.progress_shipments.push(response[i]);
+                    }
+                }
+//                $scope.shipments = shipments;
+//                $scope.progress_shipments = progress_shipment;
+                console.log("get shipment success");
+            },
+            function (error) {
+                console.log("get shipment error " + JSON.stringify(error.description));
+            }
+        );
     }]);
