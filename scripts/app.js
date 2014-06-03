@@ -39,9 +39,6 @@ app.config(['$routeProvider', function($routeProvider) {
         when('/templates/sign_up', {
             templateUrl: 'templates/sign_up.html',
             controller: 'SignUpController'
-        }).
-       otherwise({
-            redirectTo: '/templates/login'
         });
 }]);
 
