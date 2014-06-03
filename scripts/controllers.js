@@ -156,4 +156,9 @@ controllers.controller('SignUpController',
 
 controllers.controller('MainController',
     ['$scope', '$kinvey', "$location", function ($scope, $kinvey, $location) {
+        $scope.items = [
+            'The first choice!',
+            'And another choice for you.',
+            'but wait! A third!'
+        ];
     }]);

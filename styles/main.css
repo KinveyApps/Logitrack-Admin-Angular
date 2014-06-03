@@ -22,3 +22,128 @@
 .tab-header{
     font-size: 16px;
 }
+
+.dispatch-btn{
+    color: white;
+    background-color: #5893CC;
+    height: 30px;
+    border-radius: 6px;
+    line-height:30px;
+    text-align: center;
+    vertical-align: middle;
+    cursor: default;
+}
+
+#new-btn{
+    float: right;
+    margin-right: 20px;
+    margin-top: 20px;
+    width: 90px;
+}
+
+.list-item{
+    margin-right: 20px;
+    margin-left: 20px;
+    border: 1px solid #E9E9E9;
+    display: block;
+}
+
+.top-div{
+    height: 60%;
+}
+
+.bottom-div{
+    height: 40%;
+}
+
+.p-title,.p-info{
+    height: 14px;
+    line-height: 14px;
+    margin-bottom: -3px;
+    margin-top: 5px;
+    margin-left: 3px;
+    font-size: 12px;
+    color:#A0A0A0;
+}
+
+.p-title{
+    font-weight: bold;
+}
+
+.list-item-div-a,.list-item-div-b,.list-item-div-c{
+    height: 100px;
+    display: inline-block;
+}
+
+.list-item-div-a{
+    width: 15%;
+}
+
+.list-item-div-b{
+    width: 40%;
+}
+.list-item-div-c{
+    width: 15%;
+    position: relative;
+}
+.div-shipment-info{
+    position: absolute;
+    height: 100%;
+    width: 100%;
+}
+
+.new-btn-div{
+    height: 80px;
+    position: relative;
+}
+
+.box-title{
+    left: 30px;
+    bottom: 0;
+    color: #5893CC;
+    font-size: 16px;
+    position: absolute;
+}
+
+.edit-save-btns-div{
+    width:150px;
+    height: 30px;
+    display: block;
+    position: absolute;
+    top:65px;
+}
+.edit-save-btns-div div{
+    display: inline-block;
+    margin-right: 2px;
+    width: 70px;
+}
+
+.driver-div{
+    width: 150px;
+    height: 100px;
+    position: relative;
+    float: right;
+    margin-right: 20px;
+}
+
+.driver-div select{
+    width: 100px;
+    border: 2px solid #5893CC;
+    height: 20px;
+    overflow: hidden;
+    margin-top: 3px;
+    -webkit-appearance: none;
+    -webkit-border-radius: 0px;
+    background: url("../images/arrow.jpg") no-repeat right;
+}
+
+#select-driver-div{
+    width: 100px;
+    height: 70px;
+    float: right;
+    display: block;
+}
+
+#view-btn{
+    float: right;
+}
