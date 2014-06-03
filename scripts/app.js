@@ -43,7 +43,7 @@ app.config(['$routeProvider', function($routeProvider) {
 }]);
 
 //inject instances (not Providers) into run blocks
-app.run(['$location', '$kinvey', '$rootScope','$timeout', function($location, $kinvey, $rootScope,$timeout) {
+app.run(['$location', '$kinvey', '$rootScope','$timeout', function($location, $kinvey, $rootScope) {
     // Kinvey initialization starts
     var promise = $kinvey.init({
         appKey : 'kid_VTpS9qbe7q',
