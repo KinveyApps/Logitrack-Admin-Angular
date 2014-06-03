@@ -11,14 +11,19 @@
  * the License.
  *
  */
+
+var body = document.getElementsByTagName('body')[0];
+
+setTimeout(function() {
+    body.setAttribute('ng-app', 'Logitrack-Angular');
+    angular.bootstrap(body, ['ng', 'Logitrack-Angular']);
+}, 2000);
+
 var app = angular.module('Logitrack-Angular', [ 'kinvey', 'ngRoute', 'controllers' ]);
 
 //inject Providers into config block
 app.config(['$routeProvider', function($routeProvider) {
     $routeProvider.
-        when('/templates/splash', {
-            templateUrl: 'templates/splash.html'
-        }).
         when('/templates/login', {
             templateUrl: 'templates/login.html',
             controller: 'LoginController'
@@ -36,7 +41,7 @@ app.config(['$routeProvider', function($routeProvider) {
             controller: 'SignUpController'
         }).
        otherwise({
-            redirectTo: '/templates/splash'
+            redirectTo: '/templates/login'
         });
 }]);
 
@@ -73,7 +78,6 @@ function determineBehavior($kinvey, $location, $rootScope) {
     } else {
         console.log("activeUser null redirecting");
         if ($location.$$url != '/templates/login') {
-            //Todo uncomment
            $location.path('/templates/login');
         }
     }

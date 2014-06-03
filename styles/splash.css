@@ -1,4 +1,5 @@
 .splash {
+    display: none;
     position: absolute;
     top: 0;
     left: 0;
@@ -8,8 +9,12 @@
     background: #5893CC;
 }
 
+[ng-cloak].splash {
+    display: block !important;
+}
+
 #splash-content{
-    width: 300px;
+    width: 100%;
     height: 300px;
     position: absolute;
     top:0;
