@@ -1,0 +1,24 @@
+#menu-title{
+    color: white;
+    float: right;
+    margin-right: 5px;
+    margin-top: 5px;
+}
+
+#main-tabset{
+   margin-top: -39px;
+}
+
+.tabs{
+    width: 125px;
+    height: 40px;
+    margin-right: 10px;
+    margin-left: 10px;
+    background: url("../images/tab.jpg") no-repeat;
+    text-align: center;
+    border-radius: 6px 6px 0px 0px;
+}
+
+.tab-header{
+    font-size: 16px;
+}

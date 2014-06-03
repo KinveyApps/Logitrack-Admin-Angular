@@ -10,6 +10,26 @@ is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND
 or implied. See the License for the specific language governing permissions and limitations under
 the License.
 -->
-<div>
-    <h1>Main</h1>
+<div ng-controller="MainController" xmlns="http://www.w3.org/1999/html">
+    <div class="header">
+        <p id="menu-title">LOGITRACK</p>
+    </div>
+    <tabset id="main-tabset">
+        <tab class="tabs">
+            <tab-heading class="tab-header">Dispatch</tab-heading>
+            Dispatch content
+        </tab>
+        <tab class="tabs">
+            <tab-heading class="tab-header">Logistics</tab-heading>
+            Logistics content
+        </tab>
+        <tab class="tabs">
+            <tab-heading class="tab-header">Trips</tab-heading>
+            Trips content
+        </tab>
+        <tab class="tabs">
+            <tab-heading class="tab-header">Manage</tab-heading>
+            Manage content
+        </tab>
+    </tabset>
 </div>

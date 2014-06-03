@@ -11,7 +11,7 @@
  * the License.
  *
  */
-var controllers = angular.module('controllers', []);
+var controllers = angular.module('controllers', ['ui.bootstrap']);
 controllers.controller('LoginController',
     ['$scope', '$kinvey', "$location", function ($scope, $kinvey, $location) {
         //Kinvey login starts
@@ -152,14 +152,8 @@ controllers.controller('SignUpController',
                 }
             );
         }
-        $scope.phoneNumberPattern = (function() {
-            var regexp = /^\(?(\d{3})\)?[ .-]?(\d{3})[ .-]?(\d{4})$/;
-            return {
-                test: function(value) {
-                    console.log("pattern " + ($scope.requireTel === false));
-                    if( $scope.requireTel === false ) return true;
-                    else return regexp.test(value);
-                }
-            };
-        })();
+    }]);
+
+controllers.controller('MainController',
+    ['$scope', '$kinvey', "$location", function ($scope, $kinvey, $location) {
     }]);
