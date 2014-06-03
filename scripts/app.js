@@ -55,9 +55,7 @@ app.run(['$location', '$kinvey', '$rootScope','$timeout', function($location, $k
     promise.then(function() {
         // Kinvey initialization finished with success
         console.log("Kinvey init with success");
-            $timeout(function(){
-                determineBehavior($kinvey, $location, $rootScope);
-            },1000);
+        determineBehavior($kinvey, $location, $rootScope);
     }, function(errorCallback) {
         // Kinvey initialization finished with error
         console.log("Kinvey init with error: " + JSON.stringify(errorCallback));
