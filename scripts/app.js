@@ -43,6 +43,10 @@ app.config(['$routeProvider', function ($routeProvider) {
         when('/templates/new_dispatch', {
             templateUrl: 'templates/new_dispatch.html',
             controller: 'NewDispatchController'
+        }).
+        when('/templates/map', {
+            templateUrl: 'templates/map.html',
+            controller: 'MapController'
         });
 }]);
 

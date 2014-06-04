@@ -12,6 +12,19 @@
  *
  */
 var controllers = angular.module('controllers', ['ui.bootstrap']);
+
+controllers.service('currentTrip', function() {
+    var trip = {};
+    return {
+        getTrip: function() {
+            return trip;
+        },
+        setTrip: function(value) {
+            trip = value;
+        }
+    }
+});
+
 controllers.controller('LoginController',
     ['$scope', '$kinvey', "$location", function ($scope, $kinvey, $location) {
         //Kinvey login starts
@@ -197,7 +210,7 @@ controllers.controller('MainController',
 
 
 controllers.controller('NewDispatchController',
-    ['$scope', '$kinvey', "$location", function ($scope, $kinvey, $location) {
+    ['$scope', '$kinvey', "$location","currentTrip", function ($scope, $kinvey, $location,currentTrip) {
 
         initPage();
 
@@ -271,6 +284,11 @@ controllers.controller('NewDispatchController',
             }
         }
 
+        $scope.selectTrip = function(trip){
+            currentTrip.setTrip(trip);
+            $location.path("/templates/map");
+        }
+
         function initPage() {
             $scope.selected_client = "Select client";
             $scope.selected_trip = "Select trip";
@@ -289,5 +307,79 @@ controllers.controller('NewDispatchController',
             );
         }
 
+    }]);
+
+controllers.controller('MapController',
+    ['$scope', '$kinvey', "$location", "currentTrip", function ($scope, $kinvey, $location, currentTrip) {
+        var geocoder = new google.maps.Geocoder();
+        var start_marker;
+        var finish_marker;
+        var center = {};
+        var map;
+        var directionsDisplay = new google.maps.DirectionsRenderer();
+        directionsDisplay.setOptions({
+            suppressMarkers: true
+        });
+        var directionsService = new google.maps.DirectionsService();
+        var trip = currentTrip.getTrip();
+        $scope.initialize = function () {
+            var mapProp = {
+                zoom: 14,
+                disableDefaultUI: true
+            };
+            map = new google.maps.Map(document.getElementById("map"), mapProp);
+            console.log("current trip " + JSON.stringify(currentTrip.getTrip()));
+            geocoder.geocode({
+                'address': trip.route.start
+            }, function (results, status) {
+                if (status == google.maps.GeocoderStatus.OK) {
+                    start_marker = new google.maps.Marker({
+                        position: new google.maps.LatLng(results[0].geometry.location.k, results[0].geometry.location.A),
+                        map: map,
+                        icon: 'images/start_marker.png'
+                    });
+                    center.lat = results[0].geometry.location.k;
+                    center.lon = results[0].geometry.location.A;
+                    geocoder.geocode({
+                        'address': trip.route.finish
+                    }, function (results, status) {
+                        if (status == google.maps.GeocoderStatus.OK) {
+                            finish_marker = new google.maps.Marker({
+                                position: new google.maps.LatLng(results[0].geometry.location.k, results[0].geometry.location.A),
+                                map: map,
+                                icon: 'images/finish_marker.png'
+                            });
+                        }
+                        map.setCenter(new google.maps.LatLng((center.lat + results[0].geometry.location.k) / 2,
+                                (center.lon + results[0].geometry.location.A) / 2));
+                        calcRoute();
+                    });
+                }
+            });
+
+            function calcRoute() {
+                var request = {
+                    origin: new google.maps.LatLng(start_marker.getPosition().k, start_marker.getPosition().A),
+                    destination: new google.maps.LatLng(finish_marker.getPosition().k, finish_marker.getPosition().A),
+                    travelMode: google.maps.DirectionsTravelMode.DRIVING
+                };
+                directionsService.route(request, function (response, status) {
+                    if (status == google.maps.DirectionsStatus.OK) {
+                        current_direction_route = response;
+                        directionsDisplay.setDirections(response);
+                        directionsDisplay.setMap(map);
+                    }
+                });
+            }
+
+            $scope.acceptTrip = function () {
+                //Todo add functionality
+            }
+
+            $scope.cancelTrip = function () {
+                //Todo add functionality
+            }
+
+        }
     }]);
 
