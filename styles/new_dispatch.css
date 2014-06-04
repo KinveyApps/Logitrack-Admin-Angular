@@ -33,6 +33,10 @@
     margin-right: auto;
 }
 
+#trip-dropdown li:hover{
+    background-color: #F2F2F2;
+}
+
 #trip-dropdown a:hover {
     background-color: transparent;
 }

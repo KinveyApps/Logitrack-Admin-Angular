@@ -26,11 +26,6 @@
 .dispatch-btn{
     color: white;
     background-color: #5893CC;
-    height: 30px;
-    border-radius: 6px;
-    line-height:30px;
-    text-align: center;
-    vertical-align: middle;
     cursor: default;
 }
 
