@@ -1,8 +1,15 @@
-#menu-title{
-    color: white;
+.menu-div {
     float: right;
-    margin-right: 5px;
     margin-top: 5px;
+    margin-right: 5px;
+}
+
+.menu-title{
+    color: white;
+}
+
+#menu-list{
+    margin-left: -90px
 }
 
 #main-tabset{

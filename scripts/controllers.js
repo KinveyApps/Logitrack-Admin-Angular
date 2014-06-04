@@ -76,7 +76,7 @@ controllers.controller('PasswordResetController',
                 function () {
                     //Kinvey reset password finished with success
                     console.log("resetPassword");
-                    $location.path("templates/login");
+                    $location.path("/templates/login");
                 });
         }
     }]);
@@ -142,7 +142,7 @@ controllers.controller('SignUpController',
                     //Kinvey signup finished with success
                     $scope.submittedError = false;
                     console.log("signup success");
-                    $location.path("templates/main");
+                    $location.path("/templates/main");
                 },
                 function(error) {
                     //Kinvey signup finished with error
@@ -169,8 +169,6 @@ controllers.controller('MainController',
                         $scope.progress_shipments.push(response[i]);
                     }
                 }
-//                $scope.shipments = shipments;
-//                $scope.progress_shipments = progress_shipment;
                 console.log("get shipment success");
             },
             function (error) {
@@ -180,6 +178,21 @@ controllers.controller('MainController',
         $scope.createNewDispatch = function () {
             $location.path("templates/new_dispatch");
         };
+
+        $scope.signOut = function(){
+            var user = $kinvey.getActiveUser();
+            if(null !== user) {
+                var promise = $kinvey.User.logout();
+                promise.then(
+                    function(){
+                        $location.path("templates/login");
+                    },
+                    function(error){
+                        console.log("Sign out error " + error.description);
+                    }
+                );
+            }
+        }
     }]);
 
 
