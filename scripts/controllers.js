@@ -48,14 +48,14 @@ controllers.controller('LoginController',
                     //Kinvey login finished with error
                     $scope.submittedError = true;
                     $scope.errorDescription = error.description;
-                    console.log("Error login " + error.description);//
+                    console.log("Error login " + error.description);
                 }
             );
         }
-        $scope.forgetPassword = function(){
+        $scope.forgetPassword = function () {
             $location.path('/templates/password_reset');
         }
-        $scope.registerUser = function(){
+        $scope.registerUser = function () {
             $location.path('/templates/sign_up');
         }
     }]);
@@ -177,4 +177,104 @@ controllers.controller('MainController',
                 console.log("get shipment error " + JSON.stringify(error.description));
             }
         );
+        $scope.createNewDispatch = function () {
+            $location.path("templates/new_dispatch");
+        };
     }]);
+
+
+controllers.controller('NewDispatchController',
+    ['$scope', '$kinvey', "$location", function ($scope, $kinvey, $location) {
+
+        initPage();
+
+        $scope.showClientForm = function () {
+            $scope.isShowClientForm = true;
+            $scope.hideClientButtons = true;
+            $scope.showTripDropdown = false;
+        }
+
+
+        $scope.selectClient = function (id, name) {
+            $scope.status.isopen = !$scope.status.isopen;
+            $scope.selected_client = name;
+            $scope.showTripDropdown = true;
+            $scope.tripDropdownDisabled = true;
+            console.log(id + " " + name);
+            var query = new $kinvey.Query();
+            query.equalTo('client._id', id);
+            var promise = $kinvey.DataStore.find('shipment', query, {relations: { route: 'route'}});
+            promise.then(
+                function (response) {
+                    $scope.trips = response;
+                    $scope.tripDropdownDisabled= false;
+                },
+                function (error) {
+                    console.log("Error get trips " + error.description);
+                }
+            );
+        }
+        $scope.createClient = function () {
+            var isFormInvalid = false;
+            $scope.submittedError = false;
+            //check is form valid
+            if ($scope.clientForm.first_name.$error.required) {
+                $scope.submittedFirstName = true;
+                isFormInvalid = true;
+            } else {
+                $scope.submittedFirstName = false;
+            }
+            if ($scope.clientForm.last_name.$error.required) {
+                $scope.submittedLastName = true;
+                isFormInvalid = true;
+            } else {
+                $scope.submittedLastName = false;
+            }
+            if (isFormInvalid) {
+                return;
+            }
+            var promise = $kinvey.DataStore.save('clients', {
+                first_name: $scope.first_name,
+                last_name: $scope.last_name
+            });
+            promise.then(
+                function (response) {
+                    $scope.isShowClientForm = false;
+                    $scope.hideClientButtons = false;
+                    initPage();
+                },
+                function (error) {
+                    $scope.submittedError = true;
+                    $scope.errorDescription = error.description;
+                }
+            );
+        }
+
+        $scope.cancelCreateClient = function () {
+            $scope.isShowClientForm = false;
+            $scope.hideClientButtons = false;
+            if( $scope.selected_client !== "Select client") {
+                $scope.showTripDropdown = true;
+            }
+        }
+
+        function initPage() {
+            $scope.selected_client = "Select client";
+            $scope.selected_trip = "Select trip";
+            $scope.status = {
+                isopen: false
+            };
+
+            var promise = $kinvey.DataStore.find('clients', null);
+            promise.then(
+                function (response) {
+                    $scope.clients = response;
+                },
+                function (error) {
+                    console.log("get clients error " + error.description);
+                }
+            );
+        }
+
+    }]);
+

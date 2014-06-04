@@ -1,0 +1,54 @@
+<div ng-controller="NewDispatchController" align="center">
+    <div class="header">
+        <h3 class="header-title">CREATE NEW DISPATCH</h3>
+    </div>
+    <div class="dispatch-btn-group"  ng-hide="hideClientButtons">
+        <div class="btn-group" dropdown is-open="status.isopen">
+            <button type="button" class="btn btn-primary dropdown-toggle">
+                {{selected_client}}<span style="margin-left: 5px;" class="caret white-caret"></span>
+            </button>
+            <ul class="dropdown-menu" role="menu">
+                <li ng-repeat="client in clients">
+                    <a ng-click="selectClient(client._id,client.first_name +' ' + client.last_name)">{{client.first_name
+                        + " " + client.last_name }}</a></li>
+            </ul>
+        </div>
+
+        <button type="button" class="btn btn-primary dropdown-toggle" ng-click="showClientForm()">
+            Create new client</span>
+        </button>
+    </div>
+    <div class="btn-group" dropdown id="trip-dropdown" ng-show="showTripDropdown">
+        <button type="button" class="btn btn-primary dropdown-toggle" ng-disabled="tripDropdownDisabled">
+            {{selected_trip}}<span style="margin-left: 5px;" class="caret white-caret"></span>
+        </button>
+        <ul class="dropdown-menu" role="menu">
+            <li ng-click="selectTrip()" ng-repeat="trip in trips">
+                <a>Begin: {{trip.route.start}}</a>
+                <a>End: {{trip.route.finish}}</a>
+                <div class="divider-line"></div>
+            </li>
+        </ul>
+    </div>
+    <div class="sign-content" ng-show="isShowClientForm">
+        <form name="clientForm" novalidate>
+            <div class="sign-input-div">
+                <input id="client-firstname" name="first_name" ng-model="first_name" class="sign-input"
+                       placeholder="client first name" required/>
+                <span class="sign-span" ng-show="submittedFirstName">A first name is required.</span>
+            </div>
+            <div class="sign-input-div">
+                <input id="client-lastname" name="last_name" ng-model="last_name" class="sign-input"
+                       placeholder="client last name" required/>
+                <span class="sign-span" ng-show="submittedLastName">A last name is required.</span>
+            </div>
+        </form>
+        <div id="client-buttons">
+            <h4 class="submitted-btn" ng-click="createClient()">Create client</h4>
+            <h4 id="cancel-create-cancel-btn" class="submitted-btn" ng-click="cancelCreateClient()">Cancel</h4>
+            <div ng-show="submittedError">
+                <span>{{errorDescription}}</span>
+            </div>
+        </div>
+    </div>
+</div>

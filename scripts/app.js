@@ -14,7 +14,7 @@
 
 var body = document.getElementsByTagName('body')[0];
 
-setTimeout(function() {
+setTimeout(function () {
     body.setAttribute('ng-app', 'Logitrack-Angular');
     angular.bootstrap(body, ['ng', 'Logitrack-Angular']);
 }, 2000);
@@ -22,7 +22,7 @@ setTimeout(function() {
 var app = angular.module('Logitrack-Angular', [ 'kinvey', 'ngRoute', 'controllers' ]);
 
 //inject Providers into config block
-app.config(['$routeProvider', function($routeProvider) {
+app.config(['$routeProvider', function ($routeProvider) {
     $routeProvider.
         when('/templates/login', {
             templateUrl: 'templates/login.html',
@@ -39,21 +39,25 @@ app.config(['$routeProvider', function($routeProvider) {
         when('/templates/sign_up', {
             templateUrl: 'templates/sign_up.html',
             controller: 'SignUpController'
+        }).
+        when('/templates/new_dispatch', {
+            templateUrl: 'templates/new_dispatch.html',
+            controller: 'NewDispatchController'
         });
 }]);
 
 //inject instances (not Providers) into run blocks
-app.run(['$location', '$kinvey', '$rootScope','$timeout', function($location, $kinvey, $rootScope) {
+app.run(['$location', '$kinvey', '$rootScope', '$timeout', function ($location, $kinvey, $rootScope) {
     // Kinvey initialization starts
     var promise = $kinvey.init({
-        appKey : 'kid_VTpS9qbe7q',
-        appSecret : '5ae17c3bd8414d7f917c59a1c14a8fcd'
+        appKey: 'kid_VTpS9qbe7q',
+        appSecret: '5ae17c3bd8414d7f917c59a1c14a8fcd'
     });
-    promise.then(function() {
+    promise.then(function () {
         // Kinvey initialization finished with success
         console.log("Kinvey init with success");
         determineBehavior($kinvey, $location, $rootScope);
-    }, function(errorCallback) {
+    }, function (errorCallback) {
         // Kinvey initialization finished with error
         console.log("Kinvey init with error: " + JSON.stringify(errorCallback));
         determineBehavior($kinvey, $location, $rootScope);
@@ -73,7 +77,7 @@ function determineBehavior($kinvey, $location, $rootScope) {
     } else {
         console.log("activeUser null redirecting");
         if ($location.$$url != '/templates/login') {
-           $location.path('/templates/login');
+            $location.path('/templates/login');
         }
     }
 }

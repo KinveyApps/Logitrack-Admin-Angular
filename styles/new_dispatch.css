@@ -1,0 +1,46 @@
+.dispatch-btn-group {
+    margin-right: auto;
+    margin-left: auto;
+    margin-top: 50px;
+    text-align: center;
+}
+
+.btn-group {
+    display: inline-block;
+    margin-right: 20px;
+}
+
+.dispatch-btn-group button {
+    display: inline-block;
+    background-color: #5893CC;
+}
+
+.white-caret {
+    border-top-color: white !important;
+    border-bottom-color: white !important;
+}
+
+.divider-line {
+    height: 1px;
+    line-height: 1px;
+    background-color: gray;
+    width: 100%;
+}
+
+#trip-dropdown {
+    margin-top: 50px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+#trip-dropdown a:hover {
+    background-color: transparent;
+}
+
+#client-buttons h4 {
+    display: inline-block;
+}
+
+#cancel-create-cancel-btn {
+    margin-left: 40px;
+}
