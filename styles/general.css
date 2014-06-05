@@ -68,3 +68,28 @@ span{
 p{
     cursor: default;
 }
+
+h6{
+    width: 150px;
+    display: inline-block;
+    text-align: right;
+}
+.input-with-title{
+    width:400px;
+    margin-left: auto;
+    margin-right: auto;
+}
+.input-with-title input{
+    display: inline-block;
+    margin-left: 20px;
+}
+.input-with-title-span{
+    text-align: center;
+    margin-left: auto;
+    margin-right: auto;
+    width: 100%;
+}
+
+#profile-edit-page form{
+    margin-top: 50px;
+}

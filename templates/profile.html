@@ -1,4 +1,4 @@
-<div ng-controller="ProfileEditController">
+<div ng-controller="ProfileEditController" id="profile-edit-page">
     <div class="header">
         <h3 class="header-title">Edit {{edit_title}}</h3>
     </div>
@@ -26,7 +26,24 @@
             <span class="sign-span" ng-show="submittedEmail">A valid email address is required.</span>
         </div>
     </form>
+    <form novalidate name="passwordForm" ng-show="isPasswordFormShow">
+        <div class="input-with-title">
+            <h6>Enter new password:</h6>
+            <input class="sign-input" type="password" name="password" ng-model="password"
+                   placeholder="********" required/>
+        </div>
+        <span class="input-with-title-span" ng-show="submittedNewPassword">This field is required.</span>
+
+        <div class="input-with-title">
+            <h6>Reconfirm password:</h6>
+            <input class="sign-input" type="password" name="reconfirm_password"
+                   ng-model="reconfirm_password"
+                   placeholder="********" required/>
+        </div>
+        <span class="input-with-title-span" ng-show="submittedConfirmedPassword">This field is required.</span>
+    </form>
     <div class="dispatch-btn-group">
+        <span class="input-with-title-span" ng-show="matchedPasswords">Passwords don't match</span>
         <button ng-click="save()" class="btn btn-primary dispatch-btn">Save</button>
         <button ng-click="cancel()" class="btn btn-primary dispatch-btn">Cancel</button>
     </div>

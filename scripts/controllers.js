@@ -322,8 +322,35 @@ controllers.controller('ProfileEditController',
                     );
                     break;
                 case 2:
-                    $scope.isPasswordFormShow = true;
-                    $scope.edit_title="Password";
+                    var isFormInvalid = false;
+                    if ($scope.passwordForm.password.$error.required) {
+                        $scope.submittedNewPassword = true;
+                        isFormInvalid = true;
+                    } else {
+                        $scope.submittedNewPassword = false;
+                    }
+                    if ($scope.passwordForm.reconfirm_password.$error.required) {
+                        $scope.submittedConfirmedPassword = true;
+                        isFormInvalid = true;
+                    } else {
+                        $scope.submittedConfirmedPassword = false;
+                    }
+                    if (isFormInvalid) {
+                        return;
+                    }else if($scope.password !== $scope.reconfirm_password){
+                        $scope.matchedPasswords = true;
+                        return;
+                    }
+                    activeUser.password = $scope.password;
+                    var promise = $kinvey.User.update(activeUser);
+                    promise.then(
+                        function(){
+                            $location.path("templates/main");
+                        },
+                        function(error){
+                            console.log("error update user " + error.description);
+                        }
+                    );
                     break;
             }
 
