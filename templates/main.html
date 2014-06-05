@@ -18,10 +18,8 @@ the License.
       </a>
       <ul id="menu-list" class="dropdown-menu">
           <li><a><b>Profile</b></a>
-          <ul>
-              <li><a>Change name or bio</a></li>
-              <li><a>Change email</a></li>
-              <li><a>Change password</a></li>
+          <ul ng-repeat="item in menu_profile_items">
+              <li ng-click="changeProfile(item)"><a>{{item.title}}</a></li>
           </ul></li>
           <li><a ng-click="signOut()"><b>Sign Out</b></a></li>
       </ul>

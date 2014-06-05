@@ -25,6 +25,18 @@ controllers.service('currentTrip', function() {
     }
 });
 
+controllers.service('menuItem',function(){
+    var menu_item = {};
+    return {
+        getItem: function() {
+            return menu_item;
+        },
+        setItem: function(value) {
+            menu_item = value;
+        }
+    }
+});
+
 controllers.controller('LoginController',
     ['$scope', '$kinvey', "$location", function ($scope, $kinvey, $location) {
         //Kinvey login starts
@@ -168,7 +180,7 @@ controllers.controller('SignUpController',
     }]);
 
 controllers.controller('MainController',
-    ['$scope', '$kinvey', "$location", function ($scope, $kinvey, $location) {
+    ['$scope', '$kinvey', "$location","menuItem", function ($scope, $kinvey, $location,menuItem) {
         var promise = $kinvey.DataStore.find('shipment', null, {relations: { route: 'route',
             client: "clients"}});
         promise.then(
@@ -188,6 +200,18 @@ controllers.controller('MainController',
                 console.log("get shipment error " + JSON.stringify(error.description));
             }
         );
+
+        $scope.menu_profile_items = [
+            {
+                id: 0, title: "Change name or bio"
+            },
+            {
+                id: 1, title: "Change email"
+            },
+            {
+                id: 2, title: "Change password"
+            }
+        ];
         $scope.createNewDispatch = function () {
             $location.path("templates/new_dispatch");
         };
@@ -205,6 +229,107 @@ controllers.controller('MainController',
                     }
                 );
             }
+        }
+
+        $scope.changeProfile = function(item){
+            menuItem.setItem(item);
+            $location.path("templates/edit_profile");
+        }
+
+    }]);
+
+controllers.controller('ProfileEditController',
+    ['$scope', '$kinvey', "$location","menuItem",function ($scope, $kinvey, $location,menuItem) {
+        var item = menuItem.getItem();
+        var activeUser = $kinvey.getActiveUser();
+        switch (item.id){
+            case 0:
+                $scope.isBioFormShow = true;
+                $scope.edit_title="Name";
+                $scope.first_name = activeUser.first_name;
+                $scope.last_name = activeUser.last_name;
+                $scope.username = activeUser.username;
+                break;
+            case 1:
+                $scope.isEmailFormShow = true;
+                $scope.edit_title="Email";
+                $scope.email = activeUser.email;
+                break;
+            case 2:
+                $scope.isPasswordFormShow = true;
+                $scope.edit_title="Password";
+                break;
+        }
+        $scope.save = function () {
+            switch (item.id){
+                case 0:
+                    var isFormInvalid = false;
+                    if ($scope.bioForm.first_name.$error.required) {
+                        $scope.submittedFirstName = true;
+                        isFormInvalid = true;
+                    } else {
+                        $scope.submittedFirstName = false;
+                    }
+                    if ($scope.bioForm.last_name.$error.required) {
+                        $scope.submittedLastName = true;
+                        isFormInvalid = true;
+                    } else {
+                        $scope.submittedLastName = false;
+                    }
+                    if ($scope.bioForm.username.$error.required) {
+                        $scope.submittedUsername = true;
+                        isFormInvalid = true;
+                    } else {
+                        $scope.submittedUsername = false;
+                    }
+                    if (isFormInvalid) {
+                        return;
+                    }
+                    activeUser.first_name = $scope.first_name;
+                    activeUser.last_name = $scope.last_name;
+                    activeUser.username = $scope.username;
+                    var promise = $kinvey.User.update(activeUser);
+                    promise.then(
+                        function(){
+                            $location.path("templates/main");
+                        },
+                        function(error){
+                            console.log("error update user " + error.description);
+                        }
+                    );
+                    break;
+                case 1:
+                    var isFormInvalid = false;
+                    if ($scope.emailForm.email.$error.email || $scope.emailForm.email.$error.required) {
+                        $scope.submittedEmail = true;
+                        isFormInvalid = true;
+                        return;
+                    }else{
+                        $scope.submittedEmail = false;
+                    }
+                    if (isFormInvalid) {
+                        return;
+                    }
+                    activeUser.email = $scope.email;
+                    var promise = $kinvey.User.update(activeUser);
+                    promise.then(
+                        function(){
+                            $location.path("templates/main");
+                        },
+                        function(error){
+                            console.log("error update user " + error.description);
+                        }
+                    );
+                    break;
+                case 2:
+                    $scope.isPasswordFormShow = true;
+                    $scope.edit_title="Password";
+                    break;
+            }
+
+        };
+        $scope.cancel = function () {
+            $location.path("templates/main");
         }
     }]);
 

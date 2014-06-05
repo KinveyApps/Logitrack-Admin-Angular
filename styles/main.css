@@ -12,6 +12,13 @@
     margin-left: -90px
 }
 
+#menu-list ul {
+    list-style-type: disc;
+}
+#menu-list ul > li{
+    color: black;
+}
+
 #main-tabset{
    margin-top: -39px;
 }
