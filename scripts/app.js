@@ -40,10 +40,6 @@ app.config(['$routeProvider', function ($routeProvider) {
             templateUrl: 'templates/sign_up.html',
             controller: 'SignUpController'
         }).
-        when('/templates/new_dispatch', {
-            templateUrl: 'templates/new_dispatch.html',
-            controller: 'NewDispatchController'
-        }).
         when('/templates/map', {
             templateUrl: 'templates/map.html',
             controller: 'MapController'
