@@ -18,9 +18,10 @@ the License.
       </a>
       <ul id="menu-list" class="dropdown-menu">
           <li><a><b>Profile</b></a>
-          <ul ng-repeat="item in menu_profile_items">
-              <li ng-click="changeProfile(item)"><a>{{item.title}}</a></li>
-          </ul></li>
+              <ul ng-repeat="item in menu_profile_items">
+                  <li ng-click="changeProfile(item)"><a>{{item.title}}</a></li>
+              </ul>
+          </li>
           <li><a ng-click="signOut()"><b>Sign Out</b></a></li>
       </ul>
     </span>
@@ -36,36 +37,69 @@ the License.
             <ul collapse="isOpenRequestCollapsed" ng-repeat="shipment in shipments">
                 <li class="list-item">
                     <div class="list-item-div-a">
-                        <div class="top-div">
-                            <p class="p-title">Client</p>
+                        <div class="div-shipment-info">
+                            <div class="top-div">
+                                <p class="p-title">Client</p>
 
-                            <p class="p-info">{{shipment.client.first_name + " " + shipment.client.last_name}}</p>
-                        </div>
-                        <div class="bottom-div">
-                            <p class="p-title">Date</p>
+                                <p class="p-info">{{shipment.client.first_name + " " + shipment.client.last_name}}</p>
+                            </div>
+                            <div class="bottom-div" ng-show="!isEdit[$index]">
+                                <p class="p-title">Date</p>
 
-                            <p class="p-info">May 22, 2014</p>
+                                <p class="p-info">May 22, 2014</p>
+                            </div>
+                            <div style="margin-top: 0;height: 40px" ng-show="isEdit[$index]"
+                                 class="btn-group" dropdown is-open="status.isClientsOpen">
+                                <button type="button" class="btn btn-primary dropdown-toggle">
+                                    {{selected_client}}<span style="margin-left: 5px;" class="caret white-caret"></span>
+                                </button>
+                                <ul class="dropdown-menu" role="menu">
+                                    <li ng-repeat="client in clients">
+                                        <a ng-click="selectClient(client,shipment)">{{client.first_name
+                                            + " " + client.last_name }}</a></li>
+                                </ul>
+                            </div>
                         </div>
                     </div>
-                    <div class="list-item-div-b">
-                        <div class="top-div">
-                            <p class="p-title">Trip</p>
 
-                            <p class="p-info">Begin: {{shipment.route.start}}</p>
 
-                            <p class="p-info">End: {{shipment.route.finish}}</p>
-                        </div>
-                        <div class="bottom-div">
-                            <p class="p-title">Request Time</p>
+                    <div class="list-item-div-b" >
+                        <div class="div-shipment-info">
+                            <div class="top-div" >
+                                <p class="p-title">Trip</p>
 
-                            <p class="p-info">1:45 pm</p>
+                                <p class="p-info">Begin: {{shipment.route.start}}</p>
+
+                                <p class="p-info">End: {{shipment.route.finish}}</p>
+                            </div>
+                            <div ng-show="!isEdit[$index]" class="bottom-div">
+                                <p class="p-title">Request Time</p>
+
+                                <p class="p-info">1:45 pm</p>
+                            </div>
+                            <div style="margin-top: 0;height: 40px" class="btn-group" dropdown
+                                 id="trip-dropdown" is-open="status.isTripsOpen" ng-show="isEdit[$index]">
+                                <button type="button" class="btn btn-primary dropdown-toggle"
+                                        ng-disabled="tripDropdownDisabled">
+                                    {{selected_trip}}<span style="margin-left: 5px;" class="caret white-caret"></span>
+                                </button>
+                                <ul class="dropdown-menu" role="menu">
+                                    <li ng-click="selectTrip(trip,shipment)" ng-repeat="trip in trips">
+                                        <a>Begin: {{trip.route.start}}</a>
+                                        <a>End: {{trip.route.finish}}</a>
+
+                                        <div class="divider-line"></div>
+                                    </li>
+                                </ul>
+                            </div>
                         </div>
                     </div>
                     <div class="list-item-div-c">
                         <div class="div-shipment-info">
                             <p class="p-title">Shipment Info</p>
 
-                            <p class="p-info">10" by 24" by 3" box</p>
+                            <p ng-show="!isEdit[$index]" class="p-info">{{shipment.info}}</p>
+                            <input class="sign-input" name="shipment_text" ng-model="shipment_text" ng-show="isEdit[$index]" text="{{shipment.info}}"/>
                         </div>
                     </div>
                     <div class="driver-div">
@@ -75,8 +109,8 @@ the License.
                             </select>
                         </div>
                         <div class="edit-save-btns-div">
-                            <div class="btn btn-primary dispatch-btn">Edit</div>
-                            <div class="btn btn-primary dispatch-btn">Save</div>
+                            <div class="btn btn-primary dispatch-btn" ng-click="isEdit[$index]=true">Edit</div>
+                            <div class="btn btn-primary dispatch-btn" ng-click="saveDispatch($index,shipment,shipment_text)">Save</div>
                         </div>
                     </div>
                 </li>

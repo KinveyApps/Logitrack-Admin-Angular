@@ -181,6 +181,8 @@ controllers.controller('SignUpController',
 
 controllers.controller('MainController',
     ['$scope', '$kinvey', "$location","menuItem", function ($scope, $kinvey, $location,menuItem) {
+        $scope.isEdit=[];
+        $scope.tripDropdownDisabled = true;
         var promise = $kinvey.DataStore.find('shipment', null, {relations: { route: 'route',
             client: "clients"}});
         promise.then(
@@ -188,9 +190,9 @@ controllers.controller('MainController',
                 $scope.shipments = [];
                 $scope.progress_shipments = [];
                 for (var i in response) {
-                    if (response[i].user_status !== "in progress") {
+                    if (response[i].user_status === "pending") {
                         $scope.shipments.push(response[i]);
-                    } else {
+                    } else if (response[i].user_status === "in progress") {
                         $scope.progress_shipments.push(response[i]);
                     }
                 }
@@ -212,8 +214,25 @@ controllers.controller('MainController',
                 id: 2, title: "Change password"
             }
         ];
+
         $scope.createNewDispatch = function () {
-            $location.path("templates/new_dispatch");
+            $scope.shipments.unshift({});
+            $scope.isEdit.unshift(true);
+            $scope.selected_client = "Select client";
+            $scope.selected_trip = "Select trip";
+            $scope.status = {
+                isopen: false
+            };
+
+            var promise = $kinvey.DataStore.find('clients', null);
+            promise.then(
+                function (response) {
+                    $scope.clients = response;
+                },
+                function (error) {
+                    console.log("get clients error " + error.description);
+                }
+            );
         };
 
         $scope.signOut = function(){
@@ -229,13 +248,59 @@ controllers.controller('MainController',
                     }
                 );
             }
-        }
+        };
 
         $scope.changeProfile = function(item){
             menuItem.setItem(item);
             $location.path("templates/edit_profile");
-        }
+        };
 
+
+        $scope.showClientForm = function () {
+            $scope.isShowClientForm = true;
+            $scope.hideClientButtons = true;
+            $scope.showTripDropdown = false;
+        };
+
+
+        $scope.selectClient = function (client,shipment) {
+            $scope.status.isClientsOpen = !$scope.status.isClientsOpen;
+            $scope.selected_client = client.first_name + " " + client.last_name;
+            $scope.tripDropdownDisabled = true;
+            shipment.client = client;
+            var query = new $kinvey.Query();
+            query.equalTo('client._id',client._id);
+            var promise = $kinvey.DataStore.find('shipment', query, {relations: { route: 'route'}});
+            promise.then(
+                function (response) {
+                    $scope.trips = response;
+                    $scope.tripDropdownDisabled= false;
+                },
+                function (error) {
+                    console.log("Error get trips " + error.description);
+                }
+            );
+        };
+
+        $scope.cancelCreateClient = function () {
+            $scope.isShowClientForm = false;
+            $scope.hideClientButtons = false;
+            if( $scope.selected_client !== "Select client") {
+                $scope.showTripDropdown = true;
+            }
+        };
+
+        $scope.selectTrip = function(trip, shipment){
+            $scope.status.isTripsOpen = !$scope.status.isTripsOpen;
+            shipment.route = trip.route;
+        };
+
+        $scope.saveDispatch = function(index,shipment,shipment_text){
+            $scope.isEdit[index]=false;
+
+            shipment.info = shipment_text;
+            console.log("sipment inof " + shipment_text);
+        };
     }]);
 
 controllers.controller('ProfileEditController',
@@ -529,7 +594,7 @@ controllers.controller('MapController',
             }
 
             $scope.cancelTrip = function () {
-                //Todo add functionality
+                $location.path("temlates/new_dispatch");
             }
 
         }
