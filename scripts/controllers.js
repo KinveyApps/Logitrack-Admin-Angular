@@ -181,27 +181,7 @@ controllers.controller('SignUpController',
 
 controllers.controller('MainController',
     ['$scope', '$kinvey', "$location","menuItem", function ($scope, $kinvey, $location,menuItem) {
-        $scope.isEdit=[];
-        $scope.tripDropdownDisabled = true;
-        var promise = $kinvey.DataStore.find('shipment', null, {relations: { route: 'route',
-            client: "clients"}});
-        promise.then(
-            function (response) {
-                $scope.shipments = [];
-                $scope.progress_shipments = [];
-                for (var i in response) {
-                    if (response[i].user_status === "pending") {
-                        $scope.shipments.push(response[i]);
-                    } else if (response[i].user_status === "in progress") {
-                        $scope.progress_shipments.push(response[i]);
-                    }
-                }
-                console.log("get shipment success");
-            },
-            function (error) {
-                console.log("get shipment error " + JSON.stringify(error.description));
-            }
-        );
+
 
         $scope.menu_profile_items = [
             {
@@ -214,26 +194,6 @@ controllers.controller('MainController',
                 id: 2, title: "Change password"
             }
         ];
-
-        $scope.createNewDispatch = function () {
-            $scope.shipments.unshift({});
-            $scope.isEdit.unshift(true);
-            $scope.selected_client = "Select client";
-            $scope.selected_trip = "Select trip";
-            $scope.status = {
-                isopen: false
-            };
-
-            var promise = $kinvey.DataStore.find('clients', null);
-            promise.then(
-                function (response) {
-                    $scope.clients = response;
-                },
-                function (error) {
-                    console.log("get clients error " + error.description);
-                }
-            );
-        };
 
         $scope.signOut = function(){
             var user = $kinvey.getActiveUser();
@@ -254,27 +214,81 @@ controllers.controller('MainController',
             menuItem.setItem(item);
             $location.path("templates/edit_profile");
         };
+    }]);
 
+controllers.controller('DispatchController',
+    ['$scope', '$kinvey', "$location",function ($scope, $kinvey, $location) {
+        $scope.initPage = function(){
+            $scope.isEdit=[];
+            $scope.isClientsOpen=[];
+            $scope.isTripsOpen=[];
+            $scope.tripDropdownDisabled = [];
+            $scope.trips = [];
+            console.log($scope.isClientsOpen + "dfsd " + $scope.isTripsOpen);
+            var promise = $kinvey.DataStore.find('shipment', null, {relations: { route: 'route',
+                client: "clients"}});
+            promise.then(
+                function (response) {
+                    $scope.shipments = [];
+                    $scope.progress_shipments = [];
+                    for (var i in response) {
+                        if (response[i].user_status === "pending") {
+                            $scope.isClientsOpen.push(false);
+                            $scope.isTripsOpen.push(false);
+                            $scope.tripDropdownDisabled.push(true);
+                            $scope.trips.push({});
+                            $scope.shipments.push(response[i]);
+                        } else if (response[i].user_status === "in progress") {
+                            $scope.progress_shipments.push(response[i]);
+                        }
+                    }
+                    console.log("get shipment success " + $scope.isTripsOpen + " " + $scope.isClientsOpen);
+                },
+                function (error) {
+                    console.log("get shipment error " + JSON.stringify(error.description));
+                }
+            );
 
-        $scope.showClientForm = function () {
-            $scope.isShowClientForm = true;
-            $scope.hideClientButtons = true;
-            $scope.showTripDropdown = false;
         };
 
+        $scope.createNewDispatch = function () {
+            $scope.shipments.unshift({});
+            $scope.isEdit.unshift(true);
+            $scope.isClientsOpen.unshift(false);
+            $scope.isTripsOpen.unshift(false);
+            $scope.trips.unshift({});
+            $scope.tripDropdownDisabled.unshift(true);
+            $scope.selected_client = "Select client";
+            $scope.selected_trip = "Select trip";
+            $scope.status = {
+                isopen: false
+            };
 
-        $scope.selectClient = function (client,shipment) {
-            $scope.status.isClientsOpen = !$scope.status.isClientsOpen;
+            var promise = $kinvey.DataStore.find('clients', null);
+            promise.then(
+                function (response) {
+                    $scope.clients = response;
+                },
+                function (error) {
+                    console.log("get clients error " + error.description);
+                }
+            );
+        };
+
+        $scope.selectClient = function (client,shipment,index) {
+            console.log("selected index " + index);
+            $scope.isClientsOpen[index] = !$scope.isClientsOpen[index];
             $scope.selected_client = client.first_name + " " + client.last_name;
-            $scope.tripDropdownDisabled = true;
+            $scope.tripDropdownDisabled[index] = true;
             shipment.client = client;
             var query = new $kinvey.Query();
             query.equalTo('client._id',client._id);
             var promise = $kinvey.DataStore.find('shipment', query, {relations: { route: 'route'}});
             promise.then(
                 function (response) {
-                    $scope.trips = response;
-                    $scope.tripDropdownDisabled= false;
+                    $scope.trips[index] = response;
+                    console.log("trips " + JSON.stringify($scope.trips));
+                    $scope.tripDropdownDisabled[index]= false;
                 },
                 function (error) {
                     console.log("Error get trips " + error.description);
@@ -282,24 +296,14 @@ controllers.controller('MainController',
             );
         };
 
-        $scope.cancelCreateClient = function () {
-            $scope.isShowClientForm = false;
-            $scope.hideClientButtons = false;
-            if( $scope.selected_client !== "Select client") {
-                $scope.showTripDropdown = true;
-            }
-        };
-
-        $scope.selectTrip = function(trip, shipment){
-            $scope.status.isTripsOpen = !$scope.status.isTripsOpen;
+        $scope.selectTrip = function(trip,shipment,index){
+            $scope.isTripsOpen[index] = !$scope.isTripsOpen[index];
             shipment.route = trip.route;
         };
 
         $scope.saveDispatch = function(index,shipment,shipment_text){
             $scope.isEdit[index]=false;
-
             shipment.info = shipment_text;
-            console.log("sipment inof " + shipment_text);
         };
     }]);
 
@@ -435,8 +439,7 @@ controllers.controller('NewDispatchController',
             $scope.isShowClientForm = true;
             $scope.hideClientButtons = true;
             $scope.showTripDropdown = false;
-        }
-
+        };
 
         $scope.selectClient = function (id, name) {
             $scope.status.isopen = !$scope.status.isopen;
