@@ -226,7 +226,8 @@ controllers.controller('DispatchController',
             $scope.trips = [];
             console.log($scope.isClientsOpen + "dfsd " + $scope.isTripsOpen);
             var promise = $kinvey.DataStore.find('shipment', null, {relations: { route: 'route',
-                client: "clients"}});
+                client: "clients",
+            driver:"user"}});
             promise.then(
                 function (response) {
                     $scope.shipments = [];
@@ -242,13 +243,28 @@ controllers.controller('DispatchController',
                             $scope.progress_shipments.push(response[i]);
                         }
                     }
-                    console.log("get shipment success " + $scope.isTripsOpen + " " + $scope.isClientsOpen);
+                    console.log("get shipment success " + JSON.stringify(response[0]));
                 },
                 function (error) {
                     console.log("get shipment error " + JSON.stringify(error.description));
                 }
             );
+            var query = new $kinvey.Query();
+            query.equalTo('status', 'driver');
+            var promise = $kinvey.User.find(query);
+            promise.then(
+                function (response) {
+                    console.log("get drivers success");
+                    $scope.drivers = response;
+                },
+                function(error){
+                    console.log("get drivers error " + error.description);
+                });
+        };
 
+        $scope.selectDriver = function(driver,index){
+       console.log("driver " + index);
+            $scope.shipments[index].driver = driver;
         };
 
         $scope.createNewDispatch = function () {

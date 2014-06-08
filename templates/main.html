@@ -99,13 +99,14 @@ the License.
                             <p class="p-title">Shipment Info</p>
 
                             <p ng-show="!isEdit[$index]" class="p-info">{{shipment.info}}</p>
-                            <input class="sign-input" name="shipment_text" ng-model="shipment_text" ng-show="isEdit[$index]" text="{{shipment.info}}"/>
+                            <input class="sign-input" name="shipment_text" ng-model="shipment_text" ng-show="isEdit[$index]" value="{{shipment.info}}"/>
                         </div>
                     </div>
                     <div class="driver-div">
                         <div class="select-driver-div">
                             <p class="p-title">Driver</p>
-                            <select>
+                            <select ng-model="driver" ng-change="selectDriver(driver,$index)" ng-options="driver.last_name + ' ' + driver.first_name for driver in drivers">
+                                <option style="display:none" value="">select a driver</option>
                             </select>
                         </div>
                         <div class="edit-save-btns-div">
@@ -158,7 +159,7 @@ the License.
                             <div class="select-driver-div">
                                 <p class="p-title">Driver</p>
 
-                                <p class="p-info">George Pastos</p>
+                                <p class="p-info">{{shipment.driver.first_name + " " + shipment.driver.last_name}}</p>
                             </div>
                             <div class="edit-save-btns-div">
                                 <div class="btn btn-primary dispatch-btn" id="view-btn">View</div>
