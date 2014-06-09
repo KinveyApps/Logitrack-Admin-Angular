@@ -6,7 +6,6 @@
 
 .menu-title{
     color: white;
-    font-size: 18px;
 }
 
 #menu-list{
@@ -137,16 +136,28 @@
     margin-right: 20px;
 }
 
-select{
-    width: 100px;
+.dropdown-select,#trip-dropdown-btn{
     border: 2px solid #5893CC;
-    height: 20px;
     overflow: hidden;
-    margin-top: 3px;
+    margin-left: 5px;
+    margin-right: 5px;
+    font-size: 12px;
     -webkit-appearance: none;
     -webkit-border-radius: 0px;
     background: url("../images/arrow.jpg") no-repeat right;
+    text-align: left;
 }
+
+.dropdown-select{
+    height: 25px;
+    width: 130px;
+}
+
+#trip-dropdown-btn{
+    height: 40px;
+    width: 400px;
+}
+
 
 #select-driver-div{
     width: 100px;
@@ -187,9 +198,7 @@ select{
 }
 
 #trip-dropdown {
-    margin-top: 50px;
-    margin-left: auto;
-    margin-right: auto;
+    width: 100%;
 }
 
 #trip-dropdown li:hover{
@@ -217,4 +226,18 @@ select{
     position: relative;
     -webkit-transform: translateZ(0px);
     background-color: rgb(229, 227, 223);
+}
+
+.dropdown-div{
+    margin-top: 10px;
+    height: 25px
+}
+
+#trip-dropdown-div{
+    margin-top: 10px;
+    height: 40px
+}
+
+#p-end-route{
+    margin-top: -10px;
 }

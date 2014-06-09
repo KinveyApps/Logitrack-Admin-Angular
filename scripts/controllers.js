@@ -361,10 +361,10 @@ controllers.controller('DispatchController',
         $scope.initPage = function(){
             $scope.isEdit=[];
             $scope.isClientsOpen=[];
+            $scope.isDriversOpen=[];
             $scope.isTripsOpen=[];
             $scope.tripDropdownDisabled = [];
             $scope.trips = [];
-            console.log($scope.isClientsOpen + "dfsd " + $scope.isTripsOpen);
             var promise = $kinvey.DataStore.find('shipment', null, {relations: { route: 'route',
                 client: "clients",
             driver:"user"}});
@@ -375,6 +375,7 @@ controllers.controller('DispatchController',
                     for (var i in response) {
                         if (response[i].user_status === "pending") {
                             $scope.isClientsOpen.push(false);
+                            $scope.isDriversOpen.push(false);
                             $scope.isTripsOpen.push(false);
                             $scope.tripDropdownDisabled.push(true);
                             $scope.trips.push({});
@@ -404,14 +405,18 @@ controllers.controller('DispatchController',
         };
 
         $scope.selectDriver = function(driver,index){
-       console.log("driver " + index);
+            $scope.isDriversOpen[index] = !$scope.isDriversOpen[index];
+//            shipment.driver = driver;
+            console.log(JSON.stringify(driver));
             $scope.shipments[index].driver = driver;
         };
 
         $scope.createNewDispatch = function () {
+            $scope.clients =[];
             $scope.shipments.unshift({user_status:"pending"});
             $scope.isEdit.unshift(true);
             $scope.isClientsOpen.unshift(false);
+            $scope.isDriversOpen.unshift(false);
             $scope.isTripsOpen.unshift(false);
             $scope.trips.unshift({});
             $scope.tripDropdownDisabled.unshift(true);
