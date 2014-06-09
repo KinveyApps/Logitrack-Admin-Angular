@@ -43,10 +43,6 @@ app.config(['$routeProvider', function ($routeProvider) {
         when('/templates/map', {
             templateUrl: 'templates/map.html',
             controller: 'MapController'
-        }).
-        when('/templates/edit_profile', {
-            templateUrl: 'templates/profile.html',
-            controller: 'ProfileEditController'
         });
 }]);
 

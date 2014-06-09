@@ -181,4 +181,61 @@ the License.
             Manage content
         </tab>
     </tabset>
+    <script type="text/ng-template" id="profile_edit.html">
+        <div class="modal-header">
+            <h3 class="modal-title">Edit {{edit_title}}</h3>
+        </div>
+        <div class="modal-body">
+            <form novalidate name="bioForm.scope" ng-show="isBioFormShow">
+                <div class="input-with-title">
+                    <h6>First name:</h6>
+                    <input name="first_name" ng-model="user.first_name" class="sign-input"
+                           placeholder="first name" required/>
+                    <span class="input-with-title-span" ng-show="submittedFirstName">A first name is required.</span>
+                </div>
+                <div class="input-with-title">
+                    <h6>Last name:</h6>
+                    <input name="last_name" ng-model="user.last_name" class="sign-input"
+                           placeholder="last name" required/>
+                    <span class="input-with-title-span" ng-show="submittedLastName">A last name is required.</span>
+                </div>
+                <div class="input-with-title">
+                    <h6>Username:</h6>
+                    <input name="username" ng-model="user.username" class="sign-input"
+                           placeholder="username" required/>
+                    <span class="input-with-title-span" ng-show="submittedUsername">A username is required.</span>
+                </div>
+            </form>
+            <form novalidate name="emailForm.scope" ng-show="isEmailFormShow">
+                <div class="input-with-title">
+                    <h6>Email:</h6>
+                    <input class="sign-input" type="email" name="email" ng-model="user.email"
+                           placeholder="john@example.com" required/>
+                    <span class="input-with-title-span" ng-show="submittedEmail">A valid email address is required.</span>
+                </div>
+            </form>
+            <form novalidate name="passwordForm.scope" ng-show="isPasswordFormShow">
+                <div class="input-with-title">
+                    <h6>Enter new password:</h6>
+                    <input class="sign-input" type="password" name="password" ng-model="user.password"
+                           placeholder="********" required/>
+                </div>
+                <span class="input-with-title-span" ng-show="submittedNewPassword">This field is required.</span>
+
+                <div class="input-with-title">
+                    <h6>Reconfirm password:</h6>
+                    <input class="sign-input" type="password" name="reconfirm_password"
+                           ng-model="user.reconfirm_password"
+                           placeholder="********" required/>
+                </div>
+                <span class="input-with-title-span" ng-show="submittedConfirmedPassword">This field is required.</span>
+                <span class="input-with-title-span" ng-show="matchedPasswords">Passwords don't match</span>
+            </form>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-primary" ng-click="save()">Save</button>
+            <button class="btn btn-warning" ng-click="cancel()">Cancel</button>
+        </div>
+    </script>
+
 </div>
