@@ -99,7 +99,7 @@ the License.
                             <p class="p-title">Shipment Info</p>
 
                             <p ng-show="!isEdit[$index]" class="p-info">{{shipment.info}}</p>
-                            <input class="sign-input" name="shipment_text" ng-model="shipment_text" ng-show="isEdit[$index]" value="{{shipment.info}}"/>
+                            <input class="sign-input" name="shipment_text" ng-model="shipment.info" ng-show="isEdit[$index]"/>
                         </div>
                     </div>
                     <div class="driver-div">
@@ -110,8 +110,8 @@ the License.
                             </select>
                         </div>
                         <div class="edit-save-btns-div">
-                            <div class="btn btn-primary dispatch-btn" ng-click="isEdit[$index]=true">Edit</div>
-                            <div class="btn btn-primary dispatch-btn" ng-click="saveDispatch($index,shipment,shipment_text)">Save</div>
+                            <div class="btn btn-primary dispatch-btn" ng-click="editDispatch($index)">Edit</div>
+                            <div class="btn btn-primary dispatch-btn" ng-click="saveDispatch($index,shipment)">Save</div>
                         </div>
                     </div>
                 </li>

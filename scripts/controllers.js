@@ -379,10 +379,10 @@ controllers.controller('DispatchController',
                             $scope.tripDropdownDisabled.push(true);
                             $scope.trips.push({});
                             $scope.shipments.push(response[i]);
-                            getFormatDateTime(response[i]);
+                            setFormatDateTime(response[i]);
                         } else if (response[i].user_status === "in progress") {
                             $scope.progress_shipments.push(response[i]);
-                            getFormatDateTime(response[i]);
+                            setFormatDateTime(response[i]);
                         }
                     }
                 },
@@ -409,7 +409,7 @@ controllers.controller('DispatchController',
         };
 
         $scope.createNewDispatch = function () {
-            $scope.shipments.unshift({});
+            $scope.shipments.unshift({user_status:"pending"});
             $scope.isEdit.unshift(true);
             $scope.isClientsOpen.unshift(false);
             $scope.isTripsOpen.unshift(false);
@@ -458,9 +458,30 @@ controllers.controller('DispatchController',
             shipment.route = trip.route;
         };
 
-        $scope.saveDispatch = function(index,shipment,shipment_text){
+        $scope.editDispatch = function(index){
+            $scope.isEdit[index]=true;
+        };
+
+        $scope.saveDispatch = function(index,shipment){
             $scope.isEdit[index]=false;
-            shipment.info = shipment_text;
+            delete shipment.date;
+            delete shipment.request_time;
+            shipment.user_status = "in progress";
+            var promise = $kinvey.DataStore.save("shipment",shipment,{relations: { route: 'route',
+                client: "clients",
+                driver:"user"}});
+            promise.then(
+                function(responce){
+                    console.log("update shipment success " + JSON.stringify(responce));
+
+                    $scope.shipments.splice(index,1);;
+                    $scope.progress_shipments.unshift(responce);
+                    setFormatDateTime(responce);
+                },
+                function(error){
+                    console.log("update shipment error " + error.description);
+                }
+            );
         };
 
         $scope.viewRoute = function(shipment){
@@ -477,7 +498,7 @@ controllers.controller('DispatchController',
                 });
         };
 
-        var getFormatDateTime=function(shipment){
+        var setFormatDateTime=function(shipment){
             var monthNames = [ "January", "February", "March", "April", "May", "June",
                 "July", "August", "September", "October", "November", "December" ];
             var milis = Date.parse(shipment._kmd.lmt);
