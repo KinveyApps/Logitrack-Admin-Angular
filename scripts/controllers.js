@@ -379,11 +379,12 @@ controllers.controller('DispatchController',
                             $scope.tripDropdownDisabled.push(true);
                             $scope.trips.push({});
                             $scope.shipments.push(response[i]);
+                            getFormatDateTime(response[i]);
                         } else if (response[i].user_status === "in progress") {
                             $scope.progress_shipments.push(response[i]);
+                            getFormatDateTime(response[i]);
                         }
                     }
-                    console.log("get shipment success " + JSON.stringify(response[0]));
                 },
                 function (error) {
                     console.log("get shipment error " + JSON.stringify(error.description));
@@ -476,6 +477,22 @@ controllers.controller('DispatchController',
                 });
         };
 
+        var getFormatDateTime=function(shipment){
+            var monthNames = [ "January", "February", "March", "April", "May", "June",
+                "July", "August", "September", "October", "November", "December" ];
+            var milis = Date.parse(shipment._kmd.lmt);
+            var date = new Date(milis);
+            shipment.date = monthNames[date.getMonth()] + " " + date.getDate() +", " + date.getFullYear();
+            var hours = date.getHours();
+            var minutes = date.getMinutes();
+            var ampm = hours >= 12 ? 'pm' : 'am';
+            hours = hours % 12;
+            hours = hours ? hours : 12; // the hour '0' should be '12'
+            minutes = minutes < 10 ? '0'+minutes : minutes;
+            var strTime = hours + ':' + minutes + ' ' + ampm;
+           shipment.request_time = strTime;
+        };
+
     }]);
 
 var MapController = function ($scope, $kinvey, $location,$modalInstance, currentTrip) {
@@ -551,7 +568,6 @@ var MapController = function ($scope, $kinvey, $location,$modalInstance, current
         $scope.acceptTrip = function () {
             $modalInstance.dismiss();
         };
-
 };
 
 

@@ -46,7 +46,7 @@ the License.
                             <div class="bottom-div" ng-show="!isEdit[$index]">
                                 <p class="p-title">Date</p>
 
-                                <p class="p-info">May 22, 2014</p>
+                                <p class="p-info">{{shipment.date}}</p>
                             </div>
                             <div style="margin-top: 0;height: 40px" ng-show="isEdit[$index]"
                                  class="btn-group" dropdown is-open="isClientsOpen[$index]">
@@ -74,7 +74,7 @@ the License.
                             <div ng-show="!isEdit[$index]" class="bottom-div">
                                 <p class="p-title">Request Time</p>
 
-                                <p class="p-info">1:45 pm</p>
+                                <p class="p-info">{{shipment.request_time}}</p>
                             </div>
                             <div style="margin-top: 0;height: 40px" class="btn-group" dropdown
                                  id="trip-dropdown" is-open="isTripsOpen[$index]" ng-show="isEdit[$index]">
@@ -131,7 +131,7 @@ the License.
                             <div class="bottom-div">
                                 <p class="p-title">Date</p>
 
-                                <p class="p-info">May 22, 2014</p>
+                                <p class="p-info">{{shipment.date}}</p>
                             </div>
                         </div>
                         <div class="list-item-div-b">
@@ -145,7 +145,7 @@ the License.
                             <div class="bottom-div">
                                 <p class="p-title">Request Time</p>
 
-                                <p class="p-info">1:45 pm</p>
+                                <p class="p-info">{{shipment.request_time}}</p>
                             </div>
                         </div>
                         <div class="list-item-div-c">
