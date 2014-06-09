@@ -162,11 +162,23 @@ the License.
                                 <p class="p-info">{{shipment.driver.first_name + " " + shipment.driver.last_name}}</p>
                             </div>
                             <div class="edit-save-btns-div">
-                                <div class="btn btn-primary dispatch-btn" id="view-btn">View</div>
+                                <div class="btn btn-primary dispatch-btn" id="view-btn" ng-click="viewRoute(shipment)">View</div>
                             </div>
                         </div>
                     </div>
             </ul>
+            <script type="text/ng-template" id="map.html">
+                <div class="modal-header">
+                    <h3 class="modal-title">Shipment route</h3>
+                </div>
+                <div class="modal-body">
+                    <div id="map" ng-init="initialize()">
+                    </div>
+                </div>
+                <div class="dispatch-btn-group">
+                    <button class="btn btn-primary dispatch-btn" ng-click="acceptTrip()">Ok</button>
+                </div>
+            </script>
         </tab>
         <tab class="tabs">
             <tab-heading class="tab-header">Logistics</tab-heading>

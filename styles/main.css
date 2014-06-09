@@ -159,10 +159,8 @@ select{
 }
 
 .dispatch-btn-group {
-    margin-right: auto;
-    margin-left: auto;
-    margin-top: 50px;
     text-align: center;
+    margin: 20px auto 30px;
 }
 
 .btn-group {
@@ -207,4 +205,15 @@ select{
 
 #cancel-create-cancel-btn {
     margin-left: 40px;
+}
+
+#map{
+    margin-top: 50px;
+    width:700px;
+    height: 400px;
+    margin-left: auto;
+    margin-right: auto;
+    position: relative;
+    -webkit-transform: translateZ(0px);
+    background-color: rgb(229, 227, 223);
 }

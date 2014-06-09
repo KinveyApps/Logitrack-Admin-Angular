@@ -39,10 +39,6 @@ app.config(['$routeProvider', function ($routeProvider) {
         when('/templates/sign_up', {
             templateUrl: 'templates/sign_up.html',
             controller: 'SignUpController'
-        }).
-        when('/templates/map', {
-            templateUrl: 'templates/map.html',
-            controller: 'MapController'
         });
 }]);
 
