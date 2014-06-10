@@ -363,10 +363,10 @@ controllers.controller('DispatchController',
             $scope.isClientsOpen=[];
             $scope.isDriversOpen=[];
             $scope.isTripsOpen=[];
+            $scope.tripDropdownDisabled = [];
             var promise = $kinvey.DataStore.find('shipment', null, {relations: { route:"route",
                 client:"clients",
                 driver:"user"}});
-            $scope.tripDropdownDisabled = [];
             $scope.trips = [];
             promise.then(
                 function (response) {
@@ -393,12 +393,20 @@ controllers.controller('DispatchController',
                                 setFormatDateTime(response[i]);
                                 break;
                         }
-
                     }
                     console.log(response[0]);
                 },
                 function (error) {
                     console.log("get shipment error " + JSON.stringify(error.description));
+                }
+            );
+            var promise = $kinvey.DataStore.find('clients', null);
+            promise.then(
+                function (response) {
+                    $scope.clients = response;
+                },
+                function (error) {
+                    console.log("get clients error " + error.description);
                 }
             );
             var query = new $kinvey.Query();
@@ -434,16 +442,6 @@ controllers.controller('DispatchController',
             $scope.status = {
                 isopen: false
             };
-
-            var promise = $kinvey.DataStore.find('clients', null);
-            promise.then(
-                function (response) {
-                    $scope.clients = response;
-                },
-                function (error) {
-                    console.log("get clients error " + error.description);
-                }
-            );
         };
 
         $scope.selectClient = function (client,shipment,index) {
@@ -546,7 +544,6 @@ controllers.controller('DispatchController',
     }]);
 
 var MapController = function ($scope, $kinvey, $location,$modalInstance, currentTrip) {
-    var geocoder = new google.maps.Geocoder();
     var start_marker;
     var finish_marker;
     var center = {};
@@ -561,43 +558,28 @@ var MapController = function ($scope, $kinvey, $location,$modalInstance, current
         console.log("iniz");
         var mapProp = {
             zoom: 14,
-            disableDefaultUI: true
+            disableDefaultUI: true,
+            center: new google.maps.LatLng((trip.route.start_lat + trip.route.finish_lat) / 2, (trip.route.start_long + trip.route.finish_long) / 2)
         };
         if (!map) {
             console.log("map create " + map + " ");
             map = new google.maps.Map(document.getElementById("map"), mapProp);
         }
         console.log("current trip " + JSON.stringify(currentTrip.getTrip()));
-        geocoder.geocode({
-            'address': trip.route.start
-        }, function (results, status) {
-            if (status == google.maps.GeocoderStatus.OK) {
-                start_marker = new google.maps.Marker({
-                    position: new google.maps.LatLng(results[0].geometry.location.k, results[0].geometry.location.A),
-                    map: map,
-                    icon: 'images/start_marker.png'
-                });
-                center.lat = results[0].geometry.location.k;
-                center.lon = results[0].geometry.location.A;
-                geocoder.geocode({
-                    'address': trip.route.finish
-                }, function (results, status) {
-                    if (status == google.maps.GeocoderStatus.OK) {
-                        finish_marker = new google.maps.Marker({
-                            position: new google.maps.LatLng(results[0].geometry.location.k, results[0].geometry.location.A),
-                            map: map,
-                            icon: 'images/finish_marker.png'
-                        });
-                    }
-                    map.setCenter(new google.maps.LatLng((center.lat + results[0].geometry.location.k) / 2,
-                            (center.lon + results[0].geometry.location.A) / 2));
-                    calcRoute();
-                });
-            }
+        start_marker = new google.maps.Marker({
+            position: new google.maps.LatLng(trip.route.start_lat, trip.route.start_long),
+            map: map,
+            icon: 'images/start_marker.png'
         });
-        window.setTimeout(function(){
+        finish_marker = new google.maps.Marker({
+            position: new google.maps.LatLng(trip.route.finish_lat, trip.route.finish_long),
+            map: map,
+            icon: 'images/finish_marker.png'
+        });
+        calcRoute();
+        window.setTimeout(function () {
             google.maps.event.trigger(map, 'resize');
-        },100);
+        }, 100);
     };
         function calcRoute() {
             var request = {
