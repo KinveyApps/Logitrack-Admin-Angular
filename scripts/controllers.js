@@ -400,15 +400,7 @@ controllers.controller('DispatchController',
                     console.log("get shipment error " + JSON.stringify(error.description));
                 }
             );
-            var promise = $kinvey.DataStore.find('clients', null);
-            promise.then(
-                function (response) {
-                    $scope.clients = response;
-                },
-                function (error) {
-                    console.log("get clients error " + error.description);
-                }
-            );
+            getClients();
             var query = new $kinvey.Query();
             query.equalTo('status', 'driver');
             var promise = $kinvey.User.find(query);
@@ -429,7 +421,7 @@ controllers.controller('DispatchController',
         };
 
         $scope.createNewDispatch = function () {
-            $scope.clients =[];
+            getClients();
             $scope.new_shipments.unshift({user_status:"new"});
             $scope.isEdit.unshift(true);
             $scope.isClientsOpen.unshift(false);
@@ -439,9 +431,6 @@ controllers.controller('DispatchController',
             $scope.tripDropdownDisabled.unshift(true);
             $scope.selected_client = "Select client";
             $scope.selected_trip = "Select trip";
-            $scope.status = {
-                isopen: false
-            };
         };
 
         $scope.selectClient = function (client,shipment,index) {
@@ -523,6 +512,18 @@ controllers.controller('DispatchController',
                         }
                     }
                 });
+        };
+
+        var getClients=function(){
+            var promise = $kinvey.DataStore.find('clients', null);
+            promise.then(
+                function (response) {
+                    $scope.clients = response;
+                },
+                function (error) {
+                    console.log("get clients error " + error.description);
+                }
+            );
         };
 
         var setFormatDateTime=function(shipment){
