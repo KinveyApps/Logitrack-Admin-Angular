@@ -32,9 +32,9 @@ the License.
         <tab-heading class="tab-header">Dispatch</tab-heading>
         <div class="new-btn-div">
             <div class="btn btn-primary dispatch-btn" id="new-btn" ng-click="createNewDispatch()">New</div>
-            <p class="box-title" ng-click="isOpenRequestCollapsed = !isOpenRequestCollapsed">Open Requests</p>
+            <p class="box-title" ng-click="isNewRequestCollapsed = !isNewRequestCollapsed">New Requests</p>
         </div>
-        <ul collapse="isOpenRequestCollapsed" ng-repeat="shipment in shipments">
+        <ul collapse="isNewRequestCollapsed" ng-repeat="shipment in new_shipments">
             <li class="list-item">
                 <div class="list-item-div-a">
                     <div class="div-shipment-info">
@@ -114,8 +114,8 @@ the License.
                 <div class="driver-div">
                     <div class="select-driver-div">
                         <p class="p-title">Driver</p>
-
-                        <div class="dropdown-div btn-group" dropdown is-open="isDriversOpen[$index]">
+                        <p ng-show="!isEdit[$index]" class="p-info">{{shipment.driver.first_name + " " + shipment.driver.last_name}}</p>
+                        <div ng-show="isEdit[$index]" class="dropdown-div btn-group" dropdown is-open="isDriversOpen[$index]">
                             <button type="button" class="dropdown-toggle dropdown-select">
                                 {{shipment.driver.last_name + ' ' + shipment.driver.first_name}}<span
                                     style="margin-left: 5px;" class="caret white-caret"></span>
@@ -128,8 +128,65 @@ the License.
                         </div>
                     </div>
                     <div class="edit-save-btns-div">
-                        <div class="btn btn-primary dispatch-btn" ng-click="editDispatch($index)">Edit</div>
-                        <div class="btn btn-primary dispatch-btn" ng-click="saveDispatch($index,shipment)">Save</div>
+                        <div class="btn btn-primary dispatch-btn" ng-show="!isEdit[$index]" ng-click="editDispatch($index)">Edit</div>
+                        <div class="btn btn-primary dispatch-btn" ng-show="isEdit[$index]" ng-click="saveDispatch($index,shipment)">Save</div>
+                        <div class="btn btn-primary dispatch-btn" ng-show="isEdit[$index]" ng-click="cancelDispatch($index,shipment)">Cancel</div>
+                        <div class="btn btn-primary dispatch-btn" ng-show="!isEdit[$index]" ng-click="viewRoute(shipment)">View</div>
+                        <div class="btn btn-primary dispatch-btn" ng-show="!isEdit[$index]" ng-click="startDispatch($index,shipment)">Start</div>
+                    </div>
+                </div>
+            </li>
+        </ul>
+        <div class="new-btn-div">
+            <p class="box-title" ng-click="isOpenRequestCollapsed = !isOpenRequestCollapsed">Open Requests</p>
+        </div>
+        <ul collapse="isOpenRequestCollapsed" ng-repeat="shipment in open_shipments">
+            <li class="list-item">
+                <div>
+                    <div class="list-item-div-a">
+                        <div class="top-div">
+                            <p class="p-title">Client</p>
+
+                            <p class="p-info">{{shipment.client.first_name + " " + shipment.client.last_name}}</p>
+                        </div>
+                        <div class="bottom-div">
+                            <p class="p-title">Date</p>
+
+                            <p class="p-info">{{shipment.date}}</p>
+                        </div>
+                    </div>
+                    <div class="list-item-div-b">
+                        <div class="top-div">
+                            <p class="p-title">Trip</p>
+
+                            <p class="p-info">Begin: {{shipment.route.start}}</p>
+
+                            <p class="p-info">End: {{shipment.route.finish}}</p>
+                        </div>
+                        <div class="bottom-div">
+                            <p class="p-title">Request Time</p>
+
+                            <p class="p-info">{{shipment.request_time}}</p>
+                        </div>
+                    </div>
+                    <div class="list-item-div-c">
+                        <div class="div-shipment-info">
+                            <p class="p-title">Shipment Info</p>
+
+                            <p class="p-info">10" by 24" by 3" box</p>
+                        </div>
+                    </div>
+                    <div class="driver-div">
+                        <div class="select-driver-div">
+                            <p class="p-title">Driver</p>
+
+                            <p class="p-info">{{shipment.driver.first_name + " " + shipment.driver.last_name}}</p>
+                        </div>
+                        <div class="edit-save-btns-div">
+                            <div class="btn btn-primary dispatch-btn view-btn" ng-click="viewRoute(shipment)">
+                                View
+                            </div>
+                        </div>
                     </div>
                 </div>
             </li>
@@ -180,12 +237,13 @@ the License.
                             <p class="p-info">{{shipment.driver.first_name + " " + shipment.driver.last_name}}</p>
                         </div>
                         <div class="edit-save-btns-div">
-                            <div class="btn btn-primary dispatch-btn" id="view-btn" ng-click="viewRoute(shipment)">
+                            <div class="btn btn-primary dispatch-btn view-btn" ng-click="viewRoute(shipment)">
                                 View
                             </div>
                         </div>
                     </div>
                 </div>
+            </li>
         </ul>
         <script type="text/ng-template" id="map.html">
             <div class="modal-header">

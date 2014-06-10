@@ -363,29 +363,39 @@ controllers.controller('DispatchController',
             $scope.isClientsOpen=[];
             $scope.isDriversOpen=[];
             $scope.isTripsOpen=[];
+            var promise = $kinvey.DataStore.find('shipment', null, {relations: { route:"route",
+                client:"clients",
+                driver:"user"}});
             $scope.tripDropdownDisabled = [];
             $scope.trips = [];
-            var promise = $kinvey.DataStore.find('shipment', null, {relations: { route: 'route',
-                client: "clients",
-            driver:"user"}});
             promise.then(
                 function (response) {
-                    $scope.shipments = [];
+                    $scope.new_shipments = [];
+                    $scope.open_shipments = [];
                     $scope.progress_shipments = [];
                     for (var i in response) {
-                        if (response[i].user_status === "pending") {
-                            $scope.isClientsOpen.push(false);
-                            $scope.isDriversOpen.push(false);
-                            $scope.isTripsOpen.push(false);
-                            $scope.tripDropdownDisabled.push(true);
-                            $scope.trips.push({});
-                            $scope.shipments.push(response[i]);
-                            setFormatDateTime(response[i]);
-                        } else if (response[i].user_status === "in progress") {
-                            $scope.progress_shipments.push(response[i]);
-                            setFormatDateTime(response[i]);
+                        switch (response[i].user_status){
+                            case "new":
+                                $scope.isClientsOpen.push(false);
+                                $scope.isDriversOpen.push(false);
+                                $scope.isTripsOpen.push(false);
+                                $scope.tripDropdownDisabled.push(true);
+                                $scope.trips.push({});
+                                $scope.new_shipments.push(response[i]);
+                                setFormatDateTime(response[i]);
+                                break;
+                            case "open":
+                                $scope.open_shipments.push(response[i]);
+                                setFormatDateTime(response[i]);
+                                break;
+                            case "in progress":
+                                $scope.progress_shipments.push(response[i]);
+                                setFormatDateTime(response[i]);
+                                break;
                         }
+
                     }
+                    console.log(response[0]);
                 },
                 function (error) {
                     console.log("get shipment error " + JSON.stringify(error.description));
@@ -406,14 +416,13 @@ controllers.controller('DispatchController',
 
         $scope.selectDriver = function(driver,index){
             $scope.isDriversOpen[index] = !$scope.isDriversOpen[index];
-//            shipment.driver = driver;
             console.log(JSON.stringify(driver));
-            $scope.shipments[index].driver = driver;
+            $scope.new_shipments[index].driver = driver;
         };
 
         $scope.createNewDispatch = function () {
             $scope.clients =[];
-            $scope.shipments.unshift({user_status:"pending"});
+            $scope.new_shipments.unshift({user_status:"new"});
             $scope.isEdit.unshift(true);
             $scope.isClientsOpen.unshift(false);
             $scope.isDriversOpen.unshift(false);
@@ -467,20 +476,35 @@ controllers.controller('DispatchController',
             $scope.isEdit[index]=true;
         };
 
-        $scope.saveDispatch = function(index,shipment){
+        $scope.saveDispatch = function(index){
+            $scope.isEdit[index]=false;
+        };
+
+        $scope.cancelDispatch = function(index){
+            console.log("is edit " + $scope.isEdit);
+            $scope.new_shipments.splice(index,1);
+            $scope.isClientsOpen.splice(index,1);
+            $scope.isDriversOpen.splice(index,1);
+            $scope.isTripsOpen.splice(index,1);
+            $scope.tripDropdownDisabled.splice(index,1);
+            $scope.trips.splice(index,1);
+            $scope.isEdit.splice(index,1);
+            console.log("is edit " + $scope.isEdit);
+        };
+
+        $scope.startDispatch = function(index,shipment){
             $scope.isEdit[index]=false;
             delete shipment.date;
             delete shipment.request_time;
-            shipment.user_status = "in progress";
+            shipment.user_status = "open";
             var promise = $kinvey.DataStore.save("shipment",shipment,{relations: { route: 'route',
                 client: "clients",
                 driver:"user"}});
             promise.then(
                 function(responce){
                     console.log("update shipment success " + JSON.stringify(responce));
-
-                    $scope.shipments.splice(index,1);;
-                    $scope.progress_shipments.unshift(responce);
+                    $scope.new_shipments.splice(index,1);
+                    $scope.open_shipments.unshift(responce);
                     setFormatDateTime(responce);
                 },
                 function(error){
@@ -537,8 +561,7 @@ var MapController = function ($scope, $kinvey, $location,$modalInstance, current
         console.log("iniz");
         var mapProp = {
             zoom: 14,
-            disableDefaultUI: true,
-            center: new google.maps.LatLng(23, 45)
+            disableDefaultUI: true
         };
         if (!map) {
             console.log("map create " + map + " ");
