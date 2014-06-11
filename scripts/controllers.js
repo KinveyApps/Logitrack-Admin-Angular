@@ -651,7 +651,6 @@ var TripDetailsController= function ($scope, $kinvey, $location,$modalInstance, 
     $scope.initialize = function () {
         var mapProp = {
             zoom: 14,
-            disableDefaultUI: true,
             center: new google.maps.LatLng((shipment.route.start_lat + shipment.route.finish_lat) / 2, (shipment.route.start_long + shipment.route.finish_long) / 2)
         };
         if (!map) {
