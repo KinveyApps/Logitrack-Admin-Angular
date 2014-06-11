@@ -642,6 +642,7 @@ var TripDetailsController= function ($scope, $kinvey, $location,$modalInstance, 
 
     var start_marker;
     var finish_marker;
+    var user_marker;
     var map;
     var directionsDisplay = new google.maps.DirectionsRenderer();
     directionsDisplay.setOptions({
@@ -666,6 +667,11 @@ var TripDetailsController= function ($scope, $kinvey, $location,$modalInstance, 
             position: new google.maps.LatLng(shipment.route.finish_lat, shipment.route.finish_long),
             map: map,
             icon: 'images/finish_marker.png'
+        });
+        user_marker = new google.maps.Marker({
+            position: new google.maps.LatLng(shipment.driver.position.lat, shipment.driver.position.lon),
+            map: map,
+            icon: 'images/user_marker.png'
         });
         var query = new $kinvey.Query();
         query.equalTo('shipment_id', shipment._id);
