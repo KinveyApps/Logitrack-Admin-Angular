@@ -283,8 +283,8 @@ the License.
                     <td>{{shipment.route.start}}</td>
                     <td>{{shipment.route.finish}}</td>
                     <td>{{shipment.driver.last_name + ", " + shipment.driver.first_name}}</td>
-                    <td>09:55:17</td>
-                    <td>10:02:16</td>
+                    <td>{{getTime(shipment._kmd.ect)}}</td>
+                    <td>{{shipment.start_time}}</td>
                     <td><a>{{shipment.status}}</a></td>
                 </tr>
                 </tbody>

@@ -614,4 +614,16 @@ controllers.controller('LogisticsController',
         },function(error){
             console.log("get shipment error " + error.description);
         });
+
+        $scope.getTime =function(time_data){
+            var milis = Date.parse(time_data);
+            var date = new Date(milis);
+            var hours = date.getHours();
+            hours = hours < 10 ? '0'+hours : hours;
+            var minutes = date.getMinutes();
+            minutes = minutes < 10 ? '0'+minutes : minutes;
+            var seconds = date.getSeconds();
+            seconds = seconds < 10 ? '0'+seconds : seconds;
+            return hours+":"+minutes+":"+seconds;
+        };
     }]);
