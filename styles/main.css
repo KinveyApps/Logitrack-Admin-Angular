@@ -217,7 +217,7 @@
     margin-left: 40px;
 }
 
-#map{
+.map{
     margin-top: 50px;
     width:700px;
     height: 400px;
@@ -264,4 +264,5 @@
 
 #shipment-table td,th{
     border-right: 1px solid #E6E6E6;
+    cursor: default;
 }

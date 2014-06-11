@@ -538,10 +538,8 @@ controllers.controller('DispatchController',
             hours = hours % 12;
             hours = hours ? hours : 12; // the hour '0' should be '12'
             minutes = minutes < 10 ? '0'+minutes : minutes;
-            var strTime = hours + ':' + minutes + ' ' + ampm;
-           shipment.request_time = strTime;
+            shipment.request_time = hours + ':' + minutes + ' ' + ampm;
         };
-
     }]);
 
 var MapController = function ($scope, $kinvey, $location,$modalInstance, currentTrip) {
@@ -555,7 +553,6 @@ var MapController = function ($scope, $kinvey, $location,$modalInstance, current
     var directionsService = new google.maps.DirectionsService();
     var trip = currentTrip.getTrip();
     $scope.initialize = function () {
-        console.log("iniz");
         var mapProp = {
             zoom: 14,
             disableDefaultUI: true,
@@ -563,7 +560,7 @@ var MapController = function ($scope, $kinvey, $location,$modalInstance, current
         };
         if (!map) {
             console.log("map create " + map + " ");
-            map = new google.maps.Map(document.getElementById("map"), mapProp);
+            map = new google.maps.Map(document.getElementById("route_map"), mapProp);
         }
         console.log("current trip " + JSON.stringify(currentTrip.getTrip()));
         start_marker = new google.maps.Marker({
@@ -602,7 +599,7 @@ var MapController = function ($scope, $kinvey, $location,$modalInstance, current
 };
 
 controllers.controller('LogisticsController',
-    ['$scope', '$kinvey', "$location", function ($scope, $kinvey, $location) {
+    ['$scope', '$kinvey', "$modal", function ($scope, $kinvey, $modal) {
         var query = new $kinvey.Query();
         query.equalTo('user_status', 'in progress');
         var promise = $kinvey.DataStore.find('shipment', query, {relations: { route:"route",
@@ -626,4 +623,95 @@ controllers.controller('LogisticsController',
             seconds = seconds < 10 ? '0'+seconds : seconds;
             return hours+":"+minutes+":"+seconds;
         };
+
+        $scope.showTripDetails = function(shipment,index){
+                var modalInstance = $modal.open({
+                    templateUrl: 'trip_details.html',
+                    controller: TripDetailsController,
+                    size: "lg",
+                    resolve: {
+                        shipment: function () {
+                            return shipment;
+                        }
+                    }
+                });
+        };
     }]);
+
+var TripDetailsController= function ($scope, $kinvey, $location,$modalInstance, shipment){
+
+    var start_marker;
+    var finish_marker;
+    var map;
+    var directionsDisplay = new google.maps.DirectionsRenderer();
+    directionsDisplay.setOptions({
+        suppressMarkers: true
+    });
+    var directionsService = new google.maps.DirectionsService();
+    $scope.initialize = function () {
+        var mapProp = {
+            zoom: 14,
+            disableDefaultUI: true,
+            center: new google.maps.LatLng((shipment.route.start_lat + shipment.route.finish_lat) / 2, (shipment.route.start_long + shipment.route.finish_long) / 2)
+        };
+        if (!map) {
+            console.log("map create " + map + " ");
+            map = new google.maps.Map(document.getElementById("checkin_map"), mapProp);
+        }
+        start_marker = new google.maps.Marker({
+            position: new google.maps.LatLng(shipment.route.start_lat, shipment.route.start_long),
+            map: map,
+            icon: 'images/start_marker.png'
+        });
+        finish_marker = new google.maps.Marker({
+            position: new google.maps.LatLng(shipment.route.finish_lat, shipment.route.finish_long),
+            map: map,
+            icon: 'images/finish_marker.png'
+        });
+        var query = new $kinvey.Query();
+        query.equalTo('shipment_id', shipment._id);
+        console.log(shipment._id);
+        var promise = $kinvey.DataStore.find('shipment-checkins', query);
+        promise.then(function(response){
+                console.log("checins " + JSON.stringify(response));
+                for(var i in response){
+                    new google.maps.Marker({
+                        position: new google.maps.LatLng(response[i].position.lat, response[i].position.lon),
+                        map: map
+                    });
+                }
+            },
+        function(error){
+            console.log("checins error " + error.description);
+        });
+        window.setTimeout(function () {
+            google.maps.event.trigger(map, 'resize');
+        }, 100);
+    };
+    function calcRoute() {
+        var request = {
+            origin: new google.maps.LatLng(start_marker.getPosition().k, start_marker.getPosition().A),
+            destination: new google.maps.LatLng(finish_marker.getPosition().k, finish_marker.getPosition().A),
+            travelMode: google.maps.DirectionsTravelMode.DRIVING
+        };
+        directionsService.route(request, function (response, status) {
+            if (status == google.maps.DirectionsStatus.OK) {
+                current_direction_route = response;
+                directionsDisplay.setDirections(response);
+                directionsDisplay.setMap(map);
+            }
+        });
+    }
+
+    $scope.clickMapTab=function(){
+        calcRoute();
+        map.setCenter(new google.maps.LatLng((shipment.route.start_lat + shipment.route.finish_lat) / 2, (shipment.route.start_long + shipment.route.finish_long) / 2));
+        window.setTimeout(function () {
+            google.maps.event.trigger(map, 'resize');
+        }, 100);
+    };
+
+    $scope.closeTripDetails = function () {
+        $modalInstance.dismiss();
+    };
+};

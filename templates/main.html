@@ -250,7 +250,7 @@ the License.
                 <h3 class="modal-title">Shipment route</h3>
             </div>
             <div class="modal-body">
-                <div id="map" ng-init="initialize()">
+                <div class="map" id="route_map" ng-init="initialize()">
                 </div>
             </div>
             <div class="dispatch-btn-group">
@@ -285,10 +285,30 @@ the License.
                     <td>{{shipment.driver.last_name + ", " + shipment.driver.first_name}}</td>
                     <td>{{getTime(shipment._kmd.ect)}}</td>
                     <td>{{shipment.start_time}}</td>
-                    <td><a>{{shipment.status}}</a></td>
+                    <td><a ng-click="showTripDetails(shipment)">{{shipment.status}}</a></td>
                 </tr>
                 </tbody>
             </table>
+            <script type="text/ng-template" id="trip_details.html">
+                <div class="modal-header">
+                    <h3 class="modal-title">Trip details</h3>
+                </div>
+                <div class="modal-body">
+                    <tabset>
+                        <tab>
+                            <tab-heading class="tab-header">Check-Ins</tab-heading>
+                        </tab>
+                        <tab ng-click="clickMapTab()">
+                            <tab-heading class="tab-header">Map</tab-heading>
+                            <div class="map" id="checkin_map" ng-init="initialize()">
+                            </div>
+                        </tab>
+                    </tabset>
+                </div>
+                <div class="dispatch-btn-group">
+                    <button class="btn btn-primary dispatch-btn" ng-click="closeTripDetails()">Ok</button>
+                </div>
+            </script>
         </div>
     </tab>
     <tab class="tabs">
