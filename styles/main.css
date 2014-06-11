@@ -241,3 +241,27 @@
 #p-end-route{
     margin-top: -10px;
 }
+
+#shipment-table{
+    border-top:1px solid black ;
+}
+
+.shipment-tr{
+    height: 60px;
+}
+
+.shipment-tr:hover{
+    opacity: 0.8;
+}
+
+.shipment-tr:nth-child(odd){
+    background-color: #C4C4C4;
+}
+
+.shipment-tr:nth-child(even){
+    background-color: #F6F6F6;
+}
+
+#shipment-table td,th{
+    border-right: 1px solid #E6E6E6;
+}

@@ -260,7 +260,36 @@ the License.
     </tab>
     <tab class="tabs">
         <tab-heading class="tab-header">Logistics</tab-heading>
-        Logistics content
+
+        <div ng-controller="LogisticsController">
+            <div class="new-btn-div">
+                <p class="box-title">Active Trips</p>
+            </div>
+            <table id="shipment-table" class="table table-condensed">
+                <thead>
+                <tr>
+                    <th>Client</th>
+                    <th>Pickup Location</th>
+                    <th>Drop-off Location</th>
+                    <th>Driver</th>
+                    <th>Request Time</th>
+                    <th>Start Time</th>
+                    <th>Status</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr class="shipment-tr" ng-repeat="shipment in shipments">
+                    <td>{{shipment.client.last_name + ", " + shipment.client.first_name}}</td>
+                    <td>{{shipment.route.start}}</td>
+                    <td>{{shipment.route.finish}}</td>
+                    <td>{{shipment.driver.last_name + ", " + shipment.driver.first_name}}</td>
+                    <td>09:55:17</td>
+                    <td>10:02:16</td>
+                    <td><a>{{shipment.status}}</a></td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
     </tab>
     <tab class="tabs">
         <tab-heading class="tab-header">Manage</tab-heading>

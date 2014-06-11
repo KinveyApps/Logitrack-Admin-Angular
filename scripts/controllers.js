@@ -547,7 +547,6 @@ controllers.controller('DispatchController',
 var MapController = function ($scope, $kinvey, $location,$modalInstance, currentTrip) {
     var start_marker;
     var finish_marker;
-    var center = {};
     var map;
     var directionsDisplay = new google.maps.DirectionsRenderer();
     directionsDisplay.setOptions({
@@ -602,4 +601,17 @@ var MapController = function ($scope, $kinvey, $location,$modalInstance, current
         };
 };
 
-
+controllers.controller('LogisticsController',
+    ['$scope', '$kinvey', "$location", function ($scope, $kinvey, $location) {
+        var query = new $kinvey.Query();
+        query.equalTo('user_status', 'in progress');
+        var promise = $kinvey.DataStore.find('shipment', query, {relations: { route:"route",
+            client:"clients",
+            driver:"user"}});
+        promise.then(function(response){
+            $scope.shipments = response;
+            console.log("responce " + JSON.stringify(response));
+        },function(error){
+            console.log("get shipment error " + error.description);
+        });
+    }]);
