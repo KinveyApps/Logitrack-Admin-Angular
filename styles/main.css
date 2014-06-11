@@ -266,3 +266,7 @@
     border-right: 1px solid #E6E6E6;
     cursor: default;
 }
+
+#checkins_list{
+    margin-top: 20px;
+}

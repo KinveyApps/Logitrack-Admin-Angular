@@ -673,7 +673,7 @@ var TripDetailsController= function ($scope, $kinvey, $location,$modalInstance, 
         console.log(shipment._id);
         var promise = $kinvey.DataStore.find('shipment-checkins', query);
         promise.then(function(response){
-                console.log("checins " + JSON.stringify(response));
+                $scope.checkins = response;
                 for(var i in response){
                     new google.maps.Marker({
                         position: new google.maps.LatLng(response[i].position.lat, response[i].position.lon),
