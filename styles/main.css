@@ -228,9 +228,13 @@
     background-color: rgb(229, 227, 223);
 }
 
-.dropdown-div{
+.dropdown-div,#dropdown-driver-div{
     margin-top: 10px;
     height: 25px
+}
+
+#dropdown-driver-div{
+    margin-top: 4px;
 }
 
 #trip-dropdown-div{
@@ -269,4 +273,8 @@
 
 #checkins_list{
     margin-top: 20px;
+}
+
+#driver-span{
+
 }

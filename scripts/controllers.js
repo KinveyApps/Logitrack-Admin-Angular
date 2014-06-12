@@ -410,7 +410,7 @@ controllers.controller('DispatchController',
             var promise = $kinvey.DataStore.find('shipment', query, {relations: { route: 'route'}});
             promise.then(
                 function (response) {
-                    shipment.route = {};
+                    shipment.route = undefined;
                     $scope.trips = [];
                     $scope.trips[index] = response;
                     console.log("trips " + JSON.stringify($scope.trips));
@@ -431,7 +431,29 @@ controllers.controller('DispatchController',
             $scope.isEdit[index]=true;
         };
 
-        $scope.saveDispatch = function(index){
+        $scope.saveDispatch = function(index,shipment){
+            var isFormInvalid = false;
+            if(!shipment.driver){
+                $scope.submittedDriver = true;
+                isFormInvalid = true;
+            }else{
+                $scope.submittedDriver = false;
+            }
+            if(!shipment.client){
+                $scope.submittedClient = true;
+                isFormInvalid = true;
+            }else{
+                $scope.submittedClient = false;
+            }
+            if(!shipment.route){
+                $scope.submittedRoute = true;
+                isFormInvalid = true;
+            }else{
+                $scope.submittedRoute = false;
+            }
+            if(isFormInvalid){
+                return;
+            }
             $scope.isEdit[index]=false;
         };
 

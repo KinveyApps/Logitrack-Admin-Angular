@@ -57,6 +57,7 @@ the License.
                         </ul>
                     </div>
                 </div>
+                <span class="input-with-title-span" ng-show="isEdit[$index]&&submittedClient">A client is required.</span>
                 <div class="bottom-div" ng-show="!isEdit[$index]">
                     <p class="p-title">Date</p>
 
@@ -88,12 +89,12 @@ the License.
                                 ng-repeat="trip in trips[$index]">
                                 <a>Begin: {{trip.route.start}}</a>
                                 <a>End: {{trip.route.finish}}</a>
-
                                 <div class="divider-line"></div>
                             </li>
                         </ul>
                     </div>
                 </div>
+                <span class="input-with-title-span" ng-show="isEdit[$index]&&submittedRoute">A trip is required.</span>
                 <div ng-show="!isEdit[$index]" class="bottom-div">
                     <p class="p-title">Request Time</p>
 
@@ -117,8 +118,7 @@ the License.
 
                 <p ng-show="!isEdit[$index]" class="p-info">{{shipment.driver.first_name + " " +
                     shipment.driver.last_name}}</p>
-
-                <div ng-show="isEdit[$index]" class="dropdown-div btn-group" dropdown is-open="isDriversOpen[$index]">
+                <div ng-show="isEdit[$index]" id="dropdown-driver-div" class="btn-group" dropdown is-open="isDriversOpen[$index]">
                     <button type="button" class="dropdown-toggle dropdown-select">
                         {{shipment.driver.last_name + ' ' + shipment.driver.first_name}}<span
                             style="margin-left: 5px;" class="caret white-caret"></span>
@@ -128,8 +128,10 @@ the License.
                             <a ng-click="selectDriver(driver,$parent.$index)">{{driver.last_name + ' ' +
                                 driver.first_name }}</a></li>
                     </ul>
+                    <span id="driver-span" class="input-with-title-span" ng-show="submittedDriver">A driver is required.</span>
                 </div>
             </div>
+
             <div class="edit-save-btns-div">
                 <div class="btn btn-primary dispatch-btn" ng-show="!isEdit[$index]" ng-click="editDispatch($index)">
                     Edit
