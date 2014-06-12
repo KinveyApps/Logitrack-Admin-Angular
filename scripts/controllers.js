@@ -158,6 +158,8 @@ controllers.controller('SignUpController',
 controllers.controller('MainController',
     ['$scope', '$kinvey', "$location","$modal", function ($scope, $kinvey, $location,$modal) {
         $scope.selectedTab= 0;
+        $scope.status = {};
+        status.isopen=false;
         $scope.menu_profile_items = [
             {
                 id: 0, title: "Change name or bio"
@@ -197,6 +199,14 @@ controllers.controller('MainController',
                 }
             });
         };
+
+        $scope.selectManageItem = function($event,index){
+            $scope.selectedManageItem=index;
+            $scope.selectedTab=2;
+            $event.preventDefault();
+            $event.stopPropagation();
+            $scope.status.isopen = !$scope.status.isopen;
+        }
     }]);
 
 var ProfileEditController = function ($scope, $modalInstance, $kinvey,item) {

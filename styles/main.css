@@ -33,8 +33,6 @@
     color:#fff;
     width: 125px;
     text-align: center;
-    margin-right: 10px;
-    margin-left: 10px;
     font-size: 16px;
 }
 
@@ -46,12 +44,24 @@
 
 .nav-tabs>li>a:hover{
     color: #787878;
+    border-color: #777777;
+}
+.nav-tabs>li>a:focus{
+    color: #787878;
+    border-color: #777777;
+}
+.nav-tabs>li>a:active{
+    border-color: #777777;
 }
 
 .dispatch-btn{
     color: white;
     background-color: #5893CC;
     cursor: default;
+}
+
+.dropdown:active{
+    border-color: #777777;
 }
 
 #new-btn{
@@ -287,6 +297,15 @@
     margin-top: 20px;
 }
 
-#driver-span{
+#dispatch-tab{
+    margin-left: 10px
+}
 
+#logistics-tab{
+    margin-left: 10px;
+    margin-right: 10px
+}
+
+.dropdown-menu a{
+    font-size:14px;
 }
