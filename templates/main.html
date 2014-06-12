@@ -27,9 +27,13 @@ the License.
     </span>
     <!--<p >LOGITRACK</p>-->
 </div>
-<tabset id="main-tabset">
-<tab ng-controller="DispatchController" ng-init="initPage()" class="tabs">
-<tab-heading class="tab-header">Dispatch</tab-heading>
+<ul class="nav nav-tabs navbar">
+    <li ng-class="{active:selectedTab==0}" class="active"><a ng-click="selectedTab=0">Dispatch</a></li>
+    <li ng-class="{active:selectedTab==1}"><a ng-click="selectedTab=1">Logistics</a></li>
+    <li ng-class="{active:selectedTab==2}"><a ng-click="selectedTab=2">Manage</a></li>
+</ul>
+<div class="tab-content">
+<div ng-controller="DispatchController" ng-init="initPage()" ng-show="selectedTab==0">
 <div class="new-btn-div">
     <div class="btn btn-primary dispatch-btn" id="new-btn" ng-click="createNewDispatch()">New</div>
     <p class="box-title" ng-click="isNewRequestCollapsed = !isNewRequestCollapsed">New Requests</p>
@@ -57,7 +61,9 @@ the License.
                         </ul>
                     </div>
                 </div>
-                <span class="input-with-title-span" ng-show="isEdit[$index]&&submittedClient">A client is required.</span>
+                <span class="input-with-title-span"
+                      ng-show="isEdit[$index]&&submittedClient">A client is required.</span>
+
                 <div class="bottom-div" ng-show="!isEdit[$index]">
                     <p class="p-title">Date</p>
 
@@ -89,12 +95,14 @@ the License.
                                 ng-repeat="trip in trips[$index]">
                                 <a>Begin: {{trip.route.start}}</a>
                                 <a>End: {{trip.route.finish}}</a>
+
                                 <div class="divider-line"></div>
                             </li>
                         </ul>
                     </div>
                 </div>
                 <span class="input-with-title-span" ng-show="isEdit[$index]&&submittedRoute">A trip is required.</span>
+
                 <div ng-show="!isEdit[$index]" class="bottom-div">
                     <p class="p-title">Request Time</p>
 
@@ -118,7 +126,9 @@ the License.
 
                 <p ng-show="!isEdit[$index]" class="p-info">{{shipment.driver.first_name + " " +
                     shipment.driver.last_name}}</p>
-                <div ng-show="isEdit[$index]" id="dropdown-driver-div" class="btn-group" dropdown is-open="isDriversOpen[$index]">
+
+                <div ng-show="isEdit[$index]" id="dropdown-driver-div" class="btn-group" dropdown
+                     is-open="isDriversOpen[$index]">
                     <button type="button" class="dropdown-toggle dropdown-select">
                         {{shipment.driver.last_name + ' ' + shipment.driver.first_name}}<span
                             style="margin-left: 5px;" class="caret white-caret"></span>
@@ -128,7 +138,8 @@ the License.
                             <a ng-click="selectDriver(driver,$parent.$index)">{{driver.last_name + ' ' +
                                 driver.first_name }}</a></li>
                     </ul>
-                    <span id="driver-span" class="input-with-title-span" ng-show="submittedDriver">A driver is required.</span>
+                    <span id="driver-span" class="input-with-title-span"
+                          ng-show="submittedDriver">A driver is required.</span>
                 </div>
             </div>
 
@@ -272,10 +283,8 @@ the License.
         <button class="btn btn-primary dispatch-btn" ng-click="acceptTrip()">Ok</button>
     </div>
 </script>
-</tab>
-<tab class="tabs">
-    <tab-heading class="tab-header">Logistics</tab-heading>
-
+</div>
+<div ng-show="selectedTab==1">
     <div ng-controller="LogisticsController">
         <div class="new-btn-div">
             <p class="box-title">Active Trips</p>
@@ -328,12 +337,11 @@ the License.
             </div>
         </script>
     </div>
-</tab>
-<tab class="tabs">
-    <tab-heading class="tab-header">Manage</tab-heading>
-    Manage content
-</tab>
-</tabset>
+</div>
+<div ng-show="selectedTab==2">
+    <p>Manage Content</p>
+</div>
+</div>
 <script type="text/ng-template" id="profile_edit.html">
     <div class="modal-header">
         <h3 class="modal-title">Edit {{edit_title}}</h3>
@@ -390,5 +398,4 @@ the License.
         <button class="btn btn-warning" ng-click="cancel()">Cancel</button>
     </div>
 </script>
-
 </div>

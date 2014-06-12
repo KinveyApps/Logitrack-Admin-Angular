@@ -157,8 +157,7 @@ controllers.controller('SignUpController',
 
 controllers.controller('MainController',
     ['$scope', '$kinvey', "$location","$modal", function ($scope, $kinvey, $location,$modal) {
-
-
+        $scope.selectedTab= 0;
         $scope.menu_profile_items = [
             {
                 id: 0, title: "Change name or bio"

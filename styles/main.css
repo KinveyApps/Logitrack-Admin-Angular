@@ -23,18 +23,29 @@
    margin-top: -39px;
 }
 
-.tabs{
-    width: 125px;
-    height: 40px;
-    margin-right: 10px;
-    margin-left: 10px;
-    background: url("../images/tab.jpg") no-repeat;
-    text-align: center;
-    border-radius: 6px 6px 0px 0px;
+.navbar{
+    margin-top: -45px;
 }
 
-.tab-header{
+.nav-tabs>li>a {
+    background-color: #0E325F;
+    border-color: #777777;
+    color:#fff;
+    width: 125px;
+    text-align: center;
+    margin-right: 10px;
+    margin-left: 10px;
     font-size: 16px;
+}
+
+/* active tab color */
+.nav-tabs>li.active>a, .nav-tabs>li.active>a:hover, .nav-tabs>li.active>a:focus {
+    background-color: #666;
+    border: 1px solid #888888;
+}
+
+.nav-tabs>li>a:hover{
+    color: #787878;
 }
 
 .dispatch-btn{
@@ -105,6 +116,7 @@
 .new-btn-div{
     height: 80px;
     position: relative;
+    margin-top: -20px;
 }
 
 .box-title{
