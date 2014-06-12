@@ -375,15 +375,6 @@ controllers.controller('DispatchController',
                     $scope.progress_shipments = [];
                     for (var i in response) {
                         switch (response[i].user_status){
-                            case "new":
-                                $scope.isClientsOpen.push(false);
-                                $scope.isDriversOpen.push(false);
-                                $scope.isTripsOpen.push(false);
-                                $scope.tripDropdownDisabled.push(true);
-                                $scope.trips.push({});
-                                $scope.new_shipments.push(response[i]);
-                                setFormatDateTime(response[i]);
-                                break;
                             case "open":
                                 $scope.open_shipments.push(response[i]);
                                 setFormatDateTime(response[i]);
@@ -441,9 +432,12 @@ controllers.controller('DispatchController',
             shipment.client = client;
             var query = new $kinvey.Query();
             query.equalTo('client._id',client._id);
+            query.equalTo('user_status',"new");
             var promise = $kinvey.DataStore.find('shipment', query, {relations: { route: 'route'}});
             promise.then(
                 function (response) {
+                    shipment.route = {};
+                    $scope.trips = [];
                     $scope.trips[index] = response;
                     console.log("trips " + JSON.stringify($scope.trips));
                     $scope.tripDropdownDisabled[index]= false;
@@ -515,15 +509,31 @@ controllers.controller('DispatchController',
         };
 
         var getClients=function(){
-            var promise = $kinvey.DataStore.find('clients', null);
+            $scope.clients = [];
+            var query = new $kinvey.Query();
+            query.equalTo('user_status', 'new');
+            var promise = $kinvey.DataStore.find('shipment', query,{relations:{client:"clients"}});
             promise.then(
                 function (response) {
-                    $scope.clients = response;
+                    for(var i in response) {
+                        if(!isClientExistInArray(response[i].client)) {
+                            $scope.clients.push(response[i].client);
+                        }
+                    }
                 },
                 function (error) {
                     console.log("get clients error " + error.description);
                 }
             );
+        };
+
+        var isClientExistInArray=function(client){
+            for(var i in $scope.clients){
+                if($scope.clients[i]._id == client._id){
+                    return true;
+                }
+            }
+            return false;
         };
 
         var setFormatDateTime=function(shipment){
@@ -555,7 +565,6 @@ var MapController = function ($scope, $kinvey, $location,$modalInstance, current
     $scope.initialize = function () {
         var mapProp = {
             zoom: 14,
-            disableDefaultUI: true,
             center: new google.maps.LatLng((trip.route.start_lat + trip.route.finish_lat) / 2, (trip.route.start_long + trip.route.finish_long) / 2)
         };
         if (!map) {
