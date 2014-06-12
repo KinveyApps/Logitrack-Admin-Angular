@@ -13,30 +13,6 @@
  */
 var controllers = angular.module('controllers', ['ui.bootstrap']);
 
-controllers.service('currentTrip', function() {
-    var trip = {};
-    return {
-        getTrip: function() {
-            return trip;
-        },
-        setTrip: function(value) {
-            trip = value;
-        }
-    }
-});
-
-controllers.service('menuItem',function(){
-    var menu_item = {};
-    return {
-        getItem: function() {
-            return menu_item;
-        },
-        setItem: function(value) {
-            menu_item = value;
-        }
-    }
-});
-
 controllers.controller('LoginController',
     ['$scope', '$kinvey', "$location", function ($scope, $kinvey, $location) {
         //Kinvey login starts
@@ -180,7 +156,7 @@ controllers.controller('SignUpController',
     }]);
 
 controllers.controller('MainController',
-    ['$scope', '$kinvey', "$location","$modal","menuItem", function ($scope, $kinvey, $location,$modal,menuItem) {
+    ['$scope', '$kinvey', "$location","$modal", function ($scope, $kinvey, $location,$modal) {
 
 
         $scope.menu_profile_items = [
@@ -211,23 +187,21 @@ controllers.controller('MainController',
         };
 
         $scope.changeProfile = function(item){
-            menuItem.setItem(item);
             var modalInstance = $modal.open({
                 templateUrl: 'profile_edit.html',
                 controller: ProfileEditController,
                 size: "",
                 resolve: {
-                    menuItem: function () {
-                        return menuItem;
+                    item: function () {
+                        return item;
                     }
                 }
             });
         };
     }]);
 
-var ProfileEditController = function ($scope, $modalInstance, $kinvey,menuItem) {
+var ProfileEditController = function ($scope, $modalInstance, $kinvey,item) {
 
-    var item = menuItem.getItem();
     var activeUser = $kinvey.getActiveUser();
     $scope.bioForm = {};
     $scope.emailForm={};
@@ -357,7 +331,7 @@ var ProfileEditController = function ($scope, $modalInstance, $kinvey,menuItem) 
 
 
 controllers.controller('DispatchController',
-    ['$scope', '$kinvey', "$location","$modal","currentTrip",function ($scope, $kinvey, $location,$modal,currentTrip) {
+    ['$scope', '$kinvey', "$location","$modal",function ($scope, $kinvey, $location,$modal) {
         $scope.initPage = function(){
             $scope.isEdit=[];
             $scope.isClientsOpen=[];
@@ -495,14 +469,13 @@ controllers.controller('DispatchController',
         };
 
         $scope.viewRoute = function(shipment){
-                currentTrip.setTrip(shipment);
                 var modalInstance = $modal.open({
                     templateUrl: 'map.html',
                     controller: MapController,
                     size: "lg",
                     resolve: {
                         currentTrip: function () {
-                            return currentTrip;
+                            return shipment;
                         }
                     }
                 });
@@ -561,24 +534,23 @@ var MapController = function ($scope, $kinvey, $location,$modalInstance, current
         suppressMarkers: true
     });
     var directionsService = new google.maps.DirectionsService();
-    var trip = currentTrip.getTrip();
     $scope.initialize = function () {
         var mapProp = {
             zoom: 14,
-            center: new google.maps.LatLng((trip.route.start_lat + trip.route.finish_lat) / 2, (trip.route.start_long + trip.route.finish_long) / 2)
+            center: new google.maps.LatLng((currentTrip.route.start_lat + currentTrip.route.finish_lat) / 2, (currentTrip.route.start_long + currentTrip.route.finish_long) / 2)
         };
         if (!map) {
             console.log("map create " + map + " ");
             map = new google.maps.Map(document.getElementById("route_map"), mapProp);
         }
-        console.log("current trip " + JSON.stringify(currentTrip.getTrip()));
+        console.log("current trip " + JSON.stringify(currentTrip));
         start_marker = new google.maps.Marker({
-            position: new google.maps.LatLng(trip.route.start_lat, trip.route.start_long),
+            position: new google.maps.LatLng(currentTrip.route.start_lat, currentTrip.route.start_long),
             map: map,
             icon: 'images/start_marker.png'
         });
         finish_marker = new google.maps.Marker({
-            position: new google.maps.LatLng(trip.route.finish_lat, trip.route.finish_long),
+            position: new google.maps.LatLng(currentTrip.route.finish_lat, currentTrip.route.finish_long),
             map: map,
             icon: 'images/finish_marker.png'
         });
