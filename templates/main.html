@@ -384,8 +384,8 @@ the License.
                         <p class="p-info" ng-show="!isEdit[$index]">Begin: {{trip.route.start}}</p>
 
                         <p class="p-info" ng-show="!isEdit[$index]">End: {{trip.route.finish}}</p>
-                        <button id="select-trip-btn" class="btn btn-primary dispatch-btn" ng-click="selectTrip()"
-                                ng-show="isEdit[$index]">Select trip
+                        <button id="select-trip-btn" class="btn btn-primary dispatch-btn" ng-click="selectRoute(trip)"
+                                ng-show="isEdit[$index]">Select route
                         </button>
                         <span class="input-with-title-span"
                               ng-show="isEdit[$index]&&isSubmittedRoute[$index]">A trip is required.</span>
@@ -411,6 +411,32 @@ the License.
                 </div>
             </li>
         </ul>
+
+        <script type="text/ng-template" id="route_create_map.html">
+            <div class="modal-header">
+                <h3 class="modal-title">Create route</h3>
+            </div>
+            <div class="modal-body">
+                        <div class="map" id="route-map" ng-init="initialize()">
+                        </div>
+                <div class="start-finish-container">
+                    <div class="input-with-title address-input-with-title">
+                        <h6>Start:</h6>
+                        <input class="sign-input address-input" ng-model="trip_route.start"/>
+                    </div>
+                    <span class="input-with-title-span " ng-show="submittedStart">The start is required.</span>
+                    <div class="input-with-title address-input-with-title">
+                        <h6>Finish:</h6>
+                        <input class="sign-input address-input" ng-model="trip_route.finish"/>
+                    </div>
+                    <span class="input-with-title-span" ng-show="submittedFinish">The finish is required.</span>
+                </div>
+            </div>
+            <div class="dispatch-btn-group">
+                <button class="btn btn-primary dispatch-btn" ng-click="saveRoute()">Save</button>
+                <button class="btn btn-primary dispatch-btn" ng-click="cancelRoute()">Cancel</button>
+            </div>
+        </script>
     </div>
     <div ng-show="selectedManageItem==1">
         Shipments content

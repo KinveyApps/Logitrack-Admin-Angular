@@ -559,60 +559,6 @@ controllers.controller('DispatchController',
         };
     }]);
 
-var MapController = function ($scope, $kinvey, $location,$modalInstance, currentTrip) {
-    var start_marker;
-    var finish_marker;
-    var map;
-    var directionsDisplay = new google.maps.DirectionsRenderer();
-    directionsDisplay.setOptions({
-        suppressMarkers: true
-    });
-    var directionsService = new google.maps.DirectionsService();
-    $scope.initialize = function () {
-        var mapProp = {
-            zoom: 14,
-            center: new google.maps.LatLng((currentTrip.route.start_lat + currentTrip.route.finish_lat) / 2, (currentTrip.route.start_long + currentTrip.route.finish_long) / 2)
-        };
-        if (!map) {
-            console.log("map create " + map + " ");
-            map = new google.maps.Map(document.getElementById("route_map"), mapProp);
-        }
-        console.log("current trip " + JSON.stringify(currentTrip));
-        start_marker = new google.maps.Marker({
-            position: new google.maps.LatLng(currentTrip.route.start_lat, currentTrip.route.start_long),
-            map: map,
-            icon: 'images/start_marker.png'
-        });
-        finish_marker = new google.maps.Marker({
-            position: new google.maps.LatLng(currentTrip.route.finish_lat, currentTrip.route.finish_long),
-            map: map,
-            icon: 'images/finish_marker.png'
-        });
-        calcRoute();
-        window.setTimeout(function () {
-            google.maps.event.trigger(map, 'resize');
-        }, 100);
-    };
-        function calcRoute() {
-            var request = {
-                origin: new google.maps.LatLng(start_marker.getPosition().k, start_marker.getPosition().A),
-                destination: new google.maps.LatLng(finish_marker.getPosition().k, finish_marker.getPosition().A),
-                travelMode: google.maps.DirectionsTravelMode.DRIVING
-            };
-            directionsService.route(request, function (response, status) {
-                if (status == google.maps.DirectionsStatus.OK) {
-                    current_direction_route = response;
-                    directionsDisplay.setDirections(response);
-                    directionsDisplay.setMap(map);
-                }
-            });
-        }
-
-        $scope.acceptTrip = function () {
-            $modalInstance.dismiss();
-        };
-};
-
 controllers.controller('LogisticsController',
     ['$scope', '$kinvey', "$modal", function ($scope, $kinvey, $modal) {
         var query = new $kinvey.Query();
@@ -652,6 +598,60 @@ controllers.controller('LogisticsController',
                 });
         };
     }]);
+
+var MapController = function ($scope, $kinvey, $location,$modalInstance, currentTrip) {
+    var start_marker;
+    var finish_marker;
+    var map;
+    var directionsDisplay = new google.maps.DirectionsRenderer();
+    directionsDisplay.setOptions({
+        suppressMarkers: true
+    });
+    var directionsService = new google.maps.DirectionsService();
+    $scope.initialize = function () {
+        var mapProp = {
+            zoom: 14,
+            center: new google.maps.LatLng((currentTrip.route.start_lat + currentTrip.route.finish_lat) / 2, (currentTrip.route.start_long + currentTrip.route.finish_long) / 2)
+        };
+        if (!map) {
+            console.log("map create " + map + " ");
+            map = new google.maps.Map(document.getElementById("route_map"), mapProp);
+        }
+        console.log("current trip " + JSON.stringify(currentTrip));
+        start_marker = new google.maps.Marker({
+            position: new google.maps.LatLng(currentTrip.route.start_lat, currentTrip.route.start_long),
+            map: map,
+            icon: 'images/start_marker.png'
+        });
+        finish_marker = new google.maps.Marker({
+            position: new google.maps.LatLng(currentTrip.route.finish_lat, currentTrip.route.finish_long),
+            map: map,
+            icon: 'images/finish_marker.png'
+        });
+        calcRoute();
+        window.setTimeout(function () {
+            google.maps.event.trigger(map, 'resize');
+        }, 100);
+    };
+    function calcRoute() {
+        var request = {
+            origin: new google.maps.LatLng(start_marker.getPosition().k, start_marker.getPosition().A),
+            destination: new google.maps.LatLng(finish_marker.getPosition().k, finish_marker.getPosition().A),
+            travelMode: google.maps.DirectionsTravelMode.DRIVING
+        };
+        directionsService.route(request, function (response, status) {
+            if (status == google.maps.DirectionsStatus.OK) {
+                current_direction_route = response;
+                directionsDisplay.setDirections(response);
+                directionsDisplay.setMap(map);
+            }
+        });
+    }
+
+    $scope.acceptTrip = function () {
+        $modalInstance.dismiss();
+    };
+};
 
 var TripDetailsController= function ($scope, $kinvey, $location,$modalInstance, shipment){
 
@@ -833,4 +833,169 @@ controllers.controller('ManageTripsController',
             });
         };
 
+        $scope.selectRoute = function(trip){
+            var modalInstance = $modal.open({
+                templateUrl: 'route_create_map.html',
+                controller: RouteCreateController,
+                size: "lg",
+                resolve: {
+                    currentTrip: function () {
+                        return trip;
+                    }
+                }
+            });
+
+            modalInstance.result.then(function (route) {
+                trip.route = route;
+            });
+        };
+
+
     }]);
+
+
+var RouteCreateController = function ($scope, $kinvey, $location,$modalInstance,currentTrip) {
+    var start_marker;
+    var finish_marker;
+    var map;
+    console.log("current trip " + JSON.stringify(currentTrip));
+    var geocoder = new google.maps.Geocoder();
+    var directionsDisplay = new google.maps.DirectionsRenderer();
+    directionsDisplay.setOptions({
+        suppressMarkers: true
+    });
+    var directionsService = new google.maps.DirectionsService();
+    $scope.initialize = function () {
+        $scope.trip_route={};
+        var mapProp = {
+            zoom: 14,
+            center: new google.maps.LatLng(google.loader.ClientLocation.latitude, google.loader.ClientLocation.longitude)
+        };
+        if (!map) {
+            console.log("map create " + map + " ");
+            map = new google.maps.Map(document.getElementById("route-map"), mapProp);
+        }
+        window.setTimeout(function () {
+            google.maps.event.trigger(map, 'resize');
+        }, 100);
+
+        if(!currentTrip.route){
+            google.maps.event.addListener(map, 'click', function(event) {
+                placeMarker(event.latLng);
+            });
+        }else{
+            $scope.trip_route = currentTrip.route;
+            start_marker = new google.maps.Marker({
+                position: new google.maps.LatLng($scope.trip_route.start_lat, $scope.trip_route.start_long),
+                map: map,
+                draggable: true,
+                icon: 'images/start_marker.png'
+            });
+
+            google.maps.event.addListener(start_marker, 'dragend', function () {
+                calcRoute();
+                getAddressByPosition(start_marker.getPosition(),true);
+            });
+            finish_marker = new google.maps.Marker({
+                position: new google.maps.LatLng($scope.trip_route.finish_lat, $scope.trip_route.finish_long),
+                map: map,
+                draggable: true,
+                icon: 'images/finish_marker.png'
+            });
+            google.maps.event.addListener(finish_marker, 'dragend', function () {
+                calcRoute();
+                getAddressByPosition(finish_marker.getPosition(),false);
+            });
+            calcRoute();
+        }
+    };
+    function calcRoute() {
+        var request = {
+            origin: new google.maps.LatLng(start_marker.getPosition().k, start_marker.getPosition().A),
+            destination: new google.maps.LatLng(finish_marker.getPosition().k, finish_marker.getPosition().A),
+            travelMode: google.maps.DirectionsTravelMode.DRIVING
+        };
+        directionsService.route(request, function (response, status) {
+            if (status == google.maps.DirectionsStatus.OK) {
+                current_direction_route = response;
+                directionsDisplay.setDirections(response);
+                directionsDisplay.setMap(map);
+            }
+        });
+    };
+    function placeMarker(location) {
+        if (!start_marker) {
+            start_marker = new google.maps.Marker({
+                position: location,
+                map: map,
+                draggable: true,
+                icon: 'images/start_marker.png'
+            });
+            google.maps.event.addListener(start_marker, 'dragend', function () {
+                calcRoute();
+                getAddressByPosition(start_marker.getPosition(),true);
+            });
+            getAddressByPosition(start_marker.getPosition(),true);
+        } else if (!finish_marker) {
+            finish_marker = new google.maps.Marker({
+                position: location,
+                map: map,
+                draggable: true,
+                icon: 'images/finish_marker.png'
+            });
+            calcRoute();
+            getAddressByPosition(finish_marker.getPosition(),false);
+            google.maps.event.addListener(finish_marker, 'dragend', function () {
+                calcRoute();
+                getAddressByPosition(finish_marker.getPosition(),false);
+            });
+        }
+    };
+
+    $scope.cancelRoute = function () {
+        $modalInstance.dismiss();
+    };
+
+    $scope.saveRoute = function () {
+        var isFormInvalid=false;
+        if(!finish_marker){
+            isFormInvalid = true;
+            $scope.submittedFinish = true;
+        }else{
+            $scope.submittedFinish = false;
+        }
+        if(!start_marker){
+            isFormInvalid=true;
+            $scope.submittedStart = true;
+        }else{
+            $scope.submittedStart = false;
+        }
+        if(isFormInvalid){
+            return;
+        }
+        $modalInstance.close($scope.trip_route);
+    };
+
+    var getAddressByPosition = function(position,isStart){
+        console.log(JSON.stringify(position));
+        geocoder.geocode({'latLng': new google.maps.LatLng(position.k, position.A)}, function(results, status) {
+            if (status == google.maps.GeocoderStatus.OK) {
+                setRoute(isStart,position,results[0].formatted_address);
+            } else {
+                console.log('Geocoder failed due to: ' + status);
+            }
+        });
+    };
+
+    var setRoute=function(isStart,position,address){
+        if(isStart){
+            $scope.trip_route.start = address;
+            $scope.trip_route.start_lat = position.k;
+            $scope.trip_route.start_long = position.k;
+        }else{
+            $scope.trip_route.finish = address;
+            $scope.trip_route.finish_lat = position.k;
+            $scope.trip_route.finish_long = position.k;
+        }
+    }
+};
