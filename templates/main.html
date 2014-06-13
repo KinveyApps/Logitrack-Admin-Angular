@@ -373,7 +373,7 @@ the License.
                             </ul>
                         </div>
                 <span class="input-with-title-span"
-                      ng-show="isEdit[$index]&&submittedClient">A client is required.</span>
+                      ng-show="isEdit[$index]&&isSubmittedClient[$index]">A client is required.</span>
                     </div>
                 </div>
 
@@ -388,7 +388,7 @@ the License.
                                 ng-show="isEdit[$index]">Select trip
                         </button>
                         <span class="input-with-title-span"
-                              ng-show="isEdit[$index]&&submittedRoute">A trip is required.</span>
+                              ng-show="isEdit[$index]&&isSubmittedRoute[$index]">A trip is required.</span>
                     </div>
 
                 </div>
@@ -398,13 +398,13 @@ the License.
                             Edit
                         </div>
                         <div class="btn btn-primary dispatch-btn" ng-show="isEdit[$index]"
-                             ng-click="saveTrip($index,shipment)">Save
+                             ng-click="saveTrip($index,trip)">Save
                         </div>
                         <div class="btn btn-primary dispatch-btn" ng-show="isEdit[$index]"
-                             ng-click="deleteTrip($index,shipment)">Delete
+                             ng-click="deleteTrip($index,trip)">Delete
                         </div>
                         <div class="btn btn-primary dispatch-btn" ng-show="!isEdit[$index]"
-                             ng-click="viewTrip(shipment)">
+                             ng-click="viewTrip(trip)">
                             View
                         </div>
                     </div>

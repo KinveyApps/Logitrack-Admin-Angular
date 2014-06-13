@@ -316,7 +316,7 @@
 }
 
 .trips-div-a,.trips-div-b,.trips-div-c{
-    height: 70px;
+    height: 75px;
     display: inline-block;
 }
 
@@ -336,14 +336,14 @@
 }
 
 #select-trip-btn{
-    margin-top: 13px;
+    margin-top: 10px;
 }
 
 .trip-edit-btn-div{
     width:230px;
     height: 30px;
     display: block;
-  margin-top: 30px;
+  margin-top: 25px;
     float: right;
 }
 

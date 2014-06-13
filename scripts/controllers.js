@@ -736,27 +736,13 @@ var TripDetailsController= function ($scope, $kinvey, $location,$modalInstance, 
 controllers.controller('ManageTripsController',
     ['$scope', '$kinvey', "$modal", function ($scope, $kinvey, $modal) {
 
-        var isClientExistInArray=function(client){
-            for(var i in $scope.clients){
-                if($scope.clients[i]._id == client._id){
-                    return true;
-                }
-            }
-            return false;
-        };
-
         var getClients = function(){
             $scope.clients = [];
             var query = new $kinvey.Query();
-            query.equalTo('user_status', 'new');
-            var promise = $kinvey.DataStore.find('shipment', query,{relations:{client:"clients"}});
+            var promise = $kinvey.DataStore.find('clients',null);
             promise.then(
                 function (response) {
-                    for(var i in response) {
-                        if(!isClientExistInArray(response[i].client)) {
-                            $scope.clients.push(response[i].client);
-                        }
-                    }
+                    $scope.clients=response;
                     console.log($scope.clients);
                 },
                 function (error) {
@@ -767,14 +753,15 @@ controllers.controller('ManageTripsController',
         $scope.isEdit=[];
         $scope.trips=[];
         $scope.isClientsOpen=[];
+        $scope.isSubmittedClient =[];
+        $scope.isSubmittedRoute =[];
         var query = new $kinvey.Query();
         query.equalTo("user_status","new");
         getClients();
         var promise = $kinvey.DataStore.find('shipment', query,{relations:{route:"route",client:"clients"}});
         promise.then(function(response){
             for(var i in response){
-                $scope.trips.push({client: response[i].client,
-                    route: response[i].route});
+                $scope.trips.push(response[i]);
             }
         },function(error){
             console.log("get trips with error " + error.description);
@@ -784,6 +771,8 @@ controllers.controller('ManageTripsController',
             $scope.trips.unshift({});
             $scope.isEdit.unshift(true);
             $scope.isClientsOpen.unshift(false);
+            $scope.isSubmittedClient.unshift(false);
+            $scope.isSubmittedRoute.unshift(false);
             getClients();
         };
 
@@ -791,13 +780,54 @@ controllers.controller('ManageTripsController',
             $scope.isEdit[index] = !$scope.isEdit[index];
         };
 
-        $scope.saveTrip = function(index,shipment){
+        $scope.saveTrip = function(index,trip){
+            var isFormInvalid = false;
+            console.log();
+            if(!trip.client){
+                $scope.isSubmittedClient[index] = true;
+                isFormInvalid = true;
+            }else{
+                $scope.isSubmittedClient[index] = false;
+            }
+            if(!trip.route){
+                $scope.isSubmittedRoute[index] = true;
+                isFormInvalid = true;
+            }else{
+                $scope.isSubmittedRoute[index] = false;
+            }
+            if(isFormInvalid){
+                return;
+            }
             $scope.isEdit[index] = !$scope.isEdit[index];
+            var savedTrip = JSON.parse( JSON.stringify( trip ) );
+            var promise = $kinvey.DataStore.save("shipment",savedTrip,{relations: { route: 'route',
+                client: "clients" }});
+            promise.then(
+                function(responce){
+                    console.log("update shipment success " + JSON.stringify(responce));
+                },
+                function(error){
+                    console.log("update shipment error " + error.description);
+                }
+            );
         };
 
-        $scope.selectClient = function (client,shipment,index) {
+        $scope.selectClient = function (client,trip,index) {
             $scope.isClientsOpen[index] = !$scope.isClientsOpen[index];
-            shipment.client = client;
+            trip.client = client;
+        };
+
+        $scope.viewTrip = function(trip){
+            var modalInstance = $modal.open({
+                templateUrl: 'map.html',
+                controller: MapController,
+                size: "lg",
+                resolve: {
+                    currentTrip: function () {
+                        return trip;
+                    }
+                }
+            });
         };
 
     }]);
