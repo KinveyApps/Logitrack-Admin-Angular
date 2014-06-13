@@ -42,7 +42,7 @@ the License.
 <div class="tab-content">
 <div ng-controller="DispatchController" ng-init="initPage()" ng-show="selectedTab==0">
 <div class="new-btn-div">
-    <div class="btn btn-primary dispatch-btn" id="new-btn" ng-click="createNewDispatch()">New</div>
+    <div class="btn btn-primary dispatch-btn new-btn" ng-click="createNewDispatch()">New</div>
     <p class="box-title" ng-click="isNewRequestCollapsed = !isNewRequestCollapsed">New Requests</p>
 </div>
 <ul collapse="isNewRequestCollapsed" ng-repeat="shipment in new_shipments">
@@ -346,9 +346,72 @@ the License.
     </div>
 </div>
 <div ng-show="selectedTab==2">
-    <div ng-show="selectedManageItem==0">
-        Trips content
+    <div ng-show="selectedManageItem==0" ng-controller="ManageTripsController">
+        <div class="new-btn-div">
+            <div class="btn btn-primary dispatch-btn new-btn" ng-click="addNewTrip()">Add trip</div>
+            <p class="box-title" ng-click="isTripsCollapsed = !isTripsCollapsed">Trips</p>
         </div>
+        <ul collapse="isTripsCollapsed" ng-repeat="trip in trips">
+            <li class="list-item">
+                <div class="trips-div-a">
+                    <div class="trips-inner-div">
+                        <p class="p-title">Client</p>
+
+                        <p class="p-info" ng-show="!isEdit[$index]">{{trip.client.first_name + " " +
+                            trip.client.last_name}}</p>
+
+                        <div ng-show="isEdit[$index]"
+                             class="dropdown-div btn-group" dropdown is-open="isClientsOpen[$index]">
+                            <button type="button" class="dropdown-toggle dropdown-select">
+                                {{trip.client.first_name + " " + trip.client.last_name}}<span
+                                    style="margin-left: 5px;" class="caret white-caret"></span>
+                            </button>
+                            <ul class="dropdown-menu" role="menu">
+                                <li ng-repeat="client in clients">
+                                    <a ng-click="selectClient(client,trip,$parent.$index)">{{client.first_name
+                                        + " " + client.last_name }}</a></li>
+                            </ul>
+                        </div>
+                <span class="input-with-title-span"
+                      ng-show="isEdit[$index]&&submittedClient">A client is required.</span>
+                    </div>
+                </div>
+
+                <div class="trips-div-b">
+                    <div class="trips-inner-div">
+                        <p class="p-title">Trip</p>
+
+                        <p class="p-info" ng-show="!isEdit[$index]">Begin: {{trip.route.start}}</p>
+
+                        <p class="p-info" ng-show="!isEdit[$index]">End: {{trip.route.finish}}</p>
+                        <button id="select-trip-btn" class="btn btn-primary dispatch-btn" ng-click="selectTrip()"
+                                ng-show="isEdit[$index]">Select trip
+                        </button>
+                        <span class="input-with-title-span"
+                              ng-show="isEdit[$index]&&submittedRoute">A trip is required.</span>
+                    </div>
+
+                </div>
+                <div class="trips-div-c">
+                    <div class="trip-edit-btn-div">
+                        <div class="btn btn-primary dispatch-btn" ng-show="!isEdit[$index]" ng-click="editTrip($index)">
+                            Edit
+                        </div>
+                        <div class="btn btn-primary dispatch-btn" ng-show="isEdit[$index]"
+                             ng-click="saveTrip($index,shipment)">Save
+                        </div>
+                        <div class="btn btn-primary dispatch-btn" ng-show="isEdit[$index]"
+                             ng-click="deleteTrip($index,shipment)">Delete
+                        </div>
+                        <div class="btn btn-primary dispatch-btn" ng-show="!isEdit[$index]"
+                             ng-click="viewTrip(shipment)">
+                            View
+                        </div>
+                    </div>
+                </div>
+            </li>
+        </ul>
+    </div>
     <div ng-show="selectedManageItem==1">
         Shipments content
     </div>

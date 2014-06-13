@@ -64,7 +64,7 @@
     border-color: #777777;
 }
 
-#new-btn{
+.new-btn{
     float: right;
     margin-right: 20px;
     margin-top: 20px;
@@ -98,9 +98,6 @@
 
 .p-title{
     font-weight: bold;
-}
-
-.p-info{
 }
 
 .list-item-div-a,.list-item-div-b,.list-item-div-c{
@@ -181,6 +178,10 @@
     width: 400px;
 }
 
+/*#trip-dropdown-btn:disabled{*/
+    /*background-color: gray;*/
+   /*opacity: 0.8;*/
+/*}*/
 
 .select-driver-div{
     width: 100px;
@@ -229,6 +230,10 @@
 
 #trip-dropdown a:hover {
     background-color: transparent;
+}
+
+.trip-disabled{
+    background-color: grey;
 }
 
 #client-buttons h4 {
@@ -308,4 +313,43 @@
 
 .dropdown-menu a{
     font-size:14px;
+}
+
+.trips-div-a,.trips-div-b,.trips-div-c{
+    height: 70px;
+    display: inline-block;
+}
+
+.trips-div-a{
+    width: 25%;
+}
+.trips-div-b{
+    width: 45%;
+}
+.trips-div-c{
+    width: 25%;
+}
+
+.trips-inner-div{
+    position: absolute;
+    margin-top:0
+}
+
+#select-trip-btn{
+    margin-top: 13px;
+}
+
+.trip-edit-btn-div{
+    width:230px;
+    height: 30px;
+    display: block;
+  margin-top: 30px;
+    float: right;
+}
+
+.trip-edit-btn-div div{
+    display: inline-block;
+    margin-right: 2px;
+    width: 70px;
+    float: right;
 }

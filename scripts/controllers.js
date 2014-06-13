@@ -732,3 +732,72 @@ var TripDetailsController= function ($scope, $kinvey, $location,$modalInstance, 
         $modalInstance.dismiss();
     };
 };
+
+controllers.controller('ManageTripsController',
+    ['$scope', '$kinvey', "$modal", function ($scope, $kinvey, $modal) {
+
+        var isClientExistInArray=function(client){
+            for(var i in $scope.clients){
+                if($scope.clients[i]._id == client._id){
+                    return true;
+                }
+            }
+            return false;
+        };
+
+        var getClients = function(){
+            $scope.clients = [];
+            var query = new $kinvey.Query();
+            query.equalTo('user_status', 'new');
+            var promise = $kinvey.DataStore.find('shipment', query,{relations:{client:"clients"}});
+            promise.then(
+                function (response) {
+                    for(var i in response) {
+                        if(!isClientExistInArray(response[i].client)) {
+                            $scope.clients.push(response[i].client);
+                        }
+                    }
+                    console.log($scope.clients);
+                },
+                function (error) {
+                    console.log("get clients error " + error.description);
+                }
+            );
+        };
+        $scope.isEdit=[];
+        $scope.trips=[];
+        $scope.isClientsOpen=[];
+        var query = new $kinvey.Query();
+        query.equalTo("user_status","new");
+        getClients();
+        var promise = $kinvey.DataStore.find('shipment', query,{relations:{route:"route",client:"clients"}});
+        promise.then(function(response){
+            for(var i in response){
+                $scope.trips.push({client: response[i].client,
+                    route: response[i].route});
+            }
+        },function(error){
+            console.log("get trips with error " + error.description);
+        });
+
+        $scope.addNewTrip = function(){
+            $scope.trips.unshift({});
+            $scope.isEdit.unshift(true);
+            $scope.isClientsOpen.unshift(false);
+            getClients();
+        };
+
+        $scope.editTrip=function(index){
+            $scope.isEdit[index] = !$scope.isEdit[index];
+        };
+
+        $scope.saveTrip = function(index,shipment){
+            $scope.isEdit[index] = !$scope.isEdit[index];
+        };
+
+        $scope.selectClient = function (client,shipment,index) {
+            $scope.isClientsOpen[index] = !$scope.isClientsOpen[index];
+            shipment.client = client;
+        };
+
+    }]);
