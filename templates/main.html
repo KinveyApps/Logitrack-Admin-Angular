@@ -69,7 +69,7 @@ the License.
                     </div>
                 </div>
                 <span class="input-with-title-span"
-                      ng-show="isEdit[$index]&&submittedClient">A client is required.</span>
+                      ng-show="isEdit[$index]&&isSubmittedClient[$index]">A client is required.</span>
 
                 <div class="bottom-div" ng-show="!isEdit[$index]">
                     <p class="p-title">Date</p>
@@ -108,7 +108,7 @@ the License.
                         </ul>
                     </div>
                 </div>
-                <span class="input-with-title-span" ng-show="isEdit[$index]&&submittedRoute">A trip is required.</span>
+                <span class="input-with-title-span" ng-show="isEdit[$index]&&isSubmittedRoute[$index]">A trip is required.</span>
 
                 <div ng-show="!isEdit[$index]" class="bottom-div">
                     <p class="p-title">Request Time</p>
@@ -146,7 +146,7 @@ the License.
                                 driver.first_name }}</a></li>
                     </ul>
                     <span id="driver-span" class="input-with-title-span"
-                          ng-show="submittedDriver">A driver is required.</span>
+                          ng-show="isSubmittedDriver[$index]">A driver is required.</span>
                 </div>
             </div>
 

@@ -347,6 +347,9 @@ controllers.controller('DispatchController',
             $scope.isDriversOpen=[];
             $scope.isTripsOpen=[];
             $scope.tripDropdownDisabled = [];
+            $scope.isSubmittedClient =[];
+            $scope.isSubmittedRoute =[];
+            $scope.isSubmittedDriver =[];
             var promise = $kinvey.DataStore.find('shipment', null, {relations: { route:"route",
                 client:"clients",
                 driver:"user"}});
@@ -443,22 +446,22 @@ controllers.controller('DispatchController',
         $scope.saveDispatch = function(index,shipment){
             var isFormInvalid = false;
             if(!shipment.driver){
-                $scope.submittedDriver = true;
+                $scope.isSubmittedDriver[index] = true;
                 isFormInvalid = true;
             }else{
-                $scope.submittedDriver = false;
+                $scope.isSubmittedDriver[index] = false;
             }
             if(!shipment.client){
-                $scope.submittedClient = true;
+                $scope.isSubmittedClient[index] = true;
                 isFormInvalid = true;
             }else{
-                $scope.submittedClient = false;
+                $scope.isSubmittedClient[index] = false;
             }
             if(!shipment.route){
-                $scope.submittedRoute = true;
+                $scope.isSubmittedRoute[index] = true;
                 isFormInvalid = true;
             }else{
-                $scope.submittedRoute = false;
+                $scope.isSubmittedRoute[index] = false;
             }
             if(isFormInvalid){
                 return;
