@@ -381,10 +381,10 @@ the License.
                     <div class="trips-inner-div">
                         <p class="p-title">Trip</p>
 
-                        <p class="p-info" ng-show="!isEdit[$index]">Begin: {{trip.route.start}}</p>
+                        <p class="p-info" ng-show="isRoute[$index]">Begin: {{trip.route.start}}</p>
 
-                        <p class="p-info" ng-show="!isEdit[$index]">End: {{trip.route.finish}}</p>
-                        <button id="select-trip-btn" class="btn btn-primary dispatch-btn" ng-click="selectRoute(trip)"
+                        <p class="p-info" ng-show="isRoute[$index]">End: {{trip.route.finish}}</p>
+                        <button style="display: inline-block" id="select-trip-btn" class="btn btn-primary dispatch-btn" ng-click="selectRoute(trip,$index)"
                                 ng-show="isEdit[$index]">Select route
                         </button>
                         <span class="input-with-title-span"
@@ -422,20 +422,20 @@ the License.
                 <div class="start-finish-container">
                     <div class="input-with-title address-input-with-title">
                         <h6>Start:</h6>
-                        <input class="sign-input address-input" ng-model="trip_route.start"/>
+                        <input class="sign-input address-input" ng-model="trip_route.start" ng-change="changeField()"/>
                     </div>
                     <span class="input-with-title-span " ng-show="submittedStart">{{start_error}}</span>
                     <div class="input-with-title address-input-with-title">
                         <h6>Finish:</h6>
-                        <input class="sign-input address-input" ng-model="trip_route.finish"/>
+                        <input class="sign-input address-input" ng-model="trip_route.finish" ng-change="changeField()" />
                     </div>
                     <span class="input-with-title-span" ng-show="submittedFinish">{{finish_error}}</span>
                 </div>
             </div>
             <div class="dispatch-btn-group">
-                <button class="btn btn-primary dispatch-btn" ng-click="saveRoute()">Save</button>
+                <button class="btn btn-primary dispatch-btn" ng-click="saveRoute()" ng-show="isSave">Save</button>
+                <button class="btn btn-primary dispatch-btn" ng-click="findRoute()" ng-show="!isSave">Find address</button>
                 <button class="btn btn-primary dispatch-btn" ng-click="cancelRoute()">Cancel</button>
-                <button class="btn btn-primary dispatch-btn" ng-click="findRoute()">Find address</button>
             </div>
         </script>
     </div>

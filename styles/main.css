@@ -321,7 +321,7 @@
 }
 
 .trips-div-a,.trips-div-b,.trips-div-c{
-    height: 75px;
+    height: 100px;
     display: inline-block;
 }
 
@@ -348,7 +348,7 @@
     width:230px;
     height: 30px;
     display: block;
-  margin-top: 25px;
+  margin-top:57px;
     float: right;
 }
 

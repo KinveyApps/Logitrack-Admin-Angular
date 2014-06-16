@@ -758,6 +758,7 @@ controllers.controller('ManageTripsController',
         $scope.isClientsOpen=[];
         $scope.isSubmittedClient =[];
         $scope.isSubmittedRoute =[];
+        $scope.isRoute=[];
         var query = new $kinvey.Query();
         query.equalTo("user_status","new");
         getClients();
@@ -765,6 +766,7 @@ controllers.controller('ManageTripsController',
         promise.then(function(response){
             for(var i in response){
                 $scope.trips.push(response[i]);
+                $scope.isRoute.push(true);
             }
         },function(error){
             console.log("get trips with error " + error.description);
@@ -776,6 +778,7 @@ controllers.controller('ManageTripsController',
             $scope.isClientsOpen.unshift(false);
             $scope.isSubmittedClient.unshift(false);
             $scope.isSubmittedRoute.unshift(false);
+            $scope.isRoute.unshift(false);
             getClients();
         };
 
@@ -833,7 +836,7 @@ controllers.controller('ManageTripsController',
             });
         };
 
-        $scope.selectRoute = function(trip){
+        $scope.selectRoute = function(trip,index){
             var modalInstance = $modal.open({
                 templateUrl: 'route_create_map.html',
                 controller: RouteCreateController,
@@ -847,6 +850,11 @@ controllers.controller('ManageTripsController',
 
             modalInstance.result.then(function (route) {
                 trip.route = route;
+                if(route!=undefined){
+                    $scope.isRoute[index] = true;
+                    $scope.isSubmittedRoute[index] = false;
+                }
+                console.log("route " + JSON.stringify(trip.route));
             });
         };
 
@@ -867,6 +875,7 @@ var RouteCreateController = function ($scope, $kinvey, $location,$timeout,$modal
     var directionsService = new google.maps.DirectionsService();
     $scope.initialize = function () {
         $scope.trip_route={};
+        $scope.isSave ={};
         var mapProp = {
             zoom: 14,
             center: new google.maps.LatLng(google.loader.ClientLocation.latitude, google.loader.ClientLocation.longitude)
@@ -880,17 +889,21 @@ var RouteCreateController = function ($scope, $kinvey, $location,$timeout,$modal
         }, 100);
 
         if(!currentTrip.route){
+            $scope.isSave=false;
             google.maps.event.addListener(map, 'click', function(event) {
                 placeMarker(event.latLng);
             });
         }else{
+            $scope.isSave=true;
             $scope.trip_route = currentTrip.route;
             createStartMarker(new google.maps.LatLng($scope.trip_route.start_lat, $scope.trip_route.start_long));
             createFinishMarker(new google.maps.LatLng($scope.trip_route.finish_lat, $scope.trip_route.finish_long));
             calcRoute();
         }
     };
+
     function calcRoute() {
+        console.log("calc route");
         var request = {
             origin: new google.maps.LatLng(start_marker.getPosition().k, start_marker.getPosition().A),
             destination: new google.maps.LatLng(finish_marker.getPosition().k, finish_marker.getPosition().A),
@@ -904,6 +917,7 @@ var RouteCreateController = function ($scope, $kinvey, $location,$timeout,$modal
             }
         });
     };
+
     function placeMarker(location) {
         if (!start_marker) {
             createStartMarker(location);
@@ -912,7 +926,7 @@ var RouteCreateController = function ($scope, $kinvey, $location,$timeout,$modal
             createFinishMarker(location);
             calcRoute();
             getAddressByPosition(finish_marker.getPosition(),false);
-
+            $scope.isSave = true;
         }
     };
 
@@ -946,6 +960,10 @@ var RouteCreateController = function ($scope, $kinvey, $location,$timeout,$modal
       getPositionByAddress();
     };
 
+    $scope.changeField = function(){
+      $scope.isSave=false
+    };
+
     var getAddressByPosition = function(position,isStart){
         console.log(JSON.stringify(position));
         geocoder.geocode({'latLng': new google.maps.LatLng(position.k, position.A)}, function(results, status) {
@@ -973,13 +991,18 @@ var RouteCreateController = function ($scope, $kinvey, $location,$timeout,$modal
                 if(finish_marker){
                     calcRoute();
                 }
+                setRoute(true,results[0].geometry.location,results[0].formatted_address);
             }else {
-                $scope.submittedStart = true;
-                if ($scope.trip_route.start == ""||$scope.trip_route.start==undefined) {
-                    $scope.start_error = "The start is required";
-                } else {
-                    $scope.start_error = "Invalid start address";
-                }
+                $timeout(function() {
+                    $scope.submittedStart = true;
+                    if ($scope.trip_route.start == "" || $scope.trip_route.start == undefined) {
+                        $scope.start_error = "The start is required";
+                    } else {
+                        $scope.start_error = "Invalid start address";
+                    }
+                    $scope.isSave = false;
+                    directionsDisplay.setMap(null);
+                },100);
             }
         });
         geocoder.geocode({'address':$scope.trip_route.finish},function(results,status){
@@ -995,15 +1018,21 @@ var RouteCreateController = function ($scope, $kinvey, $location,$timeout,$modal
                 if(start_marker){
                     calcRoute();
                 }
-            }else{
-                $scope.submittedFinish = true;
-                if($scope.trip_route.finish == ""||$scope.trip_route.finish==undefined){
-                    $scope.finish_error = "The finish is required";
-                }else {
-                    $scope.finish_error = "Invalid finish address";
-                }
+                setRoute(false,results[0].geometry.location,results[0].formatted_address);
+            }else {
+                $timeout(function () {
+                    $scope.submittedFinish = true;
+                    if ($scope.trip_route.finish == "" || $scope.trip_route.finish == undefined) {
+                        $scope.finish_error = "The finish is required";
+                    } else {
+                        $scope.finish_error = "Invalid finish address";
+                    }
+                    $scope.isSave = false;
+                    directionsDisplay.setMap(null);
+                },100);
             }
         });
+            $scope.isSave = true;
     };
 
     var createStartMarker = function(location){
@@ -1020,6 +1049,7 @@ var RouteCreateController = function ($scope, $kinvey, $location,$timeout,$modal
     };
 
     var createFinishMarker = function(location){
+        console.log("create finish");
         finish_marker = new google.maps.Marker({
             position: location,
             map: map,
@@ -1037,12 +1067,12 @@ var RouteCreateController = function ($scope, $kinvey, $location,$timeout,$modal
             if (isStart) {
                 $scope.trip_route.start = address;
                 $scope.trip_route.start_lat = position.k;
-                $scope.trip_route.start_long = position.k;
+                $scope.trip_route.start_long = position.A;
             } else {
                 $scope.trip_route.finish = address;
                 $scope.trip_route.finish_lat = position.k;
-                $scope.trip_route.finish_long = position.k;
+                $scope.trip_route.finish_long = position.A;
             }
         },100);
-    }
+    };
 };
