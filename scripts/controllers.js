@@ -772,6 +772,23 @@ controllers.controller('ManageTripsController',
             console.log("get trips with error " + error.description);
         });
 
+        $scope.deleteTrip = function(index,trip){
+                $scope.trips.splice(index,1);
+                $scope.isClientsOpen.splice(index,1);
+                $scope.isEdit.splice(index,1);
+                $scope.isSubmittedClient.splice(index,1);
+                $scope.isSubmittedRoute.splice(index,1);
+                $scope.isRoute.splice(index,1);
+            if(trip._id !== undefined){
+                var promise = $kinvey.DataStore.destroy('shipment', trip._id);
+                promise.then(function(response){
+                   console.log("delete trip with success");
+                },function(error){
+                    console.log("delete trip with error " + error.description);
+                });
+            }
+        };
+
         $scope.addNewTrip = function(){
             $scope.trips.unshift({});
             $scope.isEdit.unshift(true);
@@ -806,6 +823,7 @@ controllers.controller('ManageTripsController',
             }
             $scope.isEdit[index] = !$scope.isEdit[index];
             var savedTrip = JSON.parse( JSON.stringify( trip ) );
+            savedTrip.user_status = "new";
             var promise = $kinvey.DataStore.save("shipment",savedTrip,{relations: { route: 'route',
                 client: "clients" }});
             promise.then(
@@ -817,6 +835,7 @@ controllers.controller('ManageTripsController',
                 }
             );
         };
+
 
         $scope.selectClient = function (client,trip,index) {
             $scope.isClientsOpen[index] = !$scope.isClientsOpen[index];
