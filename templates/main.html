@@ -98,10 +98,10 @@ the License.
                             <span style="margin-left: 5px;" class="caret white-caret"></span>
                         </button>
                         <ul class="dropdown-menu" role="menu">
-                            <li ng-click="selectTrip(trip,shipment,$parent.$index)"
+                            <li class="route-li" ng-click="selectTrip(trip,shipment,$parent.$index)"
                                 ng-repeat="trip in trips[$index]">
-                                <a>Begin: {{trip.route.start}}</a>
-                                <a>End: {{trip.route.finish}}</a>
+                                <a class="route-address-a">Begin: {{trip.route.start}}</a>
+                                <a class="route-address-a">End: {{trip.route.finish}}</a>
 
                                 <div class="divider-line"></div>
                             </li>

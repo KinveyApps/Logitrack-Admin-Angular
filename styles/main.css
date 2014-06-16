@@ -120,6 +120,14 @@
     height: 100px;
 }
 
+.route-address-a:hover{
+    background-color: transparent !important;
+}
+
+.route-li:hover{
+   background-color:  #F5F5F5;
+}
+
 .new-btn-div{
     height: 80px;
     position: relative;
@@ -164,8 +172,9 @@
     font-size: 12px;
     -webkit-appearance: none;
     -webkit-border-radius: 0px;
-    background: url("../images/arrow.jpg") no-repeat right;
+    background: url("../images/arrow.png") no-repeat right;
     text-align: left;
+    background-size: 12px 10px;
 }
 
 .dropdown-select{
@@ -178,10 +187,9 @@
     width: 400px;
 }
 
-/*#trip-dropdown-btn:disabled{*/
-    /*background-color: gray;*/
-   /*opacity: 0.8;*/
-/*}*/
+#trip-dropdown-btn:disabled{
+    background-color: #F2F2F2;
+}
 
 .select-driver-div{
     width: 100px;
@@ -225,7 +233,7 @@
 }
 
 #trip-dropdown li:hover{
-    background-color: #F2F2F2;
+    background-color: #F1F1F1;
 }
 
 #trip-dropdown a:hover {
@@ -255,11 +263,6 @@
     background-color: rgb(229, 227, 223);
 }
 
-/*#route-map{*/
-    /*width: 700px;*/
-    /*height: 600px;*/
-/*}*/
-
 .dropdown-div,#dropdown-driver-div{
     margin-top: 10px;
     height: 25px
@@ -284,10 +287,6 @@
 
 .shipment-tr{
     height: 60px;
-}
-
-.shipment-tr:hover{
-    opacity: 0.8;
 }
 
 .shipment-tr:nth-child(odd){
