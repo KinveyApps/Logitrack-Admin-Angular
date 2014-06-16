@@ -1095,3 +1095,76 @@ var RouteCreateController = function ($scope, $kinvey, $location,$timeout,$modal
         },100);
     };
 };
+
+
+controllers.controller('ManageClientsController',
+    ['$scope', '$kinvey', function ($scope, $kinvey) {
+
+        $scope.clients = [];
+        $scope.isEdit = [];
+        $scope.isSubmittedFirstName = [];
+        $scope.isSubmittedLastName = [];
+        var promise = $kinvey.DataStore.find('clients', null);
+        promise.then(
+            function (response) {
+                $scope.clients = response;
+                console.log($scope.clients);
+            },
+            function (error) {
+                console.log("get clients error " + error.description);
+            }
+        );
+
+        $scope.addNewClient = function(){
+            $scope.clients.unshift({});
+            $scope.isEdit.unshift(true);
+            $scope.isSubmittedFirstName.unshift(false);
+            $scope.isSubmittedLastName.unshift(false);
+        };
+
+        $scope.editClient=function(index){
+            $scope.isEdit[index] = !$scope.isEdit[index];
+        };
+
+        $scope.saveClient=function(index,client){
+            var isFormInvalid=false;
+            if(!client.first_name){
+                isFormInvalid = true;
+                $scope.isSubmittedFirstName[index] = true;
+            }else{
+                $scope.isSubmittedFirstName[index] = false;
+            }
+            if(!client.last_name){
+                isFormInvalid=true;
+                $scope.isSubmittedLastName[index] = true;
+            }else{
+                $scope.isSubmittedLastName[index] = false;
+            }
+            if(isFormInvalid){
+                return;
+            }
+            $scope.isEdit[index] = !$scope.isEdit[index];
+            var promise = $kinvey.DataStore.save("clients",client);
+            promise.then(function(response){
+               console.log("save client whit success");
+                $scope.clients[index] = response;
+            },function(error){
+                console.log("save client whit error " + error.description);
+            });
+        };
+
+        $scope.deleteClient=function(index,client){
+                $scope.clients.splice(index,1);
+                $scope.isEdit.splice(index,1);
+                $scope.isSubmittedFirstName.splice(index,1);
+                $scope.isSubmittedLastName.splice(index,1);
+                if(client._id !== undefined){
+                    var promise = $kinvey.DataStore.destroy('clients', client._id);
+                    promise.then(function(response){
+                        console.log("delete client with success");
+                    },function(error){
+                        console.log("delete client with error " + error.description);
+                    });
+                }
+            };
+    }]);

@@ -344,15 +344,29 @@
     margin-top: 10px;
 }
 
-.trip-edit-btn-div{
+.trip-edit-btn-div,.client-edit-btn-div{
     width:230px;
     height: 30px;
     display: block;
-  margin-top:57px;
     float: right;
 }
 
+.trip-edit-btn-div{
+    margin-top:57px;
+}
+
+.client-edit-btn-div{
+    margin-top: 30px;
+}
+
 .trip-edit-btn-div div{
+    display: inline-block;
+    margin-right: 2px;
+    width: 70px;
+    float: right;
+}
+
+.client-edit-btn-div div{
     display: inline-block;
     margin-right: 2px;
     width: 70px;
@@ -371,4 +385,23 @@
 }
 .address-input-with-title{
     width: 500px;
+}
+
+.clients-div-a,.clients-div-b,.clients-div-c{
+    height: 70px;
+    display: inline-block;
+}
+
+.clients-div-a{
+    width: 35%;
+}
+.clients-div-b{
+    width: 35%;
+}
+.clients-div-c{
+    width: 25%;
+}
+
+.client-input{
+    margin-left: 3px;
 }
