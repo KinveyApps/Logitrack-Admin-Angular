@@ -424,17 +424,18 @@ the License.
                         <h6>Start:</h6>
                         <input class="sign-input address-input" ng-model="trip_route.start"/>
                     </div>
-                    <span class="input-with-title-span " ng-show="submittedStart">The start is required.</span>
+                    <span class="input-with-title-span " ng-show="submittedStart">{{start_error}}</span>
                     <div class="input-with-title address-input-with-title">
                         <h6>Finish:</h6>
                         <input class="sign-input address-input" ng-model="trip_route.finish"/>
                     </div>
-                    <span class="input-with-title-span" ng-show="submittedFinish">The finish is required.</span>
+                    <span class="input-with-title-span" ng-show="submittedFinish">{{finish_error}}</span>
                 </div>
             </div>
             <div class="dispatch-btn-group">
                 <button class="btn btn-primary dispatch-btn" ng-click="saveRoute()">Save</button>
                 <button class="btn btn-primary dispatch-btn" ng-click="cancelRoute()">Cancel</button>
+                <button class="btn btn-primary dispatch-btn" ng-click="findRoute()">Find address</button>
             </div>
         </script>
     </div>
