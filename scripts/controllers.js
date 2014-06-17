@@ -42,8 +42,22 @@ controllers.controller('LoginController',
             promise.then(
                 function (response) {
                     //Kinvey login finished with success
-                    $scope.submittedError = false;
-                    $location.path('/templates/main');
+                    if(response.status === "admin") {
+                        $scope.submittedError = false;
+                        $location.path('/templates/main');
+                    }else{
+                        $scope.submittedError = true;
+                        $scope.errorDescription = "You don't have required permissions";
+                        var promise = $kinvey.User.logout();
+                        promise.then(
+                            function(){
+                                console.log("Sign out with success");
+                            },
+                            function(error){
+                                console.log("Sign out error " + error.description);
+                            }
+                        );
+                    }
                 },
                 function (error) {
                     //Kinvey login finished with error
@@ -135,7 +149,8 @@ controllers.controller('SignUpController',
                 email: $scope.email,
                 first_name: $scope.first_name,
                 last_name: $scope.last_name,
-                mobile_number: $scope.telephone_number
+                mobile_number: $scope.telephone_number,
+                status:"admin"
             });
             console.log("signup promise");
             promise.then(
