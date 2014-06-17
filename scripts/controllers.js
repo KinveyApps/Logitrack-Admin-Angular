@@ -759,6 +759,7 @@ controllers.controller('ManageTripsController',
         $scope.isSubmittedClient =[];
         $scope.isSubmittedRoute =[];
         $scope.isRoute=[];
+        $scope.routeBtnText = [];
         var query = new $kinvey.Query();
         query.equalTo("user_status","new");
         getClients();
@@ -767,6 +768,7 @@ controllers.controller('ManageTripsController',
             for(var i in response){
                 $scope.trips.push(response[i]);
                 $scope.isRoute.push(true);
+                $scope.routeBtnText.push("Edit route");
             }
         },function(error){
             console.log("get trips with error " + error.description);
@@ -779,6 +781,7 @@ controllers.controller('ManageTripsController',
                 $scope.isSubmittedClient.splice(index,1);
                 $scope.isSubmittedRoute.splice(index,1);
                 $scope.isRoute.splice(index,1);
+                $scope.routeBtnText.splice(index,1);
             if(trip._id !== undefined){
                 var promise = $kinvey.DataStore.destroy('shipment', trip._id);
                 promise.then(function(response){
@@ -796,6 +799,7 @@ controllers.controller('ManageTripsController',
             $scope.isSubmittedClient.unshift(false);
             $scope.isSubmittedRoute.unshift(false);
             $scope.isRoute.unshift(false);
+            $scope.routeBtnText.unshift("Select route");
             getClients();
         };
 
@@ -872,6 +876,7 @@ controllers.controller('ManageTripsController',
                 if(route!=undefined){
                     $scope.isRoute[index] = true;
                     $scope.isSubmittedRoute[index] = false;
+                    $scope.routeBtnText[index]="Edit route";
                 }
                 console.log("route " + JSON.stringify(trip.route));
             });

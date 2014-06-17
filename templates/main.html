@@ -287,7 +287,7 @@ the License.
         </div>
     </div>
     <div class="dispatch-btn-group">
-        <button class="btn btn-primary dispatch-btn" ng-click="acceptTrip()">Ok</button>
+        <button class="btn btn-primary dispatch-btn" ng-click="acceptTrip()">OK</button>
     </div>
 </script>
 </div>
@@ -340,7 +340,7 @@ the License.
                 </tabset>
             </div>
             <div class="dispatch-btn-group">
-                <button class="btn btn-primary dispatch-btn" ng-click="closeTripDetails()">Ok</button>
+                <button class="btn btn-primary dispatch-btn" ng-click="closeTripDetails()">OK</button>
             </div>
         </script>
     </div>
@@ -385,7 +385,7 @@ the License.
 
                         <p class="p-info" ng-show="isRoute[$index]">End: {{trip.route.finish}}</p>
                         <button style="display: inline-block" id="select-trip-btn" class="btn btn-primary dispatch-btn" ng-click="selectRoute(trip,$index)"
-                                ng-show="isEdit[$index]">Select route
+                                ng-show="isEdit[$index]">{{routeBtnText[$index]}}
                         </button>
                         <span class="input-with-title-span"
                               ng-show="isEdit[$index]&&isSubmittedRoute[$index]">A trip is required.</span>
