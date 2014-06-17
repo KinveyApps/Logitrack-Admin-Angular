@@ -1,3 +1,7 @@
+#main-div{
+    background-color: #F6F6F6;
+}
+
 .header {
     background-color: #5893CC;
     height: 80px;
@@ -13,7 +17,6 @@
     float: left;
     cursor: default;
 }
-
 
 .sign-content {
     text-align: center;
