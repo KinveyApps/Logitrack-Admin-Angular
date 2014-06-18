@@ -1264,14 +1264,20 @@ controllers.controller('ManageClientsController',
     ['$scope', '$kinvey', function ($scope, $kinvey) {
 
         $scope.clients = [];
+        $scope.archived_clients = [];
         $scope.isEdit = [];
         $scope.isSubmittedFirstName = [];
         $scope.isSubmittedLastName = [];
         var promise = $kinvey.DataStore.find('clients', null);
         promise.then(
             function (response) {
-                $scope.clients = response;
-                console.log($scope.clients);
+                for(var i in response){
+                    if(response[i].isInTrash){
+                        $scope.archived_clients.push(response[i]);
+                    }else{
+                        $scope.clients.push(response[i]);
+                    }
+                }
             },
             function (error) {
                 console.log("get clients error " + error.description);
@@ -1316,11 +1322,19 @@ controllers.controller('ManageClientsController',
             });
         };
 
-        $scope.deleteClient = function (index, client) {
+        $scope.archiveClient = function (index, client) {
             $scope.clients.splice(index, 1);
             $scope.isEdit.splice(index, 1);
             $scope.isSubmittedFirstName.splice(index, 1);
             $scope.isSubmittedLastName.splice(index, 1);
+
+            $scope.archived_clients.push(client);
+            client.isInTrash = true;
+            saveClientOnKinvey(JSON.parse(JSON.stringify(client)));
+        };
+
+        $scope.deleteClient = function (index, client) {
+            $scope.archived_clients.splice(index, 1);
             if (client._id !== undefined) {
                 var promise = $kinvey.DataStore.destroy('clients', client._id);
                 promise.then(function (response) {
@@ -1330,6 +1344,44 @@ controllers.controller('ManageClientsController',
                 });
             }
         };
+
+        $scope.restoreClient = function (index, client) {
+            $scope.archived_clients.splice(index, 1);
+            $scope.clients.push(client);
+            $scope.isEdit.push(false);
+            $scope.isSubmittedFirstName.push(false);
+            $scope.isSubmittedLastName.push(false);
+
+            client.isInTrash = false;
+            saveClientOnKinvey(JSON.parse(JSON.stringify(client)));
+        };
+
+        $scope.restoreAllClients = function(){
+            var length = $scope.archived_clients.length;
+            var i = 0;
+            while(i<length){
+                $scope.restoreClient(0,$scope.archived_clients[0]);
+                i++;
+            }
+        };
+
+        $scope.deleteAllClients = function(){
+            var length = $scope.archived_clients.length;
+            var i = 0;
+            while(i<length){
+                $scope.deleteClient(0,$scope.archived_clients[0]);
+                i++;
+            }
+        };
+
+        var saveClientOnKinvey = function(client){
+            var promise = $kinvey.DataStore.save("clients", client);
+            promise.then(function (response) {
+                console.log("save client whit success");
+            }, function (error) {
+                console.log("save client whit error " + error.description);
+            });
+        }
     }]);
 
 

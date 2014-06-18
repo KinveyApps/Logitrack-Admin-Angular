@@ -629,7 +629,41 @@ the License.
                         <div class="btn btn-primary dispatch-btn" ng-show="isEdit[$index]"
                              ng-click="saveClient($index,client)">Save
                         </div>
-                        <div class="btn btn-primary dispatch-btn" ng-show="isEdit[$index]"
+                        <div class="btn btn-primary dispatch-btn restore-btn" ng-show="!isEdit[$index]"
+                             ng-click="archiveClient($index,client)">Archive
+                        </div>
+                    </div>
+                </div>
+            </li>
+        </ul>
+        <div class="new-btn-div archive-div">
+            <div class="btn btn-primary dispatch-btn new-btn" ng-click="deleteAllClients()">Delete All</div>
+            <div class="btn btn-primary dispatch-btn new-btn" ng-click="restoreAllClients()">Restore All</div>
+            <p class="box-title" ng-click="isArchivedClientsCollapsed = !isArchivedClientsCollapsed">Archived Trips</p>
+        </div>
+        <ul collapse="isArchivedClientsCollapsed" ng-repeat="client in archived_clients">
+            <li class="list-item">
+                <div class="clients-div-a">
+                    <div class="trips-inner-div">
+                        <p class="p-title">Client First Name</p>
+
+                        <p class="p-info">{{client.first_name}}</p>
+                    </div>
+                </div>
+
+                <div class="clients-div-b">
+                    <div class="trips-inner-div">
+                        <p class="p-title">Client Last Name</p>
+                        <p class="p-info">{{client.last_name}}</p>
+                    </div>
+
+                </div>
+                <div class="clients-div-c">
+                    <div class="client-edit-btn-div">
+                        <div class="btn btn-primary dispatch-btn restore-btn"
+                             ng-click="restoreClient($index,client)">Restore
+                        </div>
+                        <div class="btn btn-primary dispatch-btn"
                              ng-click="deleteClient($index,client)">Delete
                         </div>
                     </div>
