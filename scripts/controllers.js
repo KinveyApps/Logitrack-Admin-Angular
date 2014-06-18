@@ -775,10 +775,8 @@ controllers.controller('ManageTripsController',
         $scope.isSubmittedRoute =[];
         $scope.isRoute=[];
         $scope.routeBtnText = [];
-        var query = new $kinvey.Query();
-        query.equalTo("user_status","new");
         getClients();
-        var promise = $kinvey.DataStore.find('shipment', query,{relations:{route:"route",client:"clients"}});
+        var promise = $kinvey.DataStore.find('shipment', null,{relations:{route:"route",client:"clients"}});
         promise.then(function(response){
             for(var i in response){
                 $scope.trips.push(response[i]);
@@ -872,6 +870,29 @@ controllers.controller('ManageTripsController',
                     }
                 }
             });
+        };
+
+        $scope.duplicateTrip = function(index){
+            var duplicatedTrip = JSON.parse( JSON.stringify( $scope.trips[index] ) );
+            delete duplicatedTrip._id;
+            duplicatedTrip.user_status = "new";
+            var promise = $kinvey.DataStore.save("shipment",duplicatedTrip,{relations: { route: 'route',
+                client: "clients" }});
+            promise.then(
+                function(responce){
+                    $scope.trips.splice(index,0,responce);
+                    $scope.isEdit.splice(index,0,false);
+                    $scope.isClientsOpen.splice(index,0,false);
+                    $scope.isSubmittedClient.splice(index,0,false);
+                    $scope.isSubmittedRoute.splice(index,0,false);
+                    $scope.isRoute.splice(index,0,true);
+                    $scope.routeBtnText.splice(index,0,"Select route");
+                    getClients();
+                },
+                function(error){
+                    console.log("update trip error " + error.description);
+                }
+            );
         };
 
         $scope.selectRoute = function(trip,index){

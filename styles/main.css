@@ -344,7 +344,7 @@
 }
 
 .trip-edit-btn-div,.client-edit-btn-div{
-    width:230px;
+    width:260px;
     height: 30px;
     display: block;
     float: right;
@@ -403,4 +403,8 @@
 
 .client-input{
     margin-left: 3px;
+}
+
+#duplicate-btn{
+    width: 90px
 }
