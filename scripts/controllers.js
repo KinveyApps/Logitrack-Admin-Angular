@@ -1337,13 +1337,20 @@ controllers.controller('ManageShipmentsController',
     ['$scope', '$kinvey', function ($scope, $kinvey) {
 
         $scope.shipments = [];
+        $scope.archived_shipments = [];
         $scope.isEdit = [];
         $scope.isSubmittedName = [];
         $scope.isSubmittedDetails = [];
         var promise = $kinvey.DataStore.find('shipment-info', null);
         promise.then(
             function (response) {
-                $scope.shipments = response;
+                for(var i in response){
+                    if(response[i].isInTrash){
+                        $scope.archived_shipments.push(response[i]);
+                    }else{
+                        $scope.shipments.push(response[i]);
+                    }
+                }
             },
             function (error) {
                 console.log("get shipment info error " + error.description);
@@ -1388,11 +1395,19 @@ controllers.controller('ManageShipmentsController',
             });
         };
 
-        $scope.deleteShipment = function (index, shipment) {
+        $scope.archiveShipment = function (index, shipment) {
             $scope.shipments.splice(index, 1);
             $scope.isEdit.splice(index, 1);
             $scope.isSubmittedName.splice(index, 1);
             $scope.isSubmittedDetails.splice(index, 1);
+
+            $scope.archived_shipments.push(shipment);
+            shipment.isInTrash = true;
+            saveShipmentOnKinvey(JSON.parse(JSON.stringify(shipment)));
+        };
+
+        $scope.deleteShipment = function (index, shipment) {
+            $scope.archived_shipments.splice(index, 1);
             if (shipment._id !== undefined) {
                 var promise = $kinvey.DataStore.destroy('shipment-info', shipment._id);
                 promise.then(function (response) {
@@ -1402,4 +1417,42 @@ controllers.controller('ManageShipmentsController',
                 });
             }
         };
+
+        $scope.restoreShipment = function (index, shipment) {
+            $scope.archived_shipments.splice(index, 1);
+            $scope.shipments.push(shipment);
+            $scope.isEdit.push(false);
+            $scope.isSubmittedName.push(false);
+            $scope.isSubmittedDetails.push(false);
+
+            shipment.isInTrash = false;
+            saveShipmentOnKinvey(JSON.parse(JSON.stringify(shipment)));
+        };
+
+        $scope.restoreAllShipments = function(){
+            var length = $scope.archived_shipments.length;
+            var i = 0;
+            while(i<length){
+                $scope.restoreShipment(0,$scope.archived_shipments[0]);
+                i++;
+            }
+        };
+
+        $scope.deleteAllShipments = function(){
+            var length = $scope.archived_shipments.length;
+            var i = 0;
+            while(i<length){
+                $scope.deleteShipment(0,$scope.archived_shipments[0]);
+                i++;
+            }
+        };
+
+        var saveShipmentOnKinvey = function(shipment){
+            var promise = $kinvey.DataStore.save("shipment-info", shipment);
+            promise.then(function (response) {
+                console.log("save shipment whit success");
+            }, function (error) {
+                console.log("save shipment whit error " + error.description);
+            });
+        }
     }]);

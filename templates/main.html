@@ -447,7 +447,7 @@ the License.
         </ul>
 
 
-        <div id="archive-div" class="new-btn-div">
+        <div class="new-btn-div archive-div">
             <div class="btn btn-primary dispatch-btn new-btn" ng-click="deleteAllTrips()">Delete All</div>
             <div class="btn btn-primary dispatch-btn new-btn" ng-click="restoreAllTrips()">Restore All</div>
             <p class="box-title" ng-click="isArchivedTripsCollapsed = !isArchivedTripsCollapsed">Archived Trips</p>
@@ -549,8 +549,41 @@ the License.
                         <div class="btn btn-primary dispatch-btn" ng-show="isEdit[$index]"
                              ng-click="saveShipment($index,shipment)">Save
                         </div>
-                        <div class="btn btn-primary dispatch-btn" ng-show="isEdit[$index]"
+                        <div class="btn btn-primary dispatch-btn restore-btn" ng-show="!isEdit[$index]"
+                             ng-click="archiveShipment($index,shipment)">Archive
+                        </div>
+                    </div>
+                </div>
+            </li>
+        </ul>
+        <div class="new-btn-div archive-div">
+            <div class="btn btn-primary dispatch-btn new-btn" ng-click="deleteAllShipments()">Delete All</div>
+            <div class="btn btn-primary dispatch-btn new-btn" ng-click="restoreAllShipments()">Restore All</div>
+            <p class="box-title" ng-click="isArchivedShipmentsCollapsed = !isArchivedShipmentsCollapsed">Archived Trips</p>
+        </div>
+        <ul collapse="isArchivedShipmentsCollapsed" ng-repeat="shipment in archived_shipments">
+            <li class="list-item">
+                <div class="shipments-div-a">
+                    <div class="trips-inner-div">
+                        <p class="p-title">Shipment Name</p>
+
+                        <p class="p-info">{{shipment.name}}</p>
+                    </div>
+                </div>
+                <div class="shipments-div-b">
+                    <div class="trips-inner-div">
+                        <p class="p-title">Shipment Details</p>
+
+                        <p class="p-info p-shipment-details-manage">{{shipment.details}}</p>
+                    </div>
+                </div>
+                <div class="shipments-div-c">
+                    <div class="client-edit-btn-div">
+                        <div class="btn btn-primary dispatch-btn"
                              ng-click="deleteShipment($index,shipment)">Delete
+                        </div>
+                        <div class="btn btn-primary dispatch-btn restore-btn"
+                             ng-click="restoreShipment($index,shipment)">Restore
                         </div>
                     </div>
                 </div>
