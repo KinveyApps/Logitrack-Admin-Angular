@@ -394,17 +394,20 @@ the License.
                 </div>
                 <div class="trips-div-c">
                     <div class="trip-edit-btn-div">
-                        <div class="btn btn-primary dispatch-btn" ng-show="!isEdit[$index]" ng-click="editTrip($index)">
+                        <div class="btn btn-primary dispatch-btn" ng-show="!isEdit[$index]&&isEditPermissions[$index]" ng-click="editTrip($index)">
                             Edit
                         </div>
                         <div id="duplicate-btn" class="btn btn-primary dispatch-btn" ng-show="!isEdit[$index]" ng-click="duplicateTrip($index)">
                             Duplicate
                         </div>
+                        <div class="btn btn-primary dispatch-btn" ng-show="isEdit[$index]&&!isRoute[$index]"
+                             ng-click="cancelTrip($index,trip)">Cancel
+                        </div>
                         <div class="btn btn-primary dispatch-btn" ng-show="isEdit[$index]"
                              ng-click="saveTrip($index,trip)">Save
                         </div>
-                        <div class="btn btn-primary dispatch-btn" ng-show="isEdit[$index]"
-                             ng-click="deleteTrip($index,trip)">Delete
+                        <div class="btn btn-primary dispatch-btn restore-btn" ng-show="!isEdit[$index]&&isEditPermissions[$index]"
+                             ng-click="archiveTrip($index,trip)">Archive
                         </div>
                         <div class="btn btn-primary dispatch-btn" ng-show="!isEdit[$index]"
                              ng-click="viewTrip(trip)">
@@ -414,6 +417,45 @@ the License.
                 </div>
             </li>
         </ul>
+
+
+        <div id="archive-div" class="new-btn-div">
+            <div class="btn btn-primary dispatch-btn new-btn" ng-click="deleteAllTrips()">Delete All</div>
+            <div class="btn btn-primary dispatch-btn new-btn" ng-click="restoreAllTrips()">Restore All</div>
+            <p class="box-title" ng-click="isArchivedTripsCollapsed = !isArchivedTripsCollapsed">Archived Trips</p>
+        </div>
+        <ul collapse="isArchivedTripsCollapsed" ng-repeat="trip in archived_trips">
+            <li class="list-item">
+                <div class="trips-div-a">
+                    <div class="trips-inner-div">
+                        <p class="p-title">Client</p>
+                        <p class="p-info">{{trip.client.first_name + " " +
+                            trip.client.last_name}}</p>
+                    </div>
+                </div>
+
+                <div class="trips-div-b">
+                    <div class="trips-inner-div">
+                        <p class="p-title">Trip</p>
+
+                        <p class="p-info">Begin: {{trip.route.start}}</p>
+
+                        <p class="p-info">End: {{trip.route.finish}}</p>
+
+                    </div>
+                </div>
+                <div class="trips-div-c">
+                    <div class="trip-edit-btn-div">
+                        <div class="btn btn-primary dispatch-btn restore-btn" ng-click="restoreTrip($index,trip)">Restore
+                        </div>
+                        <div class="btn btn-primary dispatch-btn" ng-click="deleteTrip($index,trip)">Delete
+                        </div>
+                    </div>
+                </div>
+            </li>
+        </ul>
+
+
 
         <script type="text/ng-template" id="route_create_map.html">
             <div class="modal-header">

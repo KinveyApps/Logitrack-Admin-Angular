@@ -16,9 +16,9 @@ var controllers = angular.module('controllers', ['ui.bootstrap']);
 controllers.controller('LoginController',
     ['$scope', '$kinvey', "$location", function ($scope, $kinvey, $location) {
         //Kinvey login starts
-        $scope.login = function(){
+        $scope.login = function () {
             var isFormInvalid = false;
-            $scope.submittedError=false;
+            $scope.submittedError = false;
             //check is form valid
             if ($scope.loginForm.username.$error.required) {
                 $scope.submittedUsername = true;
@@ -42,18 +42,18 @@ controllers.controller('LoginController',
             promise.then(
                 function (response) {
                     //Kinvey login finished with success
-                    if(response.status === "admin") {
+                    if (response.status === "admin") {
                         $scope.submittedError = false;
                         $location.path('/templates/main');
-                    }else{
+                    } else {
                         $scope.submittedError = true;
                         $scope.errorDescription = "You don't have required permissions";
                         var promise = $kinvey.User.logout();
                         promise.then(
-                            function(){
+                            function () {
                                 console.log("Sign out with success");
                             },
-                            function(error){
+                            function (error) {
                                 console.log("Sign out error " + error.description);
                             }
                         );
@@ -77,12 +77,12 @@ controllers.controller('LoginController',
 
 controllers.controller('PasswordResetController',
     ['$scope', '$kinvey', "$location", function ($scope, $kinvey, $location) {
-        $scope.resetPassword = function(){
+        $scope.resetPassword = function () {
             console.log("click reset");
             if ($scope.resetPasswordForm.email.$error.email || $scope.resetPasswordForm.email.$error.required) {
                 $scope.submittedEmail = true;
                 return;
-            }else{
+            } else {
                 $scope.submittedEmail = false;
             }
             //Kinvey reset password starts
@@ -99,12 +99,12 @@ controllers.controller('PasswordResetController',
 controllers.controller('SignUpController',
     ['$scope', '$kinvey', "$location", function ($scope, $kinvey, $location) {
         //Kinvey login starts
-        $scope.signUp = function(){
+        $scope.signUp = function () {
             var isFormInvalid = false;
-            $scope.submittedError=false;
+            $scope.submittedError = false;
             //check is form valid
             if ($scope.signUpForm.first_name.$error.required) {
-                $scope.submittedFirstName= true;
+                $scope.submittedFirstName = true;
                 isFormInvalid = true;
             } else {
                 $scope.submittedFirstName = false;
@@ -137,7 +137,7 @@ controllers.controller('SignUpController',
                 $scope.submittedEmail = true;
                 isFormInvalid = true;
                 return;
-            }else{
+            } else {
                 $scope.submittedEmail = false;
             }
             if (isFormInvalid) {
@@ -150,7 +150,7 @@ controllers.controller('SignUpController',
                 first_name: $scope.first_name,
                 last_name: $scope.last_name,
                 mobile_number: $scope.telephone_number,
-                status:"admin"
+                status: "admin"
             });
             console.log("signup promise");
             promise.then(
@@ -160,7 +160,7 @@ controllers.controller('SignUpController',
                     console.log("signup success");
                     $location.path("/templates/main");
                 },
-                function(error) {
+                function (error) {
                     //Kinvey signup finished with error
                     $scope.submittedError = true;
                     $scope.errorDescription = error.description;
@@ -171,10 +171,10 @@ controllers.controller('SignUpController',
     }]);
 
 controllers.controller('MainController',
-    ['$scope', '$kinvey', "$location","$modal", function ($scope, $kinvey, $location,$modal) {
-        $scope.selectedTab= 0;
+    ['$scope', '$kinvey', "$location", "$modal", function ($scope, $kinvey, $location, $modal) {
+        $scope.selectedTab = 0;
         $scope.status = {};
-        status.isopen=false;
+        status.isopen = false;
         $scope.menu_profile_items = [
             {
                 id: 0, title: "Change name or bio"
@@ -187,22 +187,22 @@ controllers.controller('MainController',
             }
         ];
 
-        $scope.signOut = function(){
+        $scope.signOut = function () {
             var user = $kinvey.getActiveUser();
-            if(null !== user) {
+            if (null !== user) {
                 var promise = $kinvey.User.logout();
                 promise.then(
-                    function(){
+                    function () {
                         $location.path("templates/login");
                     },
-                    function(error){
+                    function (error) {
                         console.log("Sign out error " + error.description);
                     }
                 );
             }
         };
 
-        $scope.changeProfile = function(item){
+        $scope.changeProfile = function (item) {
             var modalInstance = $modal.open({
                 templateUrl: 'profile_edit.html',
                 controller: ProfileEditController,
@@ -215,42 +215,42 @@ controllers.controller('MainController',
             });
         };
 
-        $scope.selectManageItem = function($event,index){
-            $scope.selectedManageItem=index;
-            $scope.selectedTab=2;
+        $scope.selectManageItem = function ($event, index) {
+            $scope.selectedManageItem = index;
+            $scope.selectedTab = 2;
             $event.preventDefault();
             $event.stopPropagation();
             $scope.status.isopen = !$scope.status.isopen;
         }
     }]);
 
-var ProfileEditController = function ($scope, $modalInstance, $kinvey,item) {
+var ProfileEditController = function ($scope, $modalInstance, $kinvey, item) {
 
     var activeUser = $kinvey.getActiveUser();
     $scope.bioForm = {};
-    $scope.emailForm={};
+    $scope.emailForm = {};
     $scope.passwordForm = {};
-   $scope.user = {};
-    switch (item.id){
+    $scope.user = {};
+    switch (item.id) {
         case 0:
             $scope.isBioFormShow = true;
-            $scope.edit_title="Name";
+            $scope.edit_title = "Name";
             $scope.user.first_name = activeUser.first_name;
             $scope.user.last_name = activeUser.last_name;
             $scope.user.username = activeUser.username;
             break;
         case 1:
             $scope.isEmailFormShow = true;
-            $scope.edit_title="Email";
+            $scope.edit_title = "Email";
             $scope.user.email = activeUser.email;
             break;
         case 2:
             $scope.isPasswordFormShow = true;
-            $scope.edit_title="Password";
+            $scope.edit_title = "Password";
             break;
     }
     $scope.save = function () {
-        switch (item.id){
+        switch (item.id) {
             case 0:
                 console.log("first name " + $scope.user.last_name);
                 var isFormInvalid = false;
@@ -281,10 +281,10 @@ var ProfileEditController = function ($scope, $modalInstance, $kinvey,item) {
                 console.log("check user name " + $scope.user.username);
                 var promise = $kinvey.User.update(activeUser);
                 promise.then(
-                    function(){
+                    function () {
                         $modalInstance.close();
                     },
-                    function(error){
+                    function (error) {
                         console.log("error update user " + error.description);
                     }
                 );
@@ -295,7 +295,7 @@ var ProfileEditController = function ($scope, $modalInstance, $kinvey,item) {
                     $scope.submittedEmail = true;
                     isFormInvalid = true;
                     return;
-                }else{
+                } else {
                     $scope.submittedEmail = false;
                 }
                 if (isFormInvalid) {
@@ -304,10 +304,10 @@ var ProfileEditController = function ($scope, $modalInstance, $kinvey,item) {
                 activeUser.email = $scope.user.email;
                 var promise = $kinvey.User.update(activeUser);
                 promise.then(
-                    function(){
+                    function () {
                         $modalInstance.close();
                     },
-                    function(error){
+                    function (error) {
                         console.log("error update user " + error.description);
                     }
                 );
@@ -328,7 +328,7 @@ var ProfileEditController = function ($scope, $modalInstance, $kinvey,item) {
                 }
                 if (isFormInvalid) {
                     return;
-                }else if($scope.user.password !== $scope.user.reconfirm_password){
+                } else if ($scope.user.password !== $scope.user.reconfirm_password) {
                     $scope.matchedPasswords = true;
                     return;
                 }
@@ -336,10 +336,10 @@ var ProfileEditController = function ($scope, $modalInstance, $kinvey,item) {
                 activeUser.password = $scope.user.password;
                 var promise = $kinvey.User.update(activeUser);
                 promise.then(
-                    function(){
+                    function () {
                         $modalInstance.close();
                     },
-                    function(error){
+                    function (error) {
                         console.log("error update user " + error.description);
                     }
                 );
@@ -355,19 +355,19 @@ var ProfileEditController = function ($scope, $modalInstance, $kinvey,item) {
 
 
 controllers.controller('DispatchController',
-    ['$scope', '$kinvey', "$location","$modal",function ($scope, $kinvey, $location,$modal) {
-        $scope.initPage = function(){
-            $scope.isEdit=[];
-            $scope.isClientsOpen=[];
-            $scope.isDriversOpen=[];
-            $scope.isTripsOpen=[];
+    ['$scope', '$kinvey', "$location", "$modal", function ($scope, $kinvey, $location, $modal) {
+        $scope.initPage = function () {
+            $scope.isEdit = [];
+            $scope.isClientsOpen = [];
+            $scope.isDriversOpen = [];
+            $scope.isTripsOpen = [];
             $scope.tripDropdownDisabled = [];
-            $scope.isSubmittedClient =[];
-            $scope.isSubmittedRoute =[];
-            $scope.isSubmittedDriver =[];
-            var promise = $kinvey.DataStore.find('shipment', null, {relations: { route:"route",
-                client:"clients",
-                driver:"user"}});
+            $scope.isSubmittedClient = [];
+            $scope.isSubmittedRoute = [];
+            $scope.isSubmittedDriver = [];
+            var promise = $kinvey.DataStore.find('shipment', null, {relations: { route: "route",
+                client: "clients",
+                driver: "user"}});
             $scope.trips = [];
             promise.then(
                 function (response) {
@@ -375,7 +375,7 @@ controllers.controller('DispatchController',
                     $scope.open_shipments = [];
                     $scope.progress_shipments = [];
                     for (var i in response) {
-                        switch (response[i].user_status){
+                        switch (response[i].user_status) {
                             case "open":
                                 $scope.open_shipments.push(response[i]);
                                 setFormatDateTime(response[i]);
@@ -401,12 +401,12 @@ controllers.controller('DispatchController',
                     console.log("get drivers success");
                     $scope.drivers = response;
                 },
-                function(error){
+                function (error) {
                     console.log("get drivers error " + error.description);
                 });
         };
 
-        $scope.selectDriver = function(driver,index){
+        $scope.selectDriver = function (driver, index) {
             $scope.isDriversOpen[index] = !$scope.isDriversOpen[index];
             console.log(JSON.stringify(driver));
             $scope.new_shipments[index].driver = driver;
@@ -414,7 +414,7 @@ controllers.controller('DispatchController',
 
         $scope.createNewDispatch = function () {
             getClients();
-            $scope.new_shipments.unshift({user_status:"new"});
+            $scope.new_shipments.unshift({user_status: "new"});
             $scope.isEdit.unshift(true);
             $scope.isClientsOpen.unshift(false);
             $scope.isDriversOpen.unshift(false);
@@ -425,15 +425,15 @@ controllers.controller('DispatchController',
             $scope.selected_trip = "Select trip";
         };
 
-        $scope.selectClient = function (client,shipment,index) {
+        $scope.selectClient = function (client, shipment, index) {
             console.log("selected index " + index);
             $scope.isClientsOpen[index] = !$scope.isClientsOpen[index];
             $scope.selected_client = client.first_name + " " + client.last_name;
             $scope.tripDropdownDisabled[index] = true;
             shipment.client = client;
             var query = new $kinvey.Query();
-            query.equalTo('client._id',client._id);
-            query.equalTo('user_status',"new");
+            query.equalTo('client._id', client._id);
+            query.equalTo('user_status', "new");
             var promise = $kinvey.DataStore.find('shipment', query, {relations: { route: 'route'}});
             promise.then(
                 function (response) {
@@ -441,7 +441,7 @@ controllers.controller('DispatchController',
                     $scope.trips = [];
                     $scope.trips[index] = response;
                     console.log("trips " + JSON.stringify($scope.trips));
-                    $scope.tripDropdownDisabled[index]= false;
+                    $scope.tripDropdownDisabled[index] = false;
                 },
                 function (error) {
                     console.log("Error get trips " + error.description);
@@ -449,96 +449,96 @@ controllers.controller('DispatchController',
             );
         };
 
-        $scope.selectTrip = function(trip,shipment,index){
+        $scope.selectTrip = function (trip, shipment, index) {
             $scope.isTripsOpen[index] = !$scope.isTripsOpen[index];
             shipment.route = trip.route;
         };
 
-        $scope.editDispatch = function(index){
-            $scope.isEdit[index]=true;
+        $scope.editDispatch = function (index) {
+            $scope.isEdit[index] = true;
         };
 
-        $scope.saveDispatch = function(index,shipment){
+        $scope.saveDispatch = function (index, shipment) {
             var isFormInvalid = false;
-            if(!shipment.driver){
+            if (!shipment.driver) {
                 $scope.isSubmittedDriver[index] = true;
                 isFormInvalid = true;
-            }else{
+            } else {
                 $scope.isSubmittedDriver[index] = false;
             }
-            if(!shipment.client){
+            if (!shipment.client) {
                 $scope.isSubmittedClient[index] = true;
                 isFormInvalid = true;
-            }else{
+            } else {
                 $scope.isSubmittedClient[index] = false;
             }
-            if(!shipment.route){
+            if (!shipment.route) {
                 $scope.isSubmittedRoute[index] = true;
                 isFormInvalid = true;
-            }else{
+            } else {
                 $scope.isSubmittedRoute[index] = false;
             }
-            if(isFormInvalid){
+            if (isFormInvalid) {
                 return;
             }
-            $scope.isEdit[index]=false;
+            $scope.isEdit[index] = false;
         };
 
-        $scope.cancelDispatch = function(index){
+        $scope.cancelDispatch = function (index) {
             console.log("is edit " + $scope.isEdit);
-            $scope.new_shipments.splice(index,1);
-            $scope.isClientsOpen.splice(index,1);
-            $scope.isDriversOpen.splice(index,1);
-            $scope.isTripsOpen.splice(index,1);
-            $scope.tripDropdownDisabled.splice(index,1);
-            $scope.trips.splice(index,1);
-            $scope.isEdit.splice(index,1);
+            $scope.new_shipments.splice(index, 1);
+            $scope.isClientsOpen.splice(index, 1);
+            $scope.isDriversOpen.splice(index, 1);
+            $scope.isTripsOpen.splice(index, 1);
+            $scope.tripDropdownDisabled.splice(index, 1);
+            $scope.trips.splice(index, 1);
+            $scope.isEdit.splice(index, 1);
             console.log("is edit " + $scope.isEdit);
         };
 
-        $scope.startDispatch = function(index,shipment){
-            $scope.isEdit[index]=false;
+        $scope.startDispatch = function (index, shipment) {
+            $scope.isEdit[index] = false;
             delete shipment.date;
             delete shipment.request_time;
             shipment.user_status = "open";
-            var promise = $kinvey.DataStore.save("shipment",shipment,{relations: { route: 'route',
+            var promise = $kinvey.DataStore.save("shipment", shipment, {relations: { route: 'route',
                 client: "clients",
-                driver:"user"}});
+                driver: "user"}});
             promise.then(
-                function(responce){
+                function (responce) {
                     console.log("update shipment success " + JSON.stringify(responce));
-                    $scope.new_shipments.splice(index,1);
+                    $scope.new_shipments.splice(index, 1);
                     $scope.open_shipments.unshift(responce);
                     setFormatDateTime(responce);
                 },
-                function(error){
+                function (error) {
                     console.log("update shipment error " + error.description);
                 }
             );
         };
 
-        $scope.viewRoute = function(shipment){
-                var modalInstance = $modal.open({
-                    templateUrl: 'map.html',
-                    controller: MapController,
-                    size: "lg",
-                    resolve: {
-                        currentTrip: function () {
-                            return shipment;
-                        }
+        $scope.viewRoute = function (shipment) {
+            var modalInstance = $modal.open({
+                templateUrl: 'map.html',
+                controller: MapController,
+                size: "lg",
+                resolve: {
+                    currentTrip: function () {
+                        return shipment;
                     }
-                });
+                }
+            });
         };
 
-        var getClients=function(){
+        var getClients = function () {
             $scope.clients = [];
             var query = new $kinvey.Query();
             query.equalTo('user_status', 'new');
-            var promise = $kinvey.DataStore.find('shipment', query,{relations:{client:"clients"}});
+            var promise = $kinvey.DataStore.find('shipment', query, {relations: {client: "clients"}});
             promise.then(
                 function (response) {
-                    for(var i in response) {
-                        if(!isClientExistInArray(response[i].client)) {
+                    for (var i in response) {
+                        if (!isClientExistInArray(response[i].client)) {
                             $scope.clients.push(response[i].client);
                         }
                     }
@@ -549,27 +549,27 @@ controllers.controller('DispatchController',
             );
         };
 
-        var isClientExistInArray=function(client){
-            for(var i in $scope.clients){
-                if($scope.clients[i]._id == client._id){
+        var isClientExistInArray = function (client) {
+            for (var i in $scope.clients) {
+                if ($scope.clients[i]._id == client._id) {
                     return true;
                 }
             }
             return false;
         };
 
-        var setFormatDateTime=function(shipment){
+        var setFormatDateTime = function (shipment) {
             var monthNames = [ "January", "February", "March", "April", "May", "June",
                 "July", "August", "September", "October", "November", "December" ];
             var milis = Date.parse(shipment._kmd.lmt);
             var date = new Date(milis);
-            shipment.date = monthNames[date.getMonth()] + " " + date.getDate() +", " + date.getFullYear();
+            shipment.date = monthNames[date.getMonth()] + " " + date.getDate() + ", " + date.getFullYear();
             var hours = date.getHours();
             var minutes = date.getMinutes();
             var ampm = hours >= 12 ? 'pm' : 'am';
             hours = hours % 12;
             hours = hours ? hours : 12; // the hour '0' should be '12'
-            minutes = minutes < 10 ? '0'+minutes : minutes;
+            minutes = minutes < 10 ? '0' + minutes : minutes;
             shipment.request_time = hours + ':' + minutes + ' ' + ampm;
         };
     }]);
@@ -578,43 +578,43 @@ controllers.controller('LogisticsController',
     ['$scope', '$kinvey', "$modal", function ($scope, $kinvey, $modal) {
         var query = new $kinvey.Query();
         query.equalTo('user_status', 'in progress');
-        var promise = $kinvey.DataStore.find('shipment', query, {relations: { route:"route",
-            client:"clients",
-            driver:"user"}});
-        promise.then(function(response){
+        var promise = $kinvey.DataStore.find('shipment', query, {relations: { route: "route",
+            client: "clients",
+            driver: "user"}});
+        promise.then(function (response) {
             $scope.shipments = response;
             console.log("responce " + JSON.stringify(response));
-        },function(error){
+        }, function (error) {
             console.log("get shipment error " + error.description);
         });
 
-        $scope.getTime =function(time_data){
+        $scope.getTime = function (time_data) {
             var milis = Date.parse(time_data);
             var date = new Date(milis);
             var hours = date.getHours();
-            hours = hours < 10 ? '0'+hours : hours;
+            hours = hours < 10 ? '0' + hours : hours;
             var minutes = date.getMinutes();
-            minutes = minutes < 10 ? '0'+minutes : minutes;
+            minutes = minutes < 10 ? '0' + minutes : minutes;
             var seconds = date.getSeconds();
-            seconds = seconds < 10 ? '0'+seconds : seconds;
-            return hours+":"+minutes+":"+seconds;
+            seconds = seconds < 10 ? '0' + seconds : seconds;
+            return hours + ":" + minutes + ":" + seconds;
         };
 
-        $scope.showTripDetails = function(shipment,index){
-                var modalInstance = $modal.open({
-                    templateUrl: 'trip_details.html',
-                    controller: TripDetailsController,
-                    size: "lg",
-                    resolve: {
-                        shipment: function () {
-                            return shipment;
-                        }
+        $scope.showTripDetails = function (shipment, index) {
+            var modalInstance = $modal.open({
+                templateUrl: 'trip_details.html',
+                controller: TripDetailsController,
+                size: "lg",
+                resolve: {
+                    shipment: function () {
+                        return shipment;
                     }
-                });
+                }
+            });
         };
     }]);
 
-var MapController = function ($scope, $kinvey, $location,$modalInstance, currentTrip) {
+var MapController = function ($scope, $kinvey, $location, $modalInstance, currentTrip) {
     var start_marker;
     var finish_marker;
     var map;
@@ -668,7 +668,7 @@ var MapController = function ($scope, $kinvey, $location,$modalInstance, current
     };
 };
 
-var TripDetailsController= function ($scope, $kinvey, $location,$modalInstance, shipment){
+var TripDetailsController = function ($scope, $kinvey, $location, $modalInstance, shipment) {
 
     var start_marker;
     var finish_marker;
@@ -707,18 +707,18 @@ var TripDetailsController= function ($scope, $kinvey, $location,$modalInstance, 
         query.equalTo('shipment_id', shipment._id);
         console.log(shipment._id);
         var promise = $kinvey.DataStore.find('shipment-checkins', query);
-        promise.then(function(response){
+        promise.then(function (response) {
                 $scope.checkins = response;
-                for(var i in response){
+                for (var i in response) {
                     new google.maps.Marker({
                         position: new google.maps.LatLng(response[i].position.lat, response[i].position.lon),
                         map: map
                     });
                 }
             },
-        function(error){
-            console.log("checins error " + error.description);
-        });
+            function (error) {
+                console.log("checins error " + error.description);
+            });
         window.setTimeout(function () {
             google.maps.event.trigger(map, 'resize');
         }, 100);
@@ -738,7 +738,7 @@ var TripDetailsController= function ($scope, $kinvey, $location,$modalInstance, 
         });
     }
 
-    $scope.clickMapTab=function(){
+    $scope.clickMapTab = function () {
         calcRoute();
         map.setCenter(new google.maps.LatLng((shipment.route.start_lat + shipment.route.finish_lat) / 2, (shipment.route.start_long + shipment.route.finish_long) / 2));
         window.setTimeout(function () {
@@ -754,13 +754,13 @@ var TripDetailsController= function ($scope, $kinvey, $location,$modalInstance, 
 controllers.controller('ManageTripsController',
     ['$scope', '$kinvey', "$modal", function ($scope, $kinvey, $modal) {
 
-        var getClients = function(){
+        var getClients = function () {
             $scope.clients = [];
             var query = new $kinvey.Query();
-            var promise = $kinvey.DataStore.find('clients',null);
+            var promise = $kinvey.DataStore.find('clients', null);
             promise.then(
                 function (response) {
-                    $scope.clients=response;
+                    $scope.clients = response;
                     console.log($scope.clients);
                 },
                 function (error) {
@@ -768,98 +768,156 @@ controllers.controller('ManageTripsController',
                 }
             );
         };
-        $scope.isEdit=[];
-        $scope.trips=[];
-        $scope.isClientsOpen=[];
-        $scope.isSubmittedClient =[];
-        $scope.isSubmittedRoute =[];
-        $scope.isRoute=[];
+        $scope.isEdit = [];
+        $scope.trips = [];
+        $scope.archived_trips = [];
+        $scope.isClientsOpen = [];
+        $scope.isSubmittedClient = [];
+        $scope.isSubmittedRoute = [];
+        $scope.isRoute = [];
         $scope.routeBtnText = [];
+        $scope.isEditPermissions = [];
         getClients();
-        var promise = $kinvey.DataStore.find('shipment', null,{relations:{route:"route",client:"clients"}});
-        promise.then(function(response){
-            for(var i in response){
-                $scope.trips.push(response[i]);
-                $scope.isRoute.push(true);
-                $scope.routeBtnText.push("Edit route");
+        var promise = $kinvey.DataStore.find('shipment', null, {relations: {route: "route", client: "clients"}});
+        promise.then(function (response) {
+            for (var i in response) {
+                if (!response[i].route.isInTrash) {
+                    if (!isTripExistInArray(response[i], $scope.trips)) {
+                        $scope.trips.push(response[i]);
+                        $scope.isRoute.push(true);
+                        $scope.routeBtnText.push("Edit route");
+                        if(response[i].user_status == "new"){
+                            $scope.isEditPermissions.push(true);
+                        }else{
+                            $scope.isEditPermissions.push(false);
+                        }
+                    }
+                } else {
+                    if (!isTripExistInArray(response[i], $scope.archived_trips)) {
+                        $scope.archived_trips.push(response[i]);
+                    }
+                }
             }
-        },function(error){
+        }, function (error) {
             console.log("get trips with error " + error.description);
         });
 
-        $scope.deleteTrip = function(index,trip){
-                $scope.trips.splice(index,1);
-                $scope.isClientsOpen.splice(index,1);
-                $scope.isEdit.splice(index,1);
-                $scope.isSubmittedClient.splice(index,1);
-                $scope.isSubmittedRoute.splice(index,1);
-                $scope.isRoute.splice(index,1);
-                $scope.routeBtnText.splice(index,1);
-            if(trip._id !== undefined){
-                var promise = $kinvey.DataStore.destroy('shipment', trip._id);
-                promise.then(function(response){
-                   console.log("delete trip with success");
-                },function(error){
-                    console.log("delete trip with error " + error.description);
-                });
+        $scope.deleteTrip = function (index, trip) {
+            $scope.archived_trips.splice(index, 1);
+            var promise = $kinvey.DataStore.destroy('shipment', trip._id);
+            promise.then(function (response) {
+                console.log("delete trip with success");
+            }, function (error) {
+                console.log("delete trip with error " + error.description);
+            });
+        };
+
+        $scope.archiveTrip = function (index, trip) {
+            trip.route.isInTrash = true;
+            $scope.trips.splice(index, 1);
+            $scope.isClientsOpen.splice(index, 1);
+            $scope.isEdit.splice(index, 1);
+            $scope.isSubmittedClient.splice(index, 1);
+            $scope.isSubmittedRoute.splice(index, 1);
+            $scope.isRoute.splice(index, 1);
+            $scope.routeBtnText.splice(index, 1);
+            $scope.isEditPermissions.splice(index,1);
+
+            $scope.archived_trips.unshift(trip);
+            saveTripOnKinvey(JSON.parse(JSON.stringify(trip)));
+        };
+
+        $scope.restoreTrip = function(index,trip){
+            trip.route.isInTrash = false;
+            $scope.archived_trips.splice(index, 1);
+
+            $scope.trips.unshift(trip);
+            $scope.isEdit.unshift(false);
+            $scope.isClientsOpen.unshift(false);
+            $scope.isSubmittedClient.unshift(false);
+            $scope.isSubmittedRoute.unshift(false);
+            $scope.isRoute.unshift(true);
+            $scope.isEditPermissions.unshift(true);
+            $scope.routeBtnText.unshift("Edit route");
+            getClients();
+            saveTripOnKinvey(JSON.parse(JSON.stringify(trip)));
+        };
+
+        $scope.restoreAllTrips = function(){
+            var length = $scope.archived_trips.length;
+            var i = 0;
+            while(i<length){
+                $scope.restoreTrip(0,$scope.archived_trips[0]);
+                i++;
             }
         };
 
-        $scope.addNewTrip = function(){
+        $scope.deleteAllTrips = function(){
+            var length = $scope.archived_trips.length;
+            var i = 0;
+            while(i<length){
+                $scope.deleteTrip(0,$scope.archived_trips[0]);
+                i++;
+            }
+        };
+
+        $scope.addNewTrip = function () {
             $scope.trips.unshift({});
             $scope.isEdit.unshift(true);
             $scope.isClientsOpen.unshift(false);
             $scope.isSubmittedClient.unshift(false);
             $scope.isSubmittedRoute.unshift(false);
             $scope.isRoute.unshift(false);
+            $scope.isEditPermissions.unshift(true);
             $scope.routeBtnText.unshift("Select route");
             getClients();
         };
 
-        $scope.editTrip=function(index){
+        $scope.editTrip = function (index) {
             $scope.isEdit[index] = !$scope.isEdit[index];
         };
 
-        $scope.saveTrip = function(index,trip){
+        $scope.saveTrip = function (index, trip) {
             var isFormInvalid = false;
             console.log();
-            if(!trip.client){
+            if (!trip.client) {
                 $scope.isSubmittedClient[index] = true;
                 isFormInvalid = true;
-            }else{
+            } else {
                 $scope.isSubmittedClient[index] = false;
             }
-            if(!trip.route){
+            if (!trip.route) {
                 $scope.isSubmittedRoute[index] = true;
                 isFormInvalid = true;
-            }else{
+            } else {
                 $scope.isSubmittedRoute[index] = false;
             }
-            if(isFormInvalid){
+            if (isFormInvalid) {
                 return;
             }
             $scope.isEdit[index] = !$scope.isEdit[index];
-            var savedTrip = JSON.parse( JSON.stringify( trip ) );
+            var savedTrip = JSON.parse(JSON.stringify(trip));
             savedTrip.user_status = "new";
-            var promise = $kinvey.DataStore.save("shipment",savedTrip,{relations: { route: 'route',
-                client: "clients" }});
-            promise.then(
-                function(responce){
-                    console.log("update shipment success " + JSON.stringify(responce));
-                },
-                function(error){
-                    console.log("update shipment error " + error.description);
-                }
-            );
+            saveTripOnKinvey(savedTrip);
         };
 
+        $scope.cancelTrip = function(index){
+            $scope.trips.splice(index, 1);
+            $scope.isClientsOpen.splice(index, 1);
+            $scope.isEdit.splice(index, 1);
+            $scope.isSubmittedClient.splice(index, 1);
+            $scope.isSubmittedRoute.splice(index, 1);
+            $scope.isRoute.splice(index, 1);
+            $scope.routeBtnText.splice(index, 1);
+            $scope.isEditPermissions.splice(index,1);
+        };
 
-        $scope.selectClient = function (client,trip,index) {
+        $scope.selectClient = function (client, trip, index) {
             $scope.isClientsOpen[index] = !$scope.isClientsOpen[index];
             trip.client = client;
         };
 
-        $scope.viewTrip = function(trip){
+        $scope.viewTrip = function (trip) {
             var modalInstance = $modal.open({
                 templateUrl: 'map.html',
                 controller: MapController,
@@ -872,30 +930,32 @@ controllers.controller('ManageTripsController',
             });
         };
 
-        $scope.duplicateTrip = function(index){
-            var duplicatedTrip = JSON.parse( JSON.stringify( $scope.trips[index] ) );
+        $scope.duplicateTrip = function (index) {
+            var duplicatedTrip = JSON.parse(JSON.stringify($scope.trips[index]));
             delete duplicatedTrip._id;
+            delete duplicatedTrip.route._id;
             duplicatedTrip.user_status = "new";
-            var promise = $kinvey.DataStore.save("shipment",duplicatedTrip,{relations: { route: 'route',
+            var promise = $kinvey.DataStore.save("shipment", duplicatedTrip, {relations: { route: 'route',
                 client: "clients" }});
             promise.then(
-                function(responce){
-                    $scope.trips.splice(index,0,responce);
-                    $scope.isEdit.splice(index,0,false);
-                    $scope.isClientsOpen.splice(index,0,false);
-                    $scope.isSubmittedClient.splice(index,0,false);
-                    $scope.isSubmittedRoute.splice(index,0,false);
-                    $scope.isRoute.splice(index,0,true);
-                    $scope.routeBtnText.splice(index,0,"Select route");
+                function (responce) {
+                    $scope.trips.splice(index, 0, responce);
+                    $scope.isEdit.splice(index, 0, false);
+                    $scope.isClientsOpen.splice(index, 0, false);
+                    $scope.isSubmittedClient.splice(index, 0, false);
+                    $scope.isSubmittedRoute.splice(index, 0, false);
+                    $scope.isRoute.splice(index, 0, true);
+                    $scope.routeBtnText.splice(index, 0, "Select route");
+                    $scope.isEditPermissions.splice(index,0,true);
                     getClients();
                 },
-                function(error){
+                function (error) {
                     console.log("update trip error " + error.description);
                 }
             );
         };
 
-        $scope.selectRoute = function(trip,index){
+        $scope.selectRoute = function (trip, index) {
             var modalInstance = $modal.open({
                 templateUrl: 'route_create_map.html',
                 controller: RouteCreateController,
@@ -909,20 +969,41 @@ controllers.controller('ManageTripsController',
 
             modalInstance.result.then(function (route) {
                 trip.route = route;
-                if(route!=undefined){
+                if (route != undefined) {
                     $scope.isRoute[index] = true;
                     $scope.isSubmittedRoute[index] = false;
-                    $scope.routeBtnText[index]="Edit route";
+                    $scope.routeBtnText[index] = "Edit route";
                 }
                 console.log("route " + JSON.stringify(trip.route));
             });
         };
 
+        var isTripExistInArray = function (trip, array) {
+            for (var i in array) {
+                if (array[i].route._id == trip.route._id) {
+                    return true;
+                }
+            }
+            return false;
+        };
 
+
+        var saveTripOnKinvey = function(trip){
+            var promise = $kinvey.DataStore.save("shipment", trip, {relations: { route: 'route',
+                client: "clients" }});
+            promise.then(
+                function (responce) {
+                    console.log("update shipment success " + JSON.stringify(responce));
+                },
+                function (error) {
+                    console.log("update shipment error " + error.description);
+                }
+            );
+        };
     }]);
 
 
-var RouteCreateController = function ($scope, $kinvey, $location,$timeout,$modalInstance,currentTrip) {
+var RouteCreateController = function ($scope, $kinvey, $location, $timeout, $modalInstance, currentTrip) {
     var start_marker;
     var finish_marker;
     var map;
@@ -934,8 +1015,8 @@ var RouteCreateController = function ($scope, $kinvey, $location,$timeout,$modal
     });
     var directionsService = new google.maps.DirectionsService();
     $scope.initialize = function () {
-        $scope.trip_route={};
-        $scope.isSave ={};
+        $scope.trip_route = {};
+        $scope.isSave = {};
         var mapProp = {
             zoom: 14,
             center: new google.maps.LatLng(google.loader.ClientLocation.latitude, google.loader.ClientLocation.longitude)
@@ -948,13 +1029,13 @@ var RouteCreateController = function ($scope, $kinvey, $location,$timeout,$modal
             google.maps.event.trigger(map, 'resize');
         }, 100);
 
-        if(!currentTrip.route){
-            $scope.isSave=false;
-            google.maps.event.addListener(map, 'click', function(event) {
+        if (!currentTrip.route) {
+            $scope.isSave = false;
+            google.maps.event.addListener(map, 'click', function (event) {
                 placeMarker(event.latLng);
             });
-        }else{
-            $scope.isSave=true;
+        } else {
+            $scope.isSave = true;
             $scope.trip_route = currentTrip.route;
             createStartMarker(new google.maps.LatLng($scope.trip_route.start_lat, $scope.trip_route.start_long));
             createFinishMarker(new google.maps.LatLng($scope.trip_route.finish_lat, $scope.trip_route.finish_long));
@@ -981,11 +1062,11 @@ var RouteCreateController = function ($scope, $kinvey, $location,$timeout,$modal
     function placeMarker(location) {
         if (!start_marker) {
             createStartMarker(location);
-            getAddressByPosition(start_marker.getPosition(),true);
+            getAddressByPosition(start_marker.getPosition(), true);
         } else if (!finish_marker) {
             createFinishMarker(location);
             calcRoute();
-            getAddressByPosition(finish_marker.getPosition(),false);
+            getAddressByPosition(finish_marker.getPosition(), false);
             $scope.isSave = true;
         }
     };
@@ -995,65 +1076,65 @@ var RouteCreateController = function ($scope, $kinvey, $location,$timeout,$modal
     };
 
     $scope.saveRoute = function () {
-        var isFormInvalid=false;
-        if(!finish_marker){
+        var isFormInvalid = false;
+        if (!finish_marker) {
             isFormInvalid = true;
             $scope.submittedFinish = true;
             $scope.finish_error = "The finish is required.";
-        }else{
+        } else {
             $scope.submittedFinish = false;
         }
-        if(!start_marker){
-            isFormInvalid=true;
+        if (!start_marker) {
+            isFormInvalid = true;
             $scope.submittedStart = true;
             $scope.start_error = "The start is required.";
-        }else{
+        } else {
             $scope.submittedStart = false;
         }
-        if(isFormInvalid){
+        if (isFormInvalid) {
             return;
         }
         $modalInstance.close($scope.trip_route);
     };
 
-    $scope.findRoute = function(){
-      getPositionByAddress();
+    $scope.findRoute = function () {
+        getPositionByAddress();
     };
 
-    $scope.changeField = function(){
-      $scope.isSave=false
+    $scope.changeField = function () {
+        $scope.isSave = false
     };
 
-    var getAddressByPosition = function(position,isStart){
+    var getAddressByPosition = function (position, isStart) {
         console.log(JSON.stringify(position));
-        geocoder.geocode({'latLng': new google.maps.LatLng(position.k, position.A)}, function(results, status) {
+        geocoder.geocode({'latLng': new google.maps.LatLng(position.k, position.A)}, function (results, status) {
             if (status == google.maps.GeocoderStatus.OK) {
-                setRoute(isStart,position,results[0].formatted_address);
+                setRoute(isStart, position, results[0].formatted_address);
             } else {
                 console.log('Geocoder failed due to: ' + status);
             }
         });
     };
 
-    var getPositionByAddress = function(){
+    var getPositionByAddress = function () {
         $scope.submittedStart = false;
         $scope.submittedFinish = false;
-        geocoder.geocode({'address':$scope.trip_route.start},function(results,status){
+        geocoder.geocode({'address': $scope.trip_route.start}, function (results, status) {
             if (status == google.maps.GeocoderStatus.OK) {
                 var start_location = new google.maps.LatLng(results[0].geometry.location.k, results[0].geometry.location.A);
-                if(!start_marker){
+                if (!start_marker) {
                     createStartMarker(start_location);
-                }else{
+                } else {
                     console.log("set position start");
                     start_marker.setPosition(start_location);
                     calcRoute();
                 }
-                if(finish_marker){
+                if (finish_marker) {
                     calcRoute();
                 }
-                setRoute(true,results[0].geometry.location,results[0].formatted_address);
-            }else {
-                $timeout(function() {
+                setRoute(true, results[0].geometry.location, results[0].formatted_address);
+            } else {
+                $timeout(function () {
                     $scope.submittedStart = true;
                     if ($scope.trip_route.start == "" || $scope.trip_route.start == undefined) {
                         $scope.start_error = "The start is required";
@@ -1062,24 +1143,24 @@ var RouteCreateController = function ($scope, $kinvey, $location,$timeout,$modal
                     }
                     $scope.isSave = false;
                     directionsDisplay.setMap(null);
-                },100);
+                }, 100);
             }
         });
-        geocoder.geocode({'address':$scope.trip_route.finish},function(results,status){
+        geocoder.geocode({'address': $scope.trip_route.finish}, function (results, status) {
             if (status == google.maps.GeocoderStatus.OK) {
                 var finish_location = new google.maps.LatLng(results[0].geometry.location.k, results[0].geometry.location.A);
-                if(!finish_marker){
+                if (!finish_marker) {
                     createFinishMarker(finish_location);
-                }else{
+                } else {
                     console.log("set position finish");
                     finish_marker.setPosition(finish_location);
                     calcRoute();
                 }
-                if(start_marker){
+                if (start_marker) {
                     calcRoute();
                 }
-                setRoute(false,results[0].geometry.location,results[0].formatted_address);
-            }else {
+                setRoute(false, results[0].geometry.location, results[0].formatted_address);
+            } else {
                 $timeout(function () {
                     $scope.submittedFinish = true;
                     if ($scope.trip_route.finish == "" || $scope.trip_route.finish == undefined) {
@@ -1089,13 +1170,13 @@ var RouteCreateController = function ($scope, $kinvey, $location,$timeout,$modal
                     }
                     $scope.isSave = false;
                     directionsDisplay.setMap(null);
-                },100);
+                }, 100);
             }
         });
-            $scope.isSave = true;
+        $scope.isSave = true;
     };
 
-    var createStartMarker = function(location){
+    var createStartMarker = function (location) {
         start_marker = new google.maps.Marker({
             position: location,
             map: map,
@@ -1104,11 +1185,11 @@ var RouteCreateController = function ($scope, $kinvey, $location,$timeout,$modal
         });
         google.maps.event.addListener(start_marker, 'dragend', function () {
             calcRoute();
-            getAddressByPosition(start_marker.getPosition(),true);
+            getAddressByPosition(start_marker.getPosition(), true);
         });
     };
 
-    var createFinishMarker = function(location){
+    var createFinishMarker = function (location) {
         console.log("create finish");
         finish_marker = new google.maps.Marker({
             position: location,
@@ -1118,12 +1199,12 @@ var RouteCreateController = function ($scope, $kinvey, $location,$timeout,$modal
         });
         google.maps.event.addListener(finish_marker, 'dragend', function () {
             calcRoute();
-            getAddressByPosition(finish_marker.getPosition(),false);
+            getAddressByPosition(finish_marker.getPosition(), false);
         });
     };
 
-    var setRoute=function(isStart,position,address){
-        $timeout(function(){
+    var setRoute = function (isStart, position, address) {
+        $timeout(function () {
             if (isStart) {
                 $scope.trip_route.start = address;
                 $scope.trip_route.start_lat = position.k;
@@ -1133,7 +1214,7 @@ var RouteCreateController = function ($scope, $kinvey, $location,$timeout,$modal
                 $scope.trip_route.finish_lat = position.k;
                 $scope.trip_route.finish_long = position.A;
             }
-        },100);
+        }, 100);
     };
 };
 
@@ -1156,56 +1237,56 @@ controllers.controller('ManageClientsController',
             }
         );
 
-        $scope.addNewClient = function(){
+        $scope.addNewClient = function () {
             $scope.clients.unshift({});
             $scope.isEdit.unshift(true);
             $scope.isSubmittedFirstName.unshift(false);
             $scope.isSubmittedLastName.unshift(false);
         };
 
-        $scope.editClient=function(index){
+        $scope.editClient = function (index) {
             $scope.isEdit[index] = !$scope.isEdit[index];
         };
 
-        $scope.saveClient=function(index,client){
-            var isFormInvalid=false;
-            if(!client.first_name){
+        $scope.saveClient = function (index, client) {
+            var isFormInvalid = false;
+            if (!client.first_name) {
                 isFormInvalid = true;
                 $scope.isSubmittedFirstName[index] = true;
-            }else{
+            } else {
                 $scope.isSubmittedFirstName[index] = false;
             }
-            if(!client.last_name){
-                isFormInvalid=true;
+            if (!client.last_name) {
+                isFormInvalid = true;
                 $scope.isSubmittedLastName[index] = true;
-            }else{
+            } else {
                 $scope.isSubmittedLastName[index] = false;
             }
-            if(isFormInvalid){
+            if (isFormInvalid) {
                 return;
             }
             $scope.isEdit[index] = !$scope.isEdit[index];
-            var promise = $kinvey.DataStore.save("clients",client);
-            promise.then(function(response){
-               console.log("save client whit success");
+            var promise = $kinvey.DataStore.save("clients", client);
+            promise.then(function (response) {
+                console.log("save client whit success");
                 $scope.clients[index] = response;
-            },function(error){
+            }, function (error) {
                 console.log("save client whit error " + error.description);
             });
         };
 
-        $scope.deleteClient=function(index,client){
-                $scope.clients.splice(index,1);
-                $scope.isEdit.splice(index,1);
-                $scope.isSubmittedFirstName.splice(index,1);
-                $scope.isSubmittedLastName.splice(index,1);
-                if(client._id !== undefined){
-                    var promise = $kinvey.DataStore.destroy('clients', client._id);
-                    promise.then(function(response){
-                        console.log("delete client with success");
-                    },function(error){
-                        console.log("delete client with error " + error.description);
-                    });
-                }
-            };
+        $scope.deleteClient = function (index, client) {
+            $scope.clients.splice(index, 1);
+            $scope.isEdit.splice(index, 1);
+            $scope.isSubmittedFirstName.splice(index, 1);
+            $scope.isSubmittedLastName.splice(index, 1);
+            if (client._id !== undefined) {
+                var promise = $kinvey.DataStore.destroy('clients', client._id);
+                promise.then(function (response) {
+                    console.log("delete client with success");
+                }, function (error) {
+                    console.log("delete client with error " + error.description);
+                });
+            }
+        };
     }]);
