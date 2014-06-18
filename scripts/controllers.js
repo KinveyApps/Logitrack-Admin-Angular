@@ -365,9 +365,13 @@ controllers.controller('DispatchController',
             $scope.isSubmittedClient = [];
             $scope.isSubmittedRoute = [];
             $scope.isSubmittedDriver = [];
+            $scope.isSubmittedShipmentName = [];
+            $scope.isShipmentNameOpen = [];
+            $scope.isShipmentNameSelected = [];
             var promise = $kinvey.DataStore.find('shipment', null, {relations: { route: "route",
                 client: "clients",
-                driver: "user"}});
+                driver: "user",
+                info: "shipment-info"}});
             $scope.trips = [];
             promise.then(
                 function (response) {
@@ -393,6 +397,7 @@ controllers.controller('DispatchController',
                 }
             );
             getClients();
+            getShipmentInfos();
             var query = new $kinvey.Query();
             query.equalTo('status', 'driver');
             var promise = $kinvey.User.find(query);
@@ -414,11 +419,14 @@ controllers.controller('DispatchController',
 
         $scope.createNewDispatch = function () {
             getClients();
+            getShipmentInfos();
             $scope.new_shipments.unshift({user_status: "new"});
             $scope.isEdit.unshift(true);
             $scope.isClientsOpen.unshift(false);
             $scope.isDriversOpen.unshift(false);
             $scope.isTripsOpen.unshift(false);
+            $scope.isShipmentNameOpen.unshift(false);
+            $scope.isShipmentNameSelected.unshift(false);
             $scope.trips.unshift({});
             $scope.tripDropdownDisabled.unshift(true);
             $scope.selected_client = "Select client";
@@ -434,6 +442,7 @@ controllers.controller('DispatchController',
             var query = new $kinvey.Query();
             query.equalTo('client._id', client._id);
             query.equalTo('user_status', "new");
+//            query.equalTo('route.isInTrash',false);
             var promise = $kinvey.DataStore.find('shipment', query, {relations: { route: 'route'}});
             promise.then(
                 function (response) {
@@ -452,6 +461,12 @@ controllers.controller('DispatchController',
         $scope.selectTrip = function (trip, shipment, index) {
             $scope.isTripsOpen[index] = !$scope.isTripsOpen[index];
             shipment.route = trip.route;
+        };
+
+        $scope.selectShipmentName = function(shipment,info,index){
+            $scope.isShipmentNameOpen[index]=!$scope.isShipmentNameOpen[index];
+            $scope.isShipmentNameSelected[index] = true;
+            shipment.info = info;
         };
 
         $scope.editDispatch = function (index) {
@@ -478,6 +493,12 @@ controllers.controller('DispatchController',
             } else {
                 $scope.isSubmittedRoute[index] = false;
             }
+            if(!shipment.info){
+                $scope.isSubmittedShipmentName[index] = true;
+                isFormInvalid = true;
+            }else{
+                $scope.isSubmittedShipmentName[index] = false;
+            }
             if (isFormInvalid) {
                 return;
             }
@@ -491,6 +512,8 @@ controllers.controller('DispatchController',
             $scope.isDriversOpen.splice(index, 1);
             $scope.isTripsOpen.splice(index, 1);
             $scope.tripDropdownDisabled.splice(index, 1);
+            $scope.isShipmentNameOpen.splice(index, 1);
+            $scope.isShipmentNameSelected.splice(index, 1);
             $scope.trips.splice(index, 1);
             $scope.isEdit.splice(index, 1);
             console.log("is edit " + $scope.isEdit);
@@ -503,7 +526,8 @@ controllers.controller('DispatchController',
             shipment.user_status = "open";
             var promise = $kinvey.DataStore.save("shipment", shipment, {relations: { route: 'route',
                 client: "clients",
-                driver: "user"}});
+                driver: "user",
+                info:"shipment-info"}});
             promise.then(
                 function (responce) {
                     console.log("update shipment success " + JSON.stringify(responce));
@@ -534,9 +558,11 @@ controllers.controller('DispatchController',
             $scope.clients = [];
             var query = new $kinvey.Query();
             query.equalTo('user_status', 'new');
-            var promise = $kinvey.DataStore.find('shipment', query, {relations: {client: "clients"}});
+//            query.equalTo('route.isinTrash', "false");
+            var promise = $kinvey.DataStore.find('shipment', query, {relations: {client: "clients",route:"route"}});
             promise.then(
                 function (response) {
+                    console.log("get client success " + response.length);
                     for (var i in response) {
                         if (!isClientExistInArray(response[i].client)) {
                             $scope.clients.push(response[i].client);
@@ -545,6 +571,20 @@ controllers.controller('DispatchController',
                 },
                 function (error) {
                     console.log("get clients error " + error.description);
+                }
+            );
+        };
+
+        var getShipmentInfos = function(){
+          $scope.shipment_infos =[];
+            var promise = $kinvey.DataStore.find('shipment-info', null);
+            promise.then(
+                function (response) {
+                    console.log("get shipment-info success");
+                    $scope.shipment_infos = response;
+                },
+                function (error) {
+                    console.log("get shipment-info error " + error.description);
                 }
             );
         };
@@ -580,7 +620,8 @@ controllers.controller('LogisticsController',
         query.equalTo('user_status', 'in progress');
         var promise = $kinvey.DataStore.find('shipment', query, {relations: { route: "route",
             client: "clients",
-            driver: "user"}});
+            driver: "user",
+            info:"shipment-info"}});
         promise.then(function (response) {
             $scope.shipments = response;
             console.log("responce " + JSON.stringify(response));

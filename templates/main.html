@@ -120,12 +120,28 @@ the License.
         </div>
         <div class="list-item-div-c">
             <div class="div-shipment-info">
-                <p class="p-title">Shipment Info</p>
-
-                <p ng-show="!isEdit[$index]" class="p-info">{{shipment.info}}</p>
-                <input class="sign-input" name="shipment_text" ng-model="shipment.info"
-                       ng-show="isEdit[$index]"/>
+            <div class="top-div-shipment-info">
+                <p class="p-title">Shipment Name</p>
+                <p ng-show="!isEdit[$index]" class="p-info">{{shipment.info.name}}</p>
+                <div ng-show="isEdit[$index]"
+                     class="dropdown-div btn-group" dropdown is-open="isShipmentNameOpen[$index]">
+                    <button type="button" class="dropdown-toggle dropdown-select">
+                        {{shipment.info.name}}<span
+                            style="margin-left: 5px;" class="caret white-caret"></span>
+                    </button>
+                    <ul class="dropdown-menu" role="menu">
+                        <li ng-repeat="info in shipment_infos">
+                            <a ng-click="selectShipmentName(shipment,info,$parent.$index)">{{info.name}}</a></li>
+                    </ul>
+                </div>
             </div>
+                 <span id="shipment-name-span" class="input-with-title-span"
+                       ng-show="isEdit[$index]&&isSubmittedShipmentName[$index]">A shipment name is required.</span>
+            <div ng-show="!isEdit[$index]||isShipmentNameSelected[$index]" class="bottom-div-shipment-info">
+                <p class="p-title">Shipment Details</p>
+                <p class="p-info p-shipment-details">{{shipment.info.details}}</p>
+            </div>
+                </div>
         </div>
         <div class="driver-div">
             <div class="select-driver-div">
@@ -204,9 +220,16 @@ the License.
             </div>
             <div class="list-item-div-c">
                 <div class="div-shipment-info">
-                    <p class="p-title">Shipment Info</p>
+                <div class="top-div-shipment-info">
+                    <p class="p-title">Shipment Name</p>
+                    <p  class="p-info">{{shipment.info.name}}</p>
 
-                    <p class="p-info">10" by 24" by 3" box</p>
+                </div>
+                <div class="bottom-div-shipment-info">
+                    <p class="p-title">Shipment Details</p>
+                    <p class="p-info p-shipment-details">{{shipment.info.details}}</p>
+
+                </div>
                 </div>
             </div>
             <div class="driver-div">
@@ -257,10 +280,15 @@ the License.
                 </div>
             </div>
             <div class="list-item-div-c">
-                <div class="div-shipment-info">
-                    <p class="p-title">Shipment Info</p>
+                <div class="top-div-shipment-info">
+                    <p class="p-title">Shipment Name</p>
+                    <p class="p-info">{{shipment.info.name}}</p>
 
-                    <p class="p-info">10" by 24" by 3" box</p>
+                </div>
+                <div  class="bottom-div-shipment-info">
+                    <p class="p-title">Shipment Details</p>
+                    <p class="p-info p-shipment-details">{{shipment.info.details}}</p>
+
                 </div>
             </div>
             <div class="driver-div">

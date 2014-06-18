@@ -82,6 +82,14 @@
     height: 60px;
 }
 
+.top-div-shipment-info{
+    height: 40px;
+    margin-bottom: 10px;
+}
+.bottom-div-shipment-info{
+    height: 50px;
+}
+
 .bottom-div{
     height: 40px;
 }
@@ -416,4 +424,20 @@
 
 #archive-div{
     margin-top: 60px;
+}
+
+#shipment-name-span{
+    margin-top: 20px;
+}
+
+.p-shipment-details{
+    overflow: hidden;
+    height: 50px !important;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    line-height: 16px;     /* fallback */
+    max-height: 32px;      /* fallback */
+    -webkit-line-clamp: 2; /* number of lines to show */
+    -webkit-box-orient: vertical;
+    width: 400px;
 }
