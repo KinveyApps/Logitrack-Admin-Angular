@@ -512,8 +512,50 @@ the License.
             </div>
         </script>
     </div>
-    <div ng-show="selectedManageItem==1">
-        Shipments content
+    <div ng-show="selectedManageItem==1" ng-controller="ManageShipmentsController">
+        <div class="new-btn-div">
+            <div id="add-shipment-btn" class="btn btn-primary dispatch-btn new-btn" ng-click="addNewShipment()">Add shipment</div>
+            <p class="box-title" ng-click="isShipmentsCollapsed = !isShipmentsCollapsed">Shipments</p>
+        </div>
+        <ul collapse="isShipmentsCollapsed" ng-repeat="shipment in shipments">
+            <li class="list-item">
+                <div class="shipments-div-a">
+                    <div class="trips-inner-div">
+                        <p class="p-title">Shipment Name</p>
+                        <p class="p-info" ng-show="!isEdit[$index]">{{shipment.name}}</p>
+                        <input class="sign-input client-input" ng-model="shipment.name"
+                               ng-show="isEdit[$index]"/>
+
+                <span class="input-with-title-span"
+                      ng-show="isEdit[$index]&&isSubmittedName[$index]">A shipment name is required.</span>
+                    </div>
+                </div>
+
+                <div class="shipments-div-b">
+                    <div class="trips-inner-div">
+                        <p class="p-title">Shipment Details</p>
+                        <p class="p-info p-shipment-details-manage" ng-show="!isEdit[$index]">{{shipment.details}}</p>
+                        <textarea id="shipment-details-manage" class="sign-input client-input" ng-model="shipment.details"
+                               ng-show="isEdit[$index]"></textarea>
+                        <span class="input-with-title-span"
+                              ng-show="isEdit[$index]&&isSubmittedDetails[$index]">A shipment details is required.</span>
+                    </div>
+                </div>
+                <div class="shipments-div-c">
+                    <div class="client-edit-btn-div">
+                        <div class="btn btn-primary dispatch-btn" ng-show="!isEdit[$index]" ng-click="editShipment($index)">
+                            Edit
+                        </div>
+                        <div class="btn btn-primary dispatch-btn" ng-show="isEdit[$index]"
+                             ng-click="saveShipment($index,shipment)">Save
+                        </div>
+                        <div class="btn btn-primary dispatch-btn" ng-show="isEdit[$index]"
+                             ng-click="deleteShipment($index,shipment)">Delete
+                        </div>
+                    </div>
+                </div>
+            </li>
+        </ul>
     </div>
     <div ng-show="selectedManageItem==2" ng-controller="ManageClientsController">
         <div class="new-btn-div">

@@ -400,13 +400,18 @@
     display: inline-block;
 }
 
-.clients-div-a{
+.shipments-div-a,.shipments-div-b,.shipments-div-c{
+    height: 90px;
+    display: inline-block;
+}
+
+.clients-div-a,.shipments-div-a{
     width: 35%;
 }
-.clients-div-b{
+.clients-div-b,.shipments-div-b{
     width: 35%;
 }
-.clients-div-c{
+.clients-div-c,.shipments-div-c{
     width: 28%;
 }
 
@@ -430,14 +435,32 @@
     margin-top: 20px;
 }
 
-.p-shipment-details{
+.p-shipment-details,.p-shipment-details-manage{
     overflow: hidden;
     height: 50px !important;
     text-overflow: ellipsis;
     display: -webkit-box;
     line-height: 16px;     /* fallback */
+    -webkit-box-orient: vertical;
+}
+
+.p-shipment-details{
     max-height: 32px;      /* fallback */
     -webkit-line-clamp: 2; /* number of lines to show */
-    -webkit-box-orient: vertical;
     width: 400px;
+}
+
+.p-shipment-details-manage{
+    max-height: 50px;      /* fallback */
+    -webkit-line-clamp: 3; /* number of lines to show */
+    width: 700px;
+}
+
+#shipment-details-manage{
+    height: 50px;
+    width: 500px;
+}
+
+#add-shipment-btn{
+    width: 130px
 }

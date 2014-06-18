@@ -1331,3 +1331,75 @@ controllers.controller('ManageClientsController',
             }
         };
     }]);
+
+
+controllers.controller('ManageShipmentsController',
+    ['$scope', '$kinvey', function ($scope, $kinvey) {
+
+        $scope.shipments = [];
+        $scope.isEdit = [];
+        $scope.isSubmittedName = [];
+        $scope.isSubmittedDetails = [];
+        var promise = $kinvey.DataStore.find('shipment-info', null);
+        promise.then(
+            function (response) {
+                $scope.shipments = response;
+            },
+            function (error) {
+                console.log("get shipment info error " + error.description);
+            }
+        );
+
+        $scope.addNewShipment = function () {
+            $scope.shipments.unshift({});
+            $scope.isEdit.unshift(true);
+            $scope.isSubmittedName.unshift(false);
+            $scope.isSubmittedDetails.unshift(false);
+        };
+
+        $scope.editShipment = function (index) {
+            $scope.isEdit[index] = !$scope.isEdit[index];
+        };
+
+        $scope.saveShipment = function (index, shipment) {
+            var isFormInvalid = false;
+            if (!shipment.name) {
+                isFormInvalid = true;
+                $scope.isSubmittedName[index] = true;
+            } else {
+                $scope.isSubmittedName[index] = false;
+            }
+            if (!shipment.details) {
+                isFormInvalid = true;
+                $scope.isSubmittedDetails[index] = true;
+            } else {
+                $scope.isSubmittedDetails[index] = false;
+            }
+            if (isFormInvalid) {
+                return;
+            }
+            $scope.isEdit[index] = !$scope.isEdit[index];
+            var promise = $kinvey.DataStore.save("shipment-info", shipment);
+            promise.then(function (response) {
+                console.log("save shipment whit success");
+                $scope.shipments[index] = response;
+            }, function (error) {
+                console.log("save shipment whit error " + error.description);
+            });
+        };
+
+        $scope.deleteShipment = function (index, shipment) {
+            $scope.shipments.splice(index, 1);
+            $scope.isEdit.splice(index, 1);
+            $scope.isSubmittedName.splice(index, 1);
+            $scope.isSubmittedDetails.splice(index, 1);
+            if (shipment._id !== undefined) {
+                var promise = $kinvey.DataStore.destroy('shipment-info', shipment._id);
+                promise.then(function (response) {
+                    console.log("delete shipment with success");
+                }, function (error) {
+                    console.log("delete shipment with error " + error.description);
+                });
+            }
+        };
+    }]);
