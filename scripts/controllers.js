@@ -1440,6 +1440,7 @@ controllers.controller('ManageShipmentsController',
         $scope.shipments = [];
         $scope.archived_shipments = [];
         $scope.isEdit = [];
+        $scope.isShipment = [];
         $scope.isEditPermissions = [];
         $scope.isEditArchivedPermissions = [];
         $scope.isSubmittedName = [];
@@ -1456,6 +1457,7 @@ controllers.controller('ManageShipmentsController',
                     }else if (!isItemExistInArray(response[i].info, $scope.shipments)) {
                         $scope.shipments.push(response[i].info);
                         $scope.isEditPermissions.push(false);
+                        $scope.isShipment.push(true);
                     }
                 }
                 var promise = $kinvey.DataStore.find('shipment-info', null);
@@ -1469,6 +1471,7 @@ controllers.controller('ManageShipmentsController',
                         } else if (!isItemExistInArray(response[i], $scope.shipments)) {
                             $scope.shipments.push(response[i]);
                             $scope.isEditPermissions.push(true);
+                            $scope.isShipment.push(true);
                         }
                     }
                 },function(error){
@@ -1483,6 +1486,7 @@ controllers.controller('ManageShipmentsController',
         $scope.addNewShipment = function () {
             $scope.shipments.unshift({});
             $scope.isEdit.unshift(true);
+            $scope.isShipment.unshift(false);
             $scope.isEditPermissions.unshift(true);
             $scope.isSubmittedName.unshift(false);
             $scope.isSubmittedDetails.unshift(false);
@@ -1510,6 +1514,7 @@ controllers.controller('ManageShipmentsController',
                 return;
             }
             $scope.isEdit[index] = !$scope.isEdit[index];
+            $scope.isShipment[index] = true;
             var promise = $kinvey.DataStore.save("shipment-info", shipment);
             promise.then(function (response) {
                 console.log("save shipment whit success");
@@ -1522,6 +1527,7 @@ controllers.controller('ManageShipmentsController',
         $scope.archiveShipment = function (index, shipment) {
             $scope.shipments.splice(index, 1);
             $scope.isEdit.splice(index, 1);
+            $scope.isShipment.splice(index,1);
             $scope.isSubmittedName.splice(index, 1);
             $scope.isSubmittedDetails.splice(index, 1);
             $scope.isEditArchivedPermissions.push($scope.isEditPermissions[index]);
@@ -1548,6 +1554,7 @@ controllers.controller('ManageShipmentsController',
             $scope.archived_shipments.splice(index, 1);
             $scope.shipments.push(shipment);
             $scope.isEdit.push(false);
+            $scope.isShipment.push(true);
             $scope.isEditPermissions.push($scope.isEditArchivedPermissions[index]);
             $scope.isEditArchivedPermissions.splice(index, 1);
             $scope.isSubmittedName.push(false);
@@ -1555,6 +1562,15 @@ controllers.controller('ManageShipmentsController',
 
             shipment.isInTrash = false;
             saveShipmentOnKinvey(JSON.parse(JSON.stringify(shipment)));
+        };
+
+        $scope.cancelShipment = function(index){
+            $scope.shipments.splice(index,1);
+            $scope.isEdit.splice(index, 1);
+            $scope.isShipment.splice(index,1);
+            $scope.isSubmittedDetails.splice(index, 1);
+            $scope.isSubmittedName.splice(index, 1);
+            $scope.isEditPermissions.splice(index,1);
         };
 
         $scope.restoreAllShipments = function(){
