@@ -56,7 +56,7 @@ the License.
                         shipment.client.last_name}}</p>
 
                     <div ng-show="isEdit[$index]"
-                         class="dropdown-div btn-group" dropdown is-open="isClientsOpen[$index]">
+                         class="dropdown-div btn-group" dropdown  ng-click="clickClients($index)" is-open="isClientsOpen[$index]">
                         <button type="button" class="dropdown-toggle dropdown-select">
                             {{shipment.client.first_name + " " + shipment.client.last_name}}<span
                                 style="margin-left: 5px;" class="caret white-caret"></span>
@@ -619,7 +619,7 @@ the License.
                         <span class="input-with-title-span"
                               ng-show="isEdit[$index]&&isSubmittedLastName[$index]">A client last name is required.</span>
                     </div>
-
+                    
                 </div>
                 <div class="clients-div-c">
                     <div class="client-edit-btn-div">
@@ -629,7 +629,7 @@ the License.
                         <div class="btn btn-primary dispatch-btn" ng-show="isEdit[$index]"
                              ng-click="saveClient($index,client)">Save
                         </div>
-                        <div class="btn btn-primary dispatch-btn restore-btn" ng-show="!isEdit[$index]"
+                        <div class="btn btn-primary dispatch-btn restore-btn" ng-show="!isEdit[$index]&&isEditPermissions[$index]"
                              ng-click="archiveClient($index,client)">Archive
                         </div>
                     </div>

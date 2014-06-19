@@ -250,10 +250,9 @@ var ProfileEditController = function ($scope, $modalInstance, $kinvey, item) {
             break;
     }
     $scope.save = function () {
+        var isFormInvalid = false;
         switch (item.id) {
             case 0:
-                console.log("first name " + $scope.user.last_name);
-                var isFormInvalid = false;
                 if ($scope.bioForm.scope.first_name.$error.required) {
                     $scope.submittedFirstName = true;
                     isFormInvalid = true;
@@ -290,7 +289,6 @@ var ProfileEditController = function ($scope, $modalInstance, $kinvey, item) {
                 );
                 break;
             case 1:
-                var isFormInvalid = false;
                 if ($scope.emailForm.scope.email.$error.email || $scope.emailForm.scope.email.$error.required) {
                     $scope.submittedEmail = true;
                     isFormInvalid = true;
@@ -313,7 +311,6 @@ var ProfileEditController = function ($scope, $modalInstance, $kinvey, item) {
                 );
                 break;
             case 2:
-                var isFormInvalid = false;
                 if ($scope.passwordForm.scope.password.$error.required) {
                     $scope.submittedNewPassword = true;
                     isFormInvalid = true;
@@ -433,6 +430,13 @@ controllers.controller('DispatchController',
             $scope.selected_trip = "Select trip";
         };
 
+        $scope.clickClients = function(index){
+            $scope.isClientsOpen[index] = false;
+            getClients(function(){
+                $scope.isClientsOpen[index] = true;
+            });
+        };
+
         $scope.selectClient = function (client, shipment, index) {
             console.log("selected index " + index);
             $scope.isClientsOpen[index] = !$scope.isClientsOpen[index];
@@ -442,14 +446,16 @@ controllers.controller('DispatchController',
             var query = new $kinvey.Query();
             query.equalTo('client._id', client._id);
             query.equalTo('user_status', "new");
-//            query.equalTo('route.isInTrash',false);
             var promise = $kinvey.DataStore.find('shipment', query, {relations: { route: 'route'}});
             promise.then(
                 function (response) {
                     shipment.route = undefined;
                     $scope.trips = [];
-                    $scope.trips[index] = response;
-                    console.log("trips " + JSON.stringify($scope.trips));
+                    for (var i in response) {
+                        if (!response[i].route.isInTrash) {
+                            $scope.trips[index].push(response[i]);
+                        }
+                    }
                     $scope.tripDropdownDisabled[index] = false;
                 },
                 function (error) {
@@ -554,19 +560,23 @@ controllers.controller('DispatchController',
             });
         };
 
-        var getClients = function () {
+        var getClients = function (callback) {
             $scope.clients = [];
             var query = new $kinvey.Query();
             query.equalTo('user_status', 'new');
-//            query.equalTo('route.isinTrash', "false");
             var promise = $kinvey.DataStore.find('shipment', query, {relations: {client: "clients",route:"route"}});
             promise.then(
                 function (response) {
                     console.log("get client success " + response.length);
                     for (var i in response) {
-                        if (!isClientExistInArray(response[i].client)) {
-                            $scope.clients.push(response[i].client);
+                        if(!response[i].route.isInTrash && !response[i].client.isInTrash) {
+                            if (!isClientExistInArray(response[i].client,$scope.clients)) {
+                                $scope.clients.push(response[i].client);
+                            }
                         }
+                    }
+                    if(callback) {
+                        callback();
                     }
                 },
                 function (error) {
@@ -587,15 +597,6 @@ controllers.controller('DispatchController',
                     console.log("get shipment-info error " + error.description);
                 }
             );
-        };
-
-        var isClientExistInArray = function (client) {
-            for (var i in $scope.clients) {
-                if ($scope.clients[i]._id == client._id) {
-                    return true;
-                }
-            }
-            return false;
         };
 
         var setFormatDateTime = function (shipment) {
@@ -1266,18 +1267,44 @@ controllers.controller('ManageClientsController',
         $scope.clients = [];
         $scope.archived_clients = [];
         $scope.isEdit = [];
+        $scope.isEditPermissions = [];
+        $scope.isEditArchivedPermissions = [];
         $scope.isSubmittedFirstName = [];
         $scope.isSubmittedLastName = [];
-        var promise = $kinvey.DataStore.find('clients', null);
+        var promise = $kinvey.DataStore.find('shipment', null, {relations: {client: "clients"}});
         promise.then(
             function (response) {
                 for(var i in response){
-                    if(response[i].isInTrash){
-                        $scope.archived_clients.push(response[i]);
+                    if(response[i].client.isInTrash){
+                        if (!isClientExistInArray(response[i].client, $scope.archived_clients)) {
+                            $scope.archived_clients.push(response[i].client);
+                            $scope.isEditArchivedPermissions.push(false);
+                        }
                     }else{
-                        $scope.clients.push(response[i]);
+                        if (!isClientExistInArray(response[i].client, $scope.clients)) {
+                            $scope.clients.push(response[i].client);
+                            $scope.isEditPermissions.push(false);
+                        }
                     }
                 }
+                var promise = $kinvey.DataStore.find('clients', null);
+                promise.then(
+                    function(response){
+                        for (var i in response) {
+                            if (response[i].isInTrash) {
+                                if (!isClientExistInArray(response[i], $scope.archived_clients)) {
+                                    $scope.archived_clients.push(response[i]);
+                                    $scope.isEditArchivedPermissions.push(true);
+                                }
+                            } else if (!isClientExistInArray(response[i], $scope.clients)) {
+                                $scope.clients.push(response[i]);
+                                $scope.isEditPermissions.push(true);
+                            }
+                        }
+                    },function(error){
+                        console.log("get clients error " + error.description);
+                    }
+                );
             },
             function (error) {
                 console.log("get clients error " + error.description);
@@ -1287,6 +1314,7 @@ controllers.controller('ManageClientsController',
         $scope.addNewClient = function () {
             $scope.clients.unshift({});
             $scope.isEdit.unshift(true);
+            $scope.isEditPermissions.unshift(true);
             $scope.isSubmittedFirstName.unshift(false);
             $scope.isSubmittedLastName.unshift(false);
         };
@@ -1329,12 +1357,15 @@ controllers.controller('ManageClientsController',
             $scope.isSubmittedLastName.splice(index, 1);
 
             $scope.archived_clients.push(client);
+            $scope.isEditArchivedPermissions.push($scope.isEditPermissions[index]);
+            $scope.isEditPermissions.splice(index, 1);
             client.isInTrash = true;
             saveClientOnKinvey(JSON.parse(JSON.stringify(client)));
         };
 
         $scope.deleteClient = function (index, client) {
             $scope.archived_clients.splice(index, 1);
+            $scope.isEditArchivedPermissions.splice(index, 1);
             if (client._id !== undefined) {
                 var promise = $kinvey.DataStore.destroy('clients', client._id);
                 promise.then(function (response) {
@@ -1348,6 +1379,8 @@ controllers.controller('ManageClientsController',
         $scope.restoreClient = function (index, client) {
             $scope.archived_clients.splice(index, 1);
             $scope.clients.push(client);
+            $scope.isEditPermissions.push($scope.isEditArchivedPermissions[index]);
+            $scope.isEditArchivedPermissions.splice(index, 1);
             $scope.isEdit.push(false);
             $scope.isSubmittedFirstName.push(false);
             $scope.isSubmittedLastName.push(false);
@@ -1508,3 +1541,12 @@ controllers.controller('ManageShipmentsController',
             });
         }
     }]);
+
+var isClientExistInArray = function(client, array){
+    for (var i in array) {
+        if (array[i]._id == client._id) {
+            return true;
+        }
+    }
+    return false;
+};
