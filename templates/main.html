@@ -626,6 +626,9 @@ the License.
                         <div class="btn btn-primary dispatch-btn" ng-show="!isEdit[$index]" ng-click="editClient($index)">
                             Edit
                         </div>
+                        <div class="btn btn-primary dispatch-btn" ng-show="isEdit[$index]&&!isClient[$index]"
+                             ng-click="cancelClient($index)">Cancel
+                        </div>
                         <div class="btn btn-primary dispatch-btn" ng-show="isEdit[$index]"
                              ng-click="saveClient($index,client)">Save
                         </div>

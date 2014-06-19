@@ -1267,6 +1267,7 @@ controllers.controller('ManageClientsController',
         $scope.clients = [];
         $scope.archived_clients = [];
         $scope.isEdit = [];
+        $scope.isClient =[];
         $scope.isEditPermissions = [];
         $scope.isEditArchivedPermissions = [];
         $scope.isSubmittedFirstName = [];
@@ -1284,6 +1285,7 @@ controllers.controller('ManageClientsController',
                         if (!isItemExistInArray(response[i].client, $scope.clients)) {
                             $scope.clients.push(response[i].client);
                             $scope.isEditPermissions.push(false);
+                            $scope.isClient.push(true);
                         }
                     }
                 }
@@ -1299,6 +1301,7 @@ controllers.controller('ManageClientsController',
                             } else if (!isItemExistInArray(response[i], $scope.clients)) {
                                 $scope.clients.push(response[i]);
                                 $scope.isEditPermissions.push(true);
+                                $scope.isClient.push(true);
                             }
                         }
                     },function(error){
@@ -1314,6 +1317,7 @@ controllers.controller('ManageClientsController',
         $scope.addNewClient = function () {
             $scope.clients.unshift({});
             $scope.isEdit.unshift(true);
+            $scope.isClient.unshift(false);
             $scope.isEditPermissions.unshift(true);
             $scope.isSubmittedFirstName.unshift(false);
             $scope.isSubmittedLastName.unshift(false);
@@ -1341,6 +1345,7 @@ controllers.controller('ManageClientsController',
                 return;
             }
             $scope.isEdit[index] = !$scope.isEdit[index];
+            $scope.isClient[index] = true;
             var promise = $kinvey.DataStore.save("clients", client);
             promise.then(function (response) {
                 console.log("save client whit success");
@@ -1353,6 +1358,7 @@ controllers.controller('ManageClientsController',
         $scope.archiveClient = function (index, client) {
             $scope.clients.splice(index, 1);
             $scope.isEdit.splice(index, 1);
+            $scope.isClient.splice(index,1);
             $scope.isSubmittedFirstName.splice(index, 1);
             $scope.isSubmittedLastName.splice(index, 1);
 
@@ -1382,11 +1388,21 @@ controllers.controller('ManageClientsController',
             $scope.isEditPermissions.push($scope.isEditArchivedPermissions[index]);
             $scope.isEditArchivedPermissions.splice(index, 1);
             $scope.isEdit.push(false);
+            $scope.isClient.push(true);
             $scope.isSubmittedFirstName.push(false);
             $scope.isSubmittedLastName.push(false);
 
             client.isInTrash = false;
             saveClientOnKinvey(JSON.parse(JSON.stringify(client)));
+        };
+
+        $scope.cancelClient = function(index){
+            $scope.clients.splice(index,1);
+            $scope.isEdit.splice(index, 1);
+            $scope.isClient.splice(index,1);
+            $scope.isSubmittedFirstName.splice(index, 1);
+            $scope.isSubmittedLastName.splice(index, 1);
+            $scope.isEditPermissions.splice(index,1);
         };
 
         $scope.restoreAllClients = function(){
