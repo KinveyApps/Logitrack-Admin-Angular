@@ -549,7 +549,7 @@ the License.
                         <div class="btn btn-primary dispatch-btn" ng-show="isEdit[$index]"
                              ng-click="saveShipment($index,shipment)">Save
                         </div>
-                        <div class="btn btn-primary dispatch-btn restore-btn" ng-show="!isEdit[$index]"
+                        <div class="btn btn-primary dispatch-btn restore-btn" ng-show="!isEdit[$index]&&isEditPermissions[$index]"
                              ng-click="archiveShipment($index,shipment)">Archive
                         </div>
                     </div>
@@ -619,7 +619,7 @@ the License.
                         <span class="input-with-title-span"
                               ng-show="isEdit[$index]&&isSubmittedLastName[$index]">A client last name is required.</span>
                     </div>
-                    
+
                 </div>
                 <div class="clients-div-c">
                     <div class="client-edit-btn-div">

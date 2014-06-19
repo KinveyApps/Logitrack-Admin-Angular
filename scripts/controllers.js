@@ -570,7 +570,7 @@ controllers.controller('DispatchController',
                     console.log("get client success " + response.length);
                     for (var i in response) {
                         if(!response[i].route.isInTrash && !response[i].client.isInTrash) {
-                            if (!isClientExistInArray(response[i].client,$scope.clients)) {
+                            if (!isItemExistInArray(response[i].client,$scope.clients)) {
                                 $scope.clients.push(response[i].client);
                             }
                         }
@@ -1276,12 +1276,12 @@ controllers.controller('ManageClientsController',
             function (response) {
                 for(var i in response){
                     if(response[i].client.isInTrash){
-                        if (!isClientExistInArray(response[i].client, $scope.archived_clients)) {
+                        if (!isItemExistInArray(response[i].client, $scope.archived_clients)) {
                             $scope.archived_clients.push(response[i].client);
                             $scope.isEditArchivedPermissions.push(false);
                         }
                     }else{
-                        if (!isClientExistInArray(response[i].client, $scope.clients)) {
+                        if (!isItemExistInArray(response[i].client, $scope.clients)) {
                             $scope.clients.push(response[i].client);
                             $scope.isEditPermissions.push(false);
                         }
@@ -1292,11 +1292,11 @@ controllers.controller('ManageClientsController',
                     function(response){
                         for (var i in response) {
                             if (response[i].isInTrash) {
-                                if (!isClientExistInArray(response[i], $scope.archived_clients)) {
+                                if (!isItemExistInArray(response[i], $scope.archived_clients)) {
                                     $scope.archived_clients.push(response[i]);
                                     $scope.isEditArchivedPermissions.push(true);
                                 }
-                            } else if (!isClientExistInArray(response[i], $scope.clients)) {
+                            } else if (!isItemExistInArray(response[i], $scope.clients)) {
                                 $scope.clients.push(response[i]);
                                 $scope.isEditPermissions.push(true);
                             }
@@ -1424,18 +1424,40 @@ controllers.controller('ManageShipmentsController',
         $scope.shipments = [];
         $scope.archived_shipments = [];
         $scope.isEdit = [];
+        $scope.isEditPermissions = [];
+        $scope.isEditArchivedPermissions = [];
         $scope.isSubmittedName = [];
         $scope.isSubmittedDetails = [];
-        var promise = $kinvey.DataStore.find('shipment-info', null);
+        var promise = $kinvey.DataStore.find('shipment', null, {relations: {info: "shipment-info"}});
         promise.then(
             function (response) {
                 for(var i in response){
-                    if(response[i].isInTrash){
-                        $scope.archived_shipments.push(response[i]);
-                    }else{
-                        $scope.shipments.push(response[i]);
+                    if(response[i].info.isInTrash){
+                        if (!isItemExistInArray(response[i].info, $scope.archived_shipments)) {
+                            $scope.archived_shipments.push(response[i].info);
+                            $scope.isEditArchivedPermissions.push(false);
+                        }
+                    }else if (!isItemExistInArray(response[i].info, $scope.shipments)) {
+                        $scope.shipments.push(response[i].info);
+                        $scope.isEditPermissions.push(false);
                     }
                 }
+                var promise = $kinvey.DataStore.find('shipment-info', null);
+                promise.then(function(response){
+                    for (var i in response) {
+                        if (response[i].isInTrash) {
+                            if (!isItemExistInArray(response[i], $scope.archived_shipments)) {
+                                $scope.archived_shipments.push(response[i]);
+                                $scope.isEditArchivedPermissions.push(true);
+                            }
+                        } else if (!isItemExistInArray(response[i], $scope.shipments)) {
+                            $scope.shipments.push(response[i]);
+                            $scope.isEditPermissions.push(true);
+                        }
+                    }
+                },function(error){
+                    console.log("get shipment info error " + error.description);
+                });
             },
             function (error) {
                 console.log("get shipment info error " + error.description);
@@ -1445,6 +1467,7 @@ controllers.controller('ManageShipmentsController',
         $scope.addNewShipment = function () {
             $scope.shipments.unshift({});
             $scope.isEdit.unshift(true);
+            $scope.isEditPermissions.unshift(true);
             $scope.isSubmittedName.unshift(false);
             $scope.isSubmittedDetails.unshift(false);
         };
@@ -1485,7 +1508,8 @@ controllers.controller('ManageShipmentsController',
             $scope.isEdit.splice(index, 1);
             $scope.isSubmittedName.splice(index, 1);
             $scope.isSubmittedDetails.splice(index, 1);
-
+            $scope.isEditArchivedPermissions.push($scope.isEditPermissions[index]);
+            $scope.isEditPermissions.splice(index, 1);
             $scope.archived_shipments.push(shipment);
             shipment.isInTrash = true;
             saveShipmentOnKinvey(JSON.parse(JSON.stringify(shipment)));
@@ -1493,6 +1517,7 @@ controllers.controller('ManageShipmentsController',
 
         $scope.deleteShipment = function (index, shipment) {
             $scope.archived_shipments.splice(index, 1);
+            $scope.isEditArchivedPermissions.splice(index, 1);
             if (shipment._id !== undefined) {
                 var promise = $kinvey.DataStore.destroy('shipment-info', shipment._id);
                 promise.then(function (response) {
@@ -1507,6 +1532,8 @@ controllers.controller('ManageShipmentsController',
             $scope.archived_shipments.splice(index, 1);
             $scope.shipments.push(shipment);
             $scope.isEdit.push(false);
+            $scope.isEditPermissions.push($scope.isEditArchivedPermissions[index]);
+            $scope.isEditArchivedPermissions.splice(index, 1);
             $scope.isSubmittedName.push(false);
             $scope.isSubmittedDetails.push(false);
 
@@ -1542,9 +1569,9 @@ controllers.controller('ManageShipmentsController',
         }
     }]);
 
-var isClientExistInArray = function(client, array){
+var isItemExistInArray = function(item, array){
     for (var i in array) {
-        if (array[i]._id == client._id) {
+        if (array[i]._id == item._id) {
             return true;
         }
     }
