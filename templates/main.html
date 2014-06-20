@@ -28,7 +28,7 @@ the License.
     <!--<p >LOGITRACK</p>-->
 </div>
 <ul class="nav nav-tabs navbar">
-    <li id="dispatch-tab" ng-click="status.isopen=false" ng-class="{active:selectedTab==0}" class="active"><a ng-click="selectedTab=0">Dispatch</a></li>
+    <li id="dispatch-tab" ng-click="status.isopen=false" ng-class="{active:selectedTab==0}" class="active"><a ng-click="selectedTab=0;dispatchClick()">Dispatch</a></li>
     <li id="logistics-tab" ng-click="status.isopen=false" ng-class="{active:selectedTab==1}"><a ng-click="selectedTab=1">Logistics</a></li>
     <li class="dropdown" is-open="status.isopen" ng-class="{active:selectedTab==2}"><a class="dropdown-toggle"
                                                                data-toggle="dropdown" href="#">Manage</a>
@@ -56,7 +56,7 @@ the License.
                         shipment.client.last_name}}</p>
 
                     <div ng-show="isEdit[$index]"
-                         class="dropdown-div btn-group" dropdown  ng-click="clickClients($index)" is-open="isClientsOpen[$index]">
+                         class="dropdown-div btn-group" dropdown is-open="isClientsOpen[$index]">
                         <button type="button" class="dropdown-toggle dropdown-select">
                             {{shipment.client.first_name + " " + shipment.client.last_name}}<span
                                 style="margin-left: 5px;" class="caret white-caret"></span>

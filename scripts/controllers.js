@@ -215,6 +215,10 @@ controllers.controller('MainController',
             });
         };
 
+        $scope.dispatchClick = function(){
+            $scope.$broadcast('UPDATE_CLIENTS');
+        };
+
         $scope.selectManageItem = function ($event, index) {
             $scope.selectedManageItem = index;
             $scope.selectedTab = 2;
@@ -408,6 +412,10 @@ controllers.controller('DispatchController',
                 });
         };
 
+        $scope.$on('UPDATE_CLIENTS', function() {
+           getClients();
+        });
+
         $scope.selectDriver = function (driver, index) {
             $scope.isDriversOpen[index] = !$scope.isDriversOpen[index];
             console.log(JSON.stringify(driver));
@@ -430,13 +438,6 @@ controllers.controller('DispatchController',
             $scope.selected_trip = "Select trip";
         };
 
-        $scope.clickClients = function(index){
-            $scope.isClientsOpen[index] = false;
-            getClients(function(){
-                $scope.isClientsOpen[index] = true;
-            });
-        };
-
         $scope.selectClient = function (client, shipment, index) {
             console.log("selected index " + index);
             $scope.isClientsOpen[index] = !$scope.isClientsOpen[index];
@@ -453,6 +454,9 @@ controllers.controller('DispatchController',
                     $scope.trips = [];
                     for (var i in response) {
                         if (!response[i].route.isInTrash) {
+                            if($scope.trips[index] === undefined){
+                                $scope.trips[index] = [];
+                            }
                             $scope.trips[index].push(response[i]);
                         }
                     }
@@ -560,7 +564,7 @@ controllers.controller('DispatchController',
             });
         };
 
-        var getClients = function (callback) {
+        var getClients = function () {
             $scope.clients = [];
             var query = new $kinvey.Query();
             query.equalTo('user_status', 'new');
@@ -568,15 +572,13 @@ controllers.controller('DispatchController',
             promise.then(
                 function (response) {
                     console.log("get client success " + response.length);
+                    console.log("clients " + JSON.stringify(response));
                     for (var i in response) {
                         if(!response[i].route.isInTrash && !response[i].client.isInTrash) {
                             if (!isItemExistInArray(response[i].client,$scope.clients)) {
                                 $scope.clients.push(response[i].client);
                             }
                         }
-                    }
-                    if(callback) {
-                        callback();
                     }
                 },
                 function (error) {
