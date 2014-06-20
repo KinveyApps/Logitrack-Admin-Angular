@@ -447,7 +447,7 @@ the License.
         </ul>
 
 
-        <div class="new-btn-div archive-div">
+        <div class="new-btn-div archive-div" ng-show="isShowArchived">
             <div class="btn btn-primary dispatch-btn new-btn" ng-click="deleteAllTrips()">Delete All</div>
             <div class="btn btn-primary dispatch-btn new-btn" ng-click="restoreAllTrips()">Restore All</div>
             <p class="box-title" ng-click="isArchivedTripsCollapsed = !isArchivedTripsCollapsed">Archived Trips</p>
@@ -559,7 +559,7 @@ the License.
                 </div>
             </li>
         </ul>
-        <div class="new-btn-div archive-div">
+        <div class="new-btn-div archive-div" ng-show="isShowArchived">
             <div class="btn btn-primary dispatch-btn new-btn" ng-click="deleteAllShipments()">Delete All</div>
             <div class="btn btn-primary dispatch-btn new-btn" ng-click="restoreAllShipments()">Restore All</div>
             <p class="box-title" ng-click="isArchivedShipmentsCollapsed = !isArchivedShipmentsCollapsed">Archived Trips</p>
@@ -642,7 +642,7 @@ the License.
                 </div>
             </li>
         </ul>
-        <div class="new-btn-div archive-div">
+        <div class="new-btn-div archive-div" ng-show="isShowArchived">
             <div class="btn btn-primary dispatch-btn new-btn" ng-click="deleteAllClients()">Delete All</div>
             <div class="btn btn-primary dispatch-btn new-btn" ng-click="restoreAllClients()">Restore All</div>
             <p class="box-title" ng-click="isArchivedClientsCollapsed = !isArchivedClientsCollapsed">Archived Trips</p>
