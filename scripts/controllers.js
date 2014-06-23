@@ -1110,6 +1110,7 @@ var RouteCreateController = function ($scope, $kinvey, $location, $timeout, $mod
                 current_direction_route = response;
                 directionsDisplay.setDirections(response);
                 directionsDisplay.setMap(map);
+                $scope.trip_route.distance = directionsDisplay.getDirections().routes[0].legs[0].distance.value;
             }
         });
     };
