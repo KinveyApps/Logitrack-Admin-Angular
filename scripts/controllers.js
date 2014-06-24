@@ -45,7 +45,8 @@ controllers.controller('LoginController',
                     if (response.status === "admin") {
                         $scope.submittedError = false;
                         $location.path('/templates/main');
-                    } else {
+                    }
+                    else {
                         $scope.submittedError = true;
                         $scope.errorDescription = "You don't have required permissions";
                         var promise = $kinvey.User.logout();
@@ -662,12 +663,15 @@ var MapController = function ($scope, $kinvey, $location, $modalInstance, curren
     var start_marker;
     var finish_marker;
     var map;
+    var shape_paths = [];
+    var markers=[];
     var directionsDisplay = new google.maps.DirectionsRenderer();
     directionsDisplay.setOptions({
         suppressMarkers: true
     });
     var directionsService = new google.maps.DirectionsService();
     $scope.initialize = function () {
+        $scope.isShape = false;
         var mapProp = {
             zoom: 14,
             center: new google.maps.LatLng((currentTrip.route.start_lat + currentTrip.route.finish_lat) / 2, (currentTrip.route.start_long + currentTrip.route.finish_long) / 2)
@@ -682,6 +686,30 @@ var MapController = function ($scope, $kinvey, $location, $modalInstance, curren
             map: map,
             icon: 'images/start_marker.png'
         });
+//        var populationOptions = {
+//            strokeColor: '#FF0000',
+//            strokeOpacity: 0.8,
+//            strokeWeight: 2,
+//            fillColor: '#FF0000',
+//            fillOpacity: 0.35,
+//            map: map,
+//            center: start_marker.getPosition(),
+//            radius: 1000,
+//            draggable:true,
+//            editable:true
+//        };
+//        // Add the circle for this city to the map.
+//        circle = new google.maps.Circle(populationOptions);
+//        google.maps.event.addListener(circle, 'dragend', function() {
+//            alert("drag end");
+//        });
+
+        // Construct the polygon.
+
+
+        google.maps.event.addListener(map, 'click', function (event) {
+            createShapePath(event.latLng);
+        });
         finish_marker = new google.maps.Marker({
             position: new google.maps.LatLng(currentTrip.route.finish_lat, currentTrip.route.finish_long),
             map: map,
@@ -691,6 +719,39 @@ var MapController = function ($scope, $kinvey, $location, $modalInstance, curren
         window.setTimeout(function () {
             google.maps.event.trigger(map, 'resize');
         }, 100);
+    };
+
+    $scope.createShape = function () {
+        for (var i in markers) {
+            markers[i].setMap(null);
+        }
+        shape_paths.push(shape_paths[0]);
+        shape = new google.maps.Polygon({
+            paths: shape_paths,
+            strokeColor: '#FF0000',
+            strokeOpacity: 0.8,
+            strokeWeight: 2,
+            fillColor: '#FF0000',
+            fillOpacity: 0.35,
+            draggable: true,
+            editable: true
+        });
+        shape.setMap(map);
+        $scope.isShape = false;
+        google.maps.event.clearListeners(map, 'click');
+        console.log("is shape contain start marker: " + (google.maps.geometry.poly.containsLocation(start_marker.getPosition(), shape)));
+    };
+
+    function createShapePath(location){
+        shape_paths.push(location);
+        var marker = new google.maps.Marker({
+            position: location,
+            map: map
+        });
+        markers.push(marker);
+        if(shape_paths.length>2){
+            $scope.isShape = true;
+        }
     };
     function calcRoute() {
         var request = {
