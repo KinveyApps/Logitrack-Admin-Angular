@@ -15,7 +15,7 @@
 controllers.controller('PasswordResetController',
     ['$scope', '$kinvey', "$location", function ($scope, $kinvey, $location) {
         $scope.resetPassword = function () {
-            console.log("click reset");
+            //check is form valid
             if ($scope.resetPasswordForm.email.$error.email || $scope.resetPasswordForm.email.$error.required) {
                 $scope.submittedEmail = true;
                 return;

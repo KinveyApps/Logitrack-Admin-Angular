@@ -15,6 +15,7 @@
 controllers.controller('ManageClientsController',
     ['$scope', '$kinvey', function ($scope, $kinvey) {
 
+        //scope variables initialization
         $scope.clients = [];
         $scope.archived_clients = [];
         $scope.isEdit = [];
@@ -24,10 +25,13 @@ controllers.controller('ManageClientsController',
         $scope.isSubmittedFirstName = [];
         $scope.isSubmittedLastName = [];
         $scope.isShowArchived = false;
+
+        //get all clients and check is client archived or not
         var promise = $kinvey.DataStore.find('shipment', null, {relations: {client: "clients"}});
         promise.then(
             function (response) {
                 for (var i in response) {
+                    //checks if clients is archived
                     if (response[i].client.isInTrash) {
                         if (!isItemExistInArray(response[i].client, $scope.archived_clients)) {
                             $scope.archived_clients.push(response[i].client);
@@ -42,6 +46,7 @@ controllers.controller('ManageClientsController',
                         }
                     }
                 }
+                //Kinvey get clients that haven`t assigned trip starts
                 var promise = $kinvey.DataStore.find('clients', null);
                 promise.then(
                     function (response) {
@@ -67,6 +72,7 @@ controllers.controller('ManageClientsController',
                 console.log("get clients error " + error.description);
             }
         );
+
 
         $scope.addNewClient = function () {
             $scope.clients.unshift({});
@@ -100,6 +106,8 @@ controllers.controller('ManageClientsController',
             }
             $scope.isEdit[index] = !$scope.isEdit[index];
             $scope.isClient[index] = true;
+
+            //Kinvey update client starts
             var promise = $kinvey.DataStore.save("clients", client);
             promise.then(function (response) {
                 console.log("save client whit success");
@@ -133,6 +141,7 @@ controllers.controller('ManageClientsController',
                 $scope.isShowArchived = false;
             }
             if (client._id !== undefined) {
+                //Kinvey destroy client starts
                 var promise = $kinvey.DataStore.destroy('clients', client._id);
                 promise.then(function (response) {
                     console.log("delete client with success");
@@ -186,6 +195,7 @@ controllers.controller('ManageClientsController',
         };
 
         var saveClientOnKinvey = function (client) {
+            //Kinvey update client starts
             var promise = $kinvey.DataStore.save("clients", client);
             promise.then(function (response) {
                 console.log("save client whit success");

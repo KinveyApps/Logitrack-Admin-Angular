@@ -13,8 +13,11 @@
  */
 
 controllers.controller('DispatchController',
-    ['$scope', '$kinvey', "$location", "$modal", function ($scope, $kinvey, $location, $modal) {
+    ['$scope', '$kinvey', "$modal", function ($scope, $kinvey, $modal) {
+        //dispatch tab initialization
         $scope.initPage = function () {
+
+            //scope variables initialization
             $scope.isEdit = [];
             $scope.isClientsOpen = [];
             $scope.isDriversOpen = [];
@@ -26,16 +29,18 @@ controllers.controller('DispatchController',
             $scope.isSubmittedShipmentName = [];
             $scope.isShipmentNameOpen = [];
             $scope.isShipmentNameSelected = [];
+            $scope.trips = [];
+            $scope.new_shipments = [];
+            $scope.open_shipments = [];
+            $scope.progress_shipments = [];
+
+            //Kinvey get shipments starts
             var promise = $kinvey.DataStore.find('shipment', null, {relations: { route: "route",
                 client: "clients",
                 driver: "user",
                 info: "shipment-info"}});
-            $scope.trips = [];
             promise.then(
                 function (response) {
-                    $scope.new_shipments = [];
-                    $scope.open_shipments = [];
-                    $scope.progress_shipments = [];
                     for (var i in response) {
                         switch (response[i].user_status) {
                             case "open":
@@ -48,7 +53,6 @@ controllers.controller('DispatchController',
                                 break;
                         }
                     }
-                    console.log(response[0]);
                 },
                 function (error) {
                     console.log("get shipment error " + JSON.stringify(error.description));
@@ -56,8 +60,11 @@ controllers.controller('DispatchController',
             );
             getClients();
             getShipmentInfos();
+
             var query = new $kinvey.Query();
             query.equalTo('status', 'driver');
+
+            //Kinvey get users with status 'driver' starts
             var promise = $kinvey.User.find(query);
             promise.then(
                 function (response) {
@@ -73,12 +80,13 @@ controllers.controller('DispatchController',
             getClients();
         });
 
+
         $scope.selectDriver = function (driver, index) {
             $scope.isDriversOpen[index] = !$scope.isDriversOpen[index];
-            console.log(JSON.stringify(driver));
             $scope.new_shipments[index].driver = driver;
         };
 
+        //creates new dispatch
         $scope.createNewDispatch = function () {
             getClients();
             getShipmentInfos();
@@ -95,8 +103,8 @@ controllers.controller('DispatchController',
             $scope.selected_trip = "Select trip";
         };
 
+
         $scope.selectClient = function (client, shipment, index) {
-            console.log("selected index " + index);
             $scope.isClientsOpen[index] = !$scope.isClientsOpen[index];
             $scope.selected_client = client.first_name + " " + client.last_name;
             $scope.tripDropdownDisabled[index] = true;
@@ -104,6 +112,8 @@ controllers.controller('DispatchController',
             var query = new $kinvey.Query();
             query.equalTo('client._id', client._id);
             query.equalTo('user_status', "new");
+
+            //Kinvey get routes of client with user_status "new" starts
             var promise = $kinvey.DataStore.find('shipment', query, {relations: { route: 'route'}});
             promise.then(
                 function (response) {
@@ -141,6 +151,8 @@ controllers.controller('DispatchController',
         };
 
         $scope.saveDispatch = function (index, shipment) {
+
+            //check is form valid
             var isFormInvalid = false;
             if (!shipment.driver) {
                 $scope.isSubmittedDriver[index] = true;
@@ -173,7 +185,6 @@ controllers.controller('DispatchController',
         };
 
         $scope.cancelDispatch = function (index) {
-            console.log("is edit " + $scope.isEdit);
             $scope.new_shipments.splice(index, 1);
             $scope.isClientsOpen.splice(index, 1);
             $scope.isDriversOpen.splice(index, 1);
@@ -183,7 +194,6 @@ controllers.controller('DispatchController',
             $scope.isShipmentNameSelected.splice(index, 1);
             $scope.trips.splice(index, 1);
             $scope.isEdit.splice(index, 1);
-            console.log("is edit " + $scope.isEdit);
         };
 
         $scope.startDispatch = function (index, shipment) {
@@ -191,13 +201,15 @@ controllers.controller('DispatchController',
             delete shipment.date;
             delete shipment.request_time;
             shipment.user_status = "open";
+
+            //Kinvey update dispatch starts
             var promise = $kinvey.DataStore.save("shipment", shipment, {relations: { route: 'route',
                 client: "clients",
                 driver: "user",
                 info: "shipment-info"}});
             promise.then(
                 function (responce) {
-                    console.log("update shipment success " + JSON.stringify(responce));
+                    console.log("update shipment success");
                     $scope.new_shipments.splice(index, 1);
                     $scope.open_shipments.unshift(responce);
                     setFormatDateTime(responce);
@@ -208,6 +220,7 @@ controllers.controller('DispatchController',
             );
         };
 
+        //shows popup map with route
         $scope.viewRoute = function (shipment) {
             var modalInstance = $modal.open({
                 templateUrl: 'map.html',
@@ -221,6 +234,7 @@ controllers.controller('DispatchController',
             });
         };
 
+        //get clients for which the routes haven`t consigned drivers
         var getClients = function () {
             $scope.clients = [];
             var query = new $kinvey.Query();
@@ -228,7 +242,6 @@ controllers.controller('DispatchController',
             var promise = $kinvey.DataStore.find('shipment', query, {relations: {client: "clients", route: "route"}});
             promise.then(
                 function (response) {
-                    console.log("get client success " + response.length);
                     console.log("clients " + JSON.stringify(response));
                     for (var i in response) {
                         if (!response[i].route.isInTrash && !response[i].client.isInTrash) {
@@ -244,6 +257,7 @@ controllers.controller('DispatchController',
             );
         };
 
+        //get shipment infos
         var getShipmentInfos = function () {
             $scope.shipment_infos = [];
             var promise = $kinvey.DataStore.find('shipment-info', null);
@@ -258,6 +272,7 @@ controllers.controller('DispatchController',
             );
         };
 
+        //converts date in right format
         var setFormatDateTime = function (shipment) {
             var monthNames = [ "January", "February", "March", "April", "May", "June",
                 "July", "August", "September", "October", "November", "December" ];
@@ -274,7 +289,7 @@ controllers.controller('DispatchController',
         };
     }]);
 
-var MapController = function ($scope, $kinvey, $location, $modalInstance, currentTrip) {
+var MapController = function ($scope, $kinvey, $modalInstance, currentTrip) {
     var start_marker;
     var finish_marker;
     var map;
@@ -283,7 +298,11 @@ var MapController = function ($scope, $kinvey, $location, $modalInstance, curren
         suppressMarkers: true
     });
     var directionsService = new google.maps.DirectionsService();
+
+    //map popup initialization
     $scope.initialize = function () {
+
+        //map creation
         var mapProp = {
             zoom: 14,
             center: new google.maps.LatLng((currentTrip.route.start_lat + currentTrip.route.finish_lat) / 2, (currentTrip.route.start_long + currentTrip.route.finish_long) / 2)
@@ -292,13 +311,13 @@ var MapController = function ($scope, $kinvey, $location, $modalInstance, curren
             console.log("map create " + map + " ");
             map = new google.maps.Map(document.getElementById("route_map"), mapProp);
         }
-        console.log("current trip " + JSON.stringify(currentTrip));
+
+        //markers creation
         start_marker = new google.maps.Marker({
             position: new google.maps.LatLng(currentTrip.route.start_lat, currentTrip.route.start_long),
             map: map,
             icon: 'images/start_marker.png'
         });
-
         finish_marker = new google.maps.Marker({
             position: new google.maps.LatLng(currentTrip.route.finish_lat, currentTrip.route.finish_long),
             map: map,
@@ -310,6 +329,7 @@ var MapController = function ($scope, $kinvey, $location, $modalInstance, curren
         }, 100);
     };
 
+    //builds route between markers
     function calcRoute() {
         var request = {
             origin: new google.maps.LatLng(start_marker.getPosition().k, start_marker.getPosition().A),
@@ -325,6 +345,7 @@ var MapController = function ($scope, $kinvey, $location, $modalInstance, curren
         });
     }
 
+    //close popup
     $scope.acceptTrip = function () {
         $modalInstance.dismiss();
     };

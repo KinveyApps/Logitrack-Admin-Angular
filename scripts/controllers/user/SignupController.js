@@ -59,6 +59,8 @@ controllers.controller('SignUpController',
             if (isFormInvalid) {
                 return;
             }
+
+            //Kinvey user signup starts
             var promise = $kinvey.User.signup({
                 username: $scope.username,
                 password: $scope.password,
@@ -68,7 +70,6 @@ controllers.controller('SignUpController',
                 mobile_number: $scope.telephone_number,
                 status: "admin"
             });
-            console.log("signup promise");
             promise.then(
                 function () {
                     //Kinvey signup finished with success

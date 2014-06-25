@@ -15,6 +15,7 @@
 controllers.controller('ManageShipmentsController',
     ['$scope', '$kinvey', function ($scope, $kinvey) {
 
+        //scope variables initialization
         $scope.shipments = [];
         $scope.archived_shipments = [];
         $scope.isEdit = [];
@@ -24,11 +25,14 @@ controllers.controller('ManageShipmentsController',
         $scope.isSubmittedName = [];
         $scope.isSubmittedDetails = [];
         $scope.isShowArchived = false;
+
+        //Kinvey get shipment info starts
         var promise = $kinvey.DataStore.find('shipment', null, {relations: {info: "shipment-info"}});
         promise.then(
             function (response) {
                 for (var i in response) {
                     if (response[i].info) {
+                        //check if info is archived or not
                         if (response[i].info.isInTrash) {
                             if (!isItemExistInArray(response[i].info, $scope.archived_shipments)) {
                                 $scope.archived_shipments.push(response[i].info);
@@ -42,6 +46,7 @@ controllers.controller('ManageShipmentsController',
                         }
                     }
                 }
+                //get shipment info that haven`t assigned dispatches
                 var promise = $kinvey.DataStore.find('shipment-info', null);
                 promise.then(function (response) {
                     for (var i in response) {
@@ -80,6 +85,7 @@ controllers.controller('ManageShipmentsController',
         };
 
         $scope.saveShipment = function (index, shipment) {
+            //check is form valid
             var isFormInvalid = false;
             if (!shipment.name) {
                 isFormInvalid = true;
@@ -98,6 +104,8 @@ controllers.controller('ManageShipmentsController',
             }
             $scope.isEdit[index] = !$scope.isEdit[index];
             $scope.isShipment[index] = true;
+
+            //Kinvey update shipment info starts
             var promise = $kinvey.DataStore.save("shipment-info", shipment);
             promise.then(function (response) {
                 console.log("save shipment whit success");
@@ -130,6 +138,7 @@ controllers.controller('ManageShipmentsController',
                 $scope.isShowArchived = false;
             }
             if (shipment._id !== undefined) {
+                //Kinvey destroy shipment info starts
                 var promise = $kinvey.DataStore.destroy('shipment-info', shipment._id);
                 promise.then(function (response) {
                     console.log("delete shipment with success");
@@ -183,6 +192,7 @@ controllers.controller('ManageShipmentsController',
         };
 
         var saveShipmentOnKinvey = function (shipment) {
+            //Kinvey update shipment info starts
             var promise = $kinvey.DataStore.save("shipment-info", shipment);
             promise.then(function (response) {
                 console.log("save shipment whit success");
@@ -192,7 +202,7 @@ controllers.controller('ManageShipmentsController',
         }
     }]);
 
-
+//check if item exist array
 var isItemExistInArray = function (item, array) {
     for (var i in array) {
         if (array[i]._id == item._id) {

@@ -14,6 +14,7 @@
 
 controllers.controller('MainController',
     ['$scope', '$kinvey', "$location", "$modal", function ($scope, $kinvey, $location, $modal) {
+        //initialize scope variables
         $scope.selectedTab = 0;
         $scope.status = {};
         status.isopen = false;
@@ -29,6 +30,7 @@ controllers.controller('MainController',
             }
         ];
 
+        //Kinvey logout starts
         $scope.signOut = function () {
             var user = $kinvey.getActiveUser();
             if (null !== user) {
@@ -44,6 +46,7 @@ controllers.controller('MainController',
             }
         };
 
+        //open popup for profile edit
         $scope.changeProfile = function (item) {
             var modalInstance = $modal.open({
                 templateUrl: 'profile_edit.html',
@@ -61,6 +64,7 @@ controllers.controller('MainController',
             $scope.$broadcast('UPDATE_CLIENTS');
         };
 
+        //switch content in "Manage" tab
         $scope.selectManageItem = function ($event, index) {
             $scope.selectedManageItem = index;
             $scope.selectedTab = 2;
@@ -73,6 +77,7 @@ controllers.controller('MainController',
 var ProfileEditController = function ($scope, $modalInstance, $kinvey, item) {
 
     var activeUser = $kinvey.getActiveUser();
+    //initialize scope variables
     $scope.bioForm = {};
     $scope.emailForm = {};
     $scope.passwordForm = {};
@@ -95,10 +100,13 @@ var ProfileEditController = function ($scope, $modalInstance, $kinvey, item) {
             $scope.edit_title = "Password";
             break;
     }
+
+    //save profile changes
     $scope.save = function () {
         var isFormInvalid = false;
         switch (item.id) {
             case 0:
+                //check is form valid
                 if ($scope.bioForm.scope.first_name.$error.required) {
                     $scope.submittedFirstName = true;
                     isFormInvalid = true;
@@ -123,7 +131,8 @@ var ProfileEditController = function ($scope, $modalInstance, $kinvey, item) {
                 activeUser.first_name = $scope.user.first_name;
                 activeUser.last_name = $scope.user.last_name;
                 activeUser.username = $scope.user.username;
-                console.log("check user name " + $scope.user.username);
+
+                //Kinvey update user data starts
                 var promise = $kinvey.User.update(activeUser);
                 promise.then(
                     function () {
@@ -135,6 +144,7 @@ var ProfileEditController = function ($scope, $modalInstance, $kinvey, item) {
                 );
                 break;
             case 1:
+                //check is form valid
                 if ($scope.emailForm.scope.email.$error.email || $scope.emailForm.scope.email.$error.required) {
                     $scope.submittedEmail = true;
                     isFormInvalid = true;
@@ -146,6 +156,8 @@ var ProfileEditController = function ($scope, $modalInstance, $kinvey, item) {
                     return;
                 }
                 activeUser.email = $scope.user.email;
+
+                //Kinvey update user data starts
                 var promise = $kinvey.User.update(activeUser);
                 promise.then(
                     function () {
@@ -157,6 +169,7 @@ var ProfileEditController = function ($scope, $modalInstance, $kinvey, item) {
                 );
                 break;
             case 2:
+                //check is form valid
                 if ($scope.passwordForm.scope.password.$error.required) {
                     $scope.submittedNewPassword = true;
                     isFormInvalid = true;
@@ -175,8 +188,9 @@ var ProfileEditController = function ($scope, $modalInstance, $kinvey, item) {
                     $scope.matchedPasswords = true;
                     return;
                 }
-                console.log("passwords " + $scope.user.password + ",," + $scope.user.reconfirm_password);
                 activeUser.password = $scope.user.password;
+
+                //Kinvey update user data starts
                 var promise = $kinvey.User.update(activeUser);
                 promise.then(
                     function () {
@@ -188,9 +202,9 @@ var ProfileEditController = function ($scope, $modalInstance, $kinvey, item) {
                 );
                 break;
         }
-
     };
 
+    //cancel editing
     $scope.cancel = function () {
         $modalInstance.dismiss('cancel');
     };

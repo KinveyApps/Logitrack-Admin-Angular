@@ -14,8 +14,11 @@
 
 controllers.controller('LogisticsController',
     ['$scope', '$kinvey', "$modal", function ($scope, $kinvey, $modal) {
+
         var query = new $kinvey.Query();
         query.equalTo('user_status', 'in progress');
+
+        //Kinvey get all shipments with status "in progress"
         var promise = $kinvey.DataStore.find('shipment', query, {relations: { route: "route",
             client: "clients",
             driver: "user",
@@ -27,7 +30,8 @@ controllers.controller('LogisticsController',
             console.log("get shipment error " + error.description);
         });
 
-        $scope.getTime = function (time_data) {
+        //converts time in right format
+        $scope.formatTime = function (time_data) {
             var milis = Date.parse(time_data);
             var date = new Date(milis);
             var hours = date.getHours();
@@ -39,10 +43,11 @@ controllers.controller('LogisticsController',
             return hours + ":" + minutes + ":" + seconds;
         };
 
-        $scope.showTripDetails = function (shipment, index) {
+        //open popup with shipment details
+        $scope.showShipmentDetails = function (shipment, index) {
             var modalInstance = $modal.open({
                 templateUrl: 'trip_details.html',
-                controller: TripDetailsController,
+                controller: ShipmentDetailsController,
                 size: "lg",
                 resolve: {
                     shipment: function () {
@@ -54,7 +59,7 @@ controllers.controller('LogisticsController',
     }]);
 
 
-var TripDetailsController = function ($scope, $kinvey, $location, $modalInstance, shipment) {
+var ShipmentDetailsController = function ($scope, $kinvey, $modalInstance, shipment) {
 
     var start_marker;
     var finish_marker;
@@ -65,15 +70,18 @@ var TripDetailsController = function ($scope, $kinvey, $location, $modalInstance
         suppressMarkers: true
     });
     var directionsService = new google.maps.DirectionsService();
+
+    //initialization shipment details popup
     $scope.initialize = function () {
         var mapProp = {
             zoom: 14,
             center: new google.maps.LatLng((shipment.route.start_lat + shipment.route.finish_lat) / 2, (shipment.route.start_long + shipment.route.finish_long) / 2)
         };
         if (!map) {
-            console.log("map create " + map + " ");
             map = new google.maps.Map(document.getElementById("checkin_map"), mapProp);
         }
+
+        //markers creation
         start_marker = new google.maps.Marker({
             position: new google.maps.LatLng(shipment.route.start_lat, shipment.route.start_long),
             map: map,
@@ -89,13 +97,16 @@ var TripDetailsController = function ($scope, $kinvey, $location, $modalInstance
             map: map,
             icon: 'images/user_marker.png'
         });
+
         var query = new $kinvey.Query();
         query.equalTo('shipment_id', shipment._id);
-        console.log(shipment._id);
+
+        //Kinvey get checkins starts
         var promise = $kinvey.DataStore.find('shipment-checkins', query);
         promise.then(function (response) {
                 $scope.checkins = response;
                 for (var i in response) {
+                    //create checkin marker
                     new google.maps.Marker({
                         position: new google.maps.LatLng(response[i].position.lat, response[i].position.lon),
                         map: map
@@ -103,12 +114,14 @@ var TripDetailsController = function ($scope, $kinvey, $location, $modalInstance
                 }
             },
             function (error) {
-                console.log("checins error " + error.description);
+                console.log("get checkins with error " + error.description);
             });
         window.setTimeout(function () {
             google.maps.event.trigger(map, 'resize');
         }, 100);
     };
+
+    //builds route between markers
     function calcRoute() {
         var request = {
             origin: new google.maps.LatLng(start_marker.getPosition().k, start_marker.getPosition().A),
@@ -132,6 +145,7 @@ var TripDetailsController = function ($scope, $kinvey, $location, $modalInstance
         }, 100);
     };
 
+    //closes popup
     $scope.closeTripDetails = function () {
         $modalInstance.dismiss();
     };
