@@ -1534,17 +1534,19 @@ controllers.controller('ManageShipmentsController',
         var promise = $kinvey.DataStore.find('shipment', null, {relations: {info: "shipment-info"}});
         promise.then(
             function (response) {
-                for(var i in response){
-                    if(response[i].info.isInTrash){
-                        if (!isItemExistInArray(response[i].info, $scope.archived_shipments)) {
-                            $scope.archived_shipments.push(response[i].info);
-                            $scope.isEditArchivedPermissions.push(false);
-                            $scope.isShowArchived = true;
+                for (var i in response) {
+                    if (response[i].info) {
+                        if (response[i].info.isInTrash) {
+                            if (!isItemExistInArray(response[i].info, $scope.archived_shipments)) {
+                                $scope.archived_shipments.push(response[i].info);
+                                $scope.isEditArchivedPermissions.push(false);
+                                $scope.isShowArchived = true;
+                            }
+                        } else if (!isItemExistInArray(response[i].info, $scope.shipments)) {
+                            $scope.shipments.push(response[i].info);
+                            $scope.isEditPermissions.push(false);
+                            $scope.isShipment.push(true);
                         }
-                    }else if (!isItemExistInArray(response[i].info, $scope.shipments)) {
-                        $scope.shipments.push(response[i].info);
-                        $scope.isEditPermissions.push(false);
-                        $scope.isShipment.push(true);
                     }
                 }
                 var promise = $kinvey.DataStore.find('shipment-info', null);
