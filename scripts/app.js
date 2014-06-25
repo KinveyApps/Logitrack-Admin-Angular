@@ -60,11 +60,13 @@ app.run(['$location', '$kinvey', '$rootScope', '$timeout', function ($location, 
     });
 }]);
 
+var controllers = angular.module('controllers', ['ui.bootstrap']);
 
 //function selects the desired behavior depending on whether the user is logged or not
 function determineBehavior($kinvey, $location, $rootScope) {
     var activeUser = $kinvey.getActiveUser();
     console.log("$location.$$url: " + $location.$$url);
+
     if (activeUser != null) {
         console.log("activeUser not null determine behavior");
         if ($location.$$url != '/templates/main') {
