@@ -316,9 +316,6 @@ the License.
     </div>
     <div class="dispatch-btn-group">
         <button class="btn btn-primary dispatch-btn" ng-click="acceptTrip()">OK</button>
-        <button class="btn btn-primary dispatch-btn" ng-show="isShape" ng-click="createShape()">
-            Create Shape
-        </button>
     </div>
 </script>
 </div>
@@ -513,6 +510,7 @@ the License.
                 <button class="btn btn-primary dispatch-btn" ng-click="findRoute()" ng-show="!isSave">Find address</button>
                 <button class="btn btn-primary dispatch-btn" ng-click="cancelRoute()">Cancel</button>
             </div>
+            <span style="margin-top: -20px" class="input-with-title-span" ng-show="submittedError">{{error}}</span>
         </script>
     </div>
     <div ng-show="selectedManageItem==1" ng-controller="ManageShipmentsController">

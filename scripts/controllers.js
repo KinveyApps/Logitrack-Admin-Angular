@@ -663,15 +663,12 @@ var MapController = function ($scope, $kinvey, $location, $modalInstance, curren
     var start_marker;
     var finish_marker;
     var map;
-    var shape_paths = [];
-    var markers=[];
     var directionsDisplay = new google.maps.DirectionsRenderer();
     directionsDisplay.setOptions({
         suppressMarkers: true
     });
     var directionsService = new google.maps.DirectionsService();
     $scope.initialize = function () {
-        $scope.isShape = false;
         var mapProp = {
             zoom: 14,
             center: new google.maps.LatLng((currentTrip.route.start_lat + currentTrip.route.finish_lat) / 2, (currentTrip.route.start_long + currentTrip.route.finish_long) / 2)
@@ -686,30 +683,7 @@ var MapController = function ($scope, $kinvey, $location, $modalInstance, curren
             map: map,
             icon: 'images/start_marker.png'
         });
-//        var populationOptions = {
-//            strokeColor: '#FF0000',
-//            strokeOpacity: 0.8,
-//            strokeWeight: 2,
-//            fillColor: '#FF0000',
-//            fillOpacity: 0.35,
-//            map: map,
-//            center: start_marker.getPosition(),
-//            radius: 1000,
-//            draggable:true,
-//            editable:true
-//        };
-//        // Add the circle for this city to the map.
-//        circle = new google.maps.Circle(populationOptions);
-//        google.maps.event.addListener(circle, 'dragend', function() {
-//            alert("drag end");
-//        });
 
-        // Construct the polygon.
-
-
-        google.maps.event.addListener(map, 'click', function (event) {
-            createShapePath(event.latLng);
-        });
         finish_marker = new google.maps.Marker({
             position: new google.maps.LatLng(currentTrip.route.finish_lat, currentTrip.route.finish_long),
             map: map,
@@ -721,38 +695,6 @@ var MapController = function ($scope, $kinvey, $location, $modalInstance, curren
         }, 100);
     };
 
-    $scope.createShape = function () {
-        for (var i in markers) {
-            markers[i].setMap(null);
-        }
-        shape_paths.push(shape_paths[0]);
-        shape = new google.maps.Polygon({
-            paths: shape_paths,
-            strokeColor: '#FF0000',
-            strokeOpacity: 0.8,
-            strokeWeight: 2,
-            fillColor: '#FF0000',
-            fillOpacity: 0.35,
-            draggable: true,
-            editable: true
-        });
-        shape.setMap(map);
-        $scope.isShape = false;
-        google.maps.event.clearListeners(map, 'click');
-        console.log("is shape contain start marker: " + (google.maps.geometry.poly.containsLocation(start_marker.getPosition(), shape)));
-    };
-
-    function createShapePath(location){
-        shape_paths.push(location);
-        var marker = new google.maps.Marker({
-            position: location,
-            map: map
-        });
-        markers.push(marker);
-        if(shape_paths.length>2){
-            $scope.isShape = true;
-        }
-    };
     function calcRoute() {
         var request = {
             origin: new google.maps.LatLng(start_marker.getPosition().k, start_marker.getPosition().A),
@@ -1123,6 +1065,7 @@ var RouteCreateController = function ($scope, $kinvey, $location, $timeout, $mod
     var start_marker;
     var finish_marker;
     var map;
+    var area;
     console.log("current trip " + JSON.stringify(currentTrip));
     var geocoder = new google.maps.Geocoder();
     var directionsDisplay = new google.maps.DirectionsRenderer();
@@ -1156,6 +1099,7 @@ var RouteCreateController = function ($scope, $kinvey, $location, $timeout, $mod
             createStartMarker(new google.maps.LatLng($scope.trip_route.start_lat, $scope.trip_route.start_long));
             createFinishMarker(new google.maps.LatLng($scope.trip_route.finish_lat, $scope.trip_route.finish_long));
             calcRoute();
+            createArea(true);
         }
     };
 
@@ -1185,6 +1129,7 @@ var RouteCreateController = function ($scope, $kinvey, $location, $timeout, $mod
             calcRoute();
             getAddressByPosition(finish_marker.getPosition(), false);
             $scope.isSave = true;
+            createArea(false);
         }
     };
 
@@ -1208,9 +1153,18 @@ var RouteCreateController = function ($scope, $kinvey, $location, $timeout, $mod
         } else {
             $scope.submittedStart = false;
         }
+        console.log(area.getBounds().contains(start_marker.getPosition()) + "  " + area.getBounds().contains(finish_marker.getPosition()));
+        if (!area.getBounds().contains(start_marker.getPosition()) || !area.getBounds().contains(finish_marker.getPosition())) {
+            isFormInvalid = true;
+            $scope.submittedError = true;
+            $scope.error = "The area doesn't contain route points";
+        } else {
+            $scope.submittedError = true;
+        }
         if (isFormInvalid) {
             return;
         }
+        $scope.trip_route.isInTrash = false;
         $modalInstance.close($scope.trip_route);
     };
 
@@ -1304,6 +1258,47 @@ var RouteCreateController = function ($scope, $kinvey, $location, $timeout, $mod
             calcRoute();
             getAddressByPosition(start_marker.getPosition(), true);
         });
+        if(!area && finish_marker){
+            console.log("create area");
+            createArea(false);
+        }
+    };
+
+    var createArea = function (isAreaExist) {
+        var bounds;
+        if (isAreaExist) {
+            bounds = new google.maps.LatLngBounds(
+                new google.maps.LatLng(currentTrip.route.area.ya.k,currentTrip.route.area.pa.j),
+                new google.maps.LatLng(currentTrip.route.area.ya.j,currentTrip.route.area.pa.k));
+        } else {
+            if (start_marker.getPosition().A < finish_marker.getPosition().A) {
+                console.log("bounds 1");
+                bounds = new google.maps.LatLngBounds(
+                    start_marker.getPosition(),
+                    finish_marker.getPosition());
+            } else {
+                console.log("bounds 2");
+                bounds = new google.maps.LatLngBounds(
+                    finish_marker.getPosition(),
+                    start_marker.getPosition());
+            }
+        }
+        area = new google.maps.Rectangle({
+            strokeColor: '#5893CC',
+            strokeOpacity: 0.8,
+            strokeWeight: 2,
+            fillColor: '#5893CC',
+            fillOpacity: 0.35,
+            bounds:bounds,
+            draggable: true,
+            editable: true,
+            map:map
+        });
+        $scope.trip_route.area = area.getBounds();
+        google.maps.event.clearListeners(map, 'click');
+        google.maps.event.addListener(area, 'bounds_changed', function() {
+            $scope.trip_route.area = area.getBounds();
+        });
     };
 
     var createFinishMarker = function (location) {
@@ -1318,6 +1313,10 @@ var RouteCreateController = function ($scope, $kinvey, $location, $timeout, $mod
             calcRoute();
             getAddressByPosition(finish_marker.getPosition(), false);
         });
+        if(!area && start_marker){
+            console.log("create area");
+            createArea(false);
+        }
     };
 
     var setRoute = function (isStart, position, address) {
