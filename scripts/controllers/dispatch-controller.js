@@ -152,7 +152,7 @@ controllers.controller('DispatchController',
 
         $scope.saveDispatch = function (index, shipment) {
 
-            //check is form valid
+            //checks is form valid
             var isFormInvalid = false;
             if (!shipment.driver) {
                 $scope.isSubmittedDriver[index] = true;
@@ -234,7 +234,7 @@ controllers.controller('DispatchController',
             });
         };
 
-        //get clients for which the routes haven`t consigned drivers
+        //gets clients for which the routes haven`t consigned drivers
         var getClients = function () {
             $scope.clients = [];
             var query = new $kinvey.Query();
@@ -257,7 +257,7 @@ controllers.controller('DispatchController',
             );
         };
 
-        //get shipment infos
+        //gets shipment infos
         var getShipmentInfos = function () {
             $scope.shipment_infos = [];
             var promise = $kinvey.DataStore.find('shipment-info', null);
@@ -345,7 +345,7 @@ var MapController = function ($scope, $kinvey, $modalInstance, currentTrip) {
         });
     }
 
-    //close popup
+    //closes popup
     $scope.acceptTrip = function () {
         $modalInstance.dismiss();
     };

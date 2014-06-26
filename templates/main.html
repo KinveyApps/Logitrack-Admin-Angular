@@ -374,7 +374,7 @@ the License.
     </div>
 </div>
 <div ng-show="selectedTab==2">
-    <div ng-show="selectedManageItem==0" ng-controller="ManageTripsController">
+    <div ng-show="selectedManageItem==0" ng-init="initPage()" ng-controller="ManageTripsController">
         <div class="new-btn-div">
             <div class="btn btn-primary dispatch-btn new-btn" ng-click="addNewTrip()">Add trip</div>
             <p class="box-title" ng-click="isTripsCollapsed = !isTripsCollapsed">Trips</p>

@@ -15,58 +15,51 @@
 controllers.controller('ManageTripsController',
     ['$scope', '$kinvey', "$modal", function ($scope, $kinvey, $modal) {
 
-        var getClients = function () {
-            $scope.clients = [];
-            var query = new $kinvey.Query();
-            var promise = $kinvey.DataStore.find('clients', null);
-            promise.then(
-                function (response) {
-                    $scope.clients = response;
-                    console.log($scope.clients);
-                },
-                function (error) {
-                    console.log("get clients error " + error.description);
-                }
-            );
-        };
-        $scope.isEdit = [];
-        $scope.trips = [];
-        $scope.archived_trips = [];
-        $scope.isClientsOpen = [];
-        $scope.isSubmittedClient = [];
-        $scope.isSubmittedRoute = [];
-        $scope.isRoute = [];
-        $scope.routeBtnText = [];
-        $scope.isEditPermissions = [];
-        $scope.isShowArchived = false;
-        getClients();
-        var promise = $kinvey.DataStore.find('shipment', null, {relations: {route: "route", client: "clients"}});
-        promise.then(function (response) {
-            for (var i in response) {
-                if (!response[i].route.isInTrash) {
-                    if (!isTripExistInArray(response[i], $scope.trips)) {
-                        $scope.trips.push(response[i]);
-                        $scope.isRoute.push(true);
-                        $scope.routeBtnText.push("Edit route");
-                        if (response[i].user_status == "new") {
-                            $scope.isEditPermissions.push(true);
-                        } else {
-                            $scope.isEditPermissions.push(false);
+        $scope.initPage = function() {
+            //scope variables initialization
+            $scope.isEdit = [];
+            $scope.trips = [];
+            $scope.archived_trips = [];
+            $scope.isClientsOpen = [];
+            $scope.isSubmittedClient = [];
+            $scope.isSubmittedRoute = [];
+            $scope.isRoute = [];
+            $scope.routeBtnText = [];
+            $scope.isEditPermissions = [];
+            $scope.isShowArchived = false;
+            getClients();
+
+            //Kinvey get shipments starts
+            var promise = $kinvey.DataStore.find('shipment', null, {relations: {route: "route", client: "clients"}});
+            promise.then(function (response) {
+                for (var i in response) {
+                    //checks is trip archived or not
+                    if (!response[i].route.isInTrash) {
+                        if (!isTripExistInArray(response[i], $scope.trips)) {
+                            $scope.trips.push(response[i]);
+                            $scope.isRoute.push(true);
+                            $scope.routeBtnText.push("Edit route");
+                            if (response[i].user_status == "new") {
+                                $scope.isEditPermissions.push(true);
+                            } else {
+                                $scope.isEditPermissions.push(false);
+                            }
+                        }
+                    } else {
+                        if (!isTripExistInArray(response[i], $scope.archived_trips)) {
+                            $scope.archived_trips.push(response[i]);
+                            $scope.isShowArchived = true;
                         }
                     }
-                } else {
-                    if (!isTripExistInArray(response[i], $scope.archived_trips)) {
-                        $scope.archived_trips.push(response[i]);
-                        $scope.isShowArchived = true;
-                    }
                 }
-            }
-        }, function (error) {
-            console.log("get trips with error " + error.description);
-        });
+            }, function (error) {
+                console.log("get trips with error " + error.description);
+            });
+        }
 
         $scope.deleteTrip = function (index, trip) {
             $scope.archived_trips.splice(index, 1);
+            //Kinvey delete trip starts
             var promise = $kinvey.DataStore.destroy('shipment', trip._id);
             promise.then(function (response) {
                 console.log("delete trip with success");
@@ -150,6 +143,7 @@ controllers.controller('ManageTripsController',
         };
 
         $scope.saveTrip = function (index, trip) {
+            //checks is form valid
             var isFormInvalid = false;
             console.log();
             if (!trip.client) {
@@ -189,6 +183,7 @@ controllers.controller('ManageTripsController',
             trip.client = client;
         };
 
+        //shows map with route
         $scope.viewTrip = function (trip) {
             var modalInstance = $modal.open({
                 templateUrl: 'map.html',
@@ -207,6 +202,8 @@ controllers.controller('ManageTripsController',
             delete duplicatedTrip._id;
             delete duplicatedTrip.route._id;
             duplicatedTrip.user_status = "new";
+
+            //Kinvey duplicate trip starts
             var promise = $kinvey.DataStore.save("shipment", duplicatedTrip, {relations: { route: 'route',
                 client: "clients" }});
             promise.then(
@@ -227,6 +224,7 @@ controllers.controller('ManageTripsController',
             );
         };
 
+        //shows map where you can create new route and select route area
         $scope.selectRoute = function (trip, index) {
             var modalInstance = $modal.open({
                 templateUrl: 'route_create_map.html',
@@ -250,6 +248,22 @@ controllers.controller('ManageTripsController',
             });
         };
 
+        var getClients = function () {
+            $scope.clients = [];
+
+            //Kinvey get clients starts
+            var promise = $kinvey.DataStore.find('clients', null);
+            promise.then(
+                function (response) {
+                    $scope.clients = response;
+                    console.log($scope.clients);
+                },
+                function (error) {
+                    console.log("get clients error " + error.description);
+                }
+            );
+        };
+
         var isTripExistInArray = function (trip, array) {
             for (var i in array) {
                 if (array[i].route._id == trip.route._id) {
@@ -261,6 +275,7 @@ controllers.controller('ManageTripsController',
 
 
         var saveTripOnKinvey = function (trip) {
+            //Kinvey save shipment starts
             var promise = $kinvey.DataStore.save("shipment", trip, {relations: { route: 'route',
                 client: "clients" }});
             promise.then(
@@ -275,33 +290,38 @@ controllers.controller('ManageTripsController',
     }]);
 
 
-var RouteCreateController = function ($scope, $kinvey, $location, $timeout, $modalInstance, currentTrip) {
+var RouteCreateController = function ($scope, $kinvey, $timeout, $modalInstance, currentTrip) {
     var start_marker;
     var finish_marker;
     var map;
     var area;
-    console.log("current trip " + JSON.stringify(currentTrip));
     var geocoder = new google.maps.Geocoder();
     var directionsDisplay = new google.maps.DirectionsRenderer();
     directionsDisplay.setOptions({
         suppressMarkers: true
     });
     var directionsService = new google.maps.DirectionsService();
+    console.log("current trip " + JSON.stringify(currentTrip));
+
     $scope.initialize = function () {
+
+        //scope variables initialization
         $scope.trip_route = {};
         $scope.isSave = {};
+
+        //map creation
         var mapProp = {
             zoom: 14,
             center: new google.maps.LatLng(google.loader.ClientLocation.latitude, google.loader.ClientLocation.longitude)
         };
         if (!map) {
-            console.log("map create " + map + " ");
             map = new google.maps.Map(document.getElementById("route-map"), mapProp);
         }
         $timeout(function () {
             google.maps.event.trigger(map, 'resize');
         }, 100);
 
+        //checks if we create new route or edit existing one
         if (!currentTrip.route) {
             $scope.isSave = false;
             google.maps.event.addListener(map, 'click', function (event) {
@@ -317,8 +337,8 @@ var RouteCreateController = function ($scope, $kinvey, $location, $timeout, $mod
         }
     };
 
+    //builds route between markers
     function calcRoute() {
-        console.log("calc route");
         var request = {
             origin: new google.maps.LatLng(start_marker.getPosition().k, start_marker.getPosition().A),
             destination: new google.maps.LatLng(finish_marker.getPosition().k, finish_marker.getPosition().A),
@@ -334,6 +354,7 @@ var RouteCreateController = function ($scope, $kinvey, $location, $timeout, $mod
         });
     };
 
+    //map click event listener
     function placeMarker(location) {
         if (!start_marker) {
             createStartMarker(location);
@@ -347,6 +368,7 @@ var RouteCreateController = function ($scope, $kinvey, $location, $timeout, $mod
         }
     };
 
+    //closes popup
     $scope.cancelRoute = function () {
         $modalInstance.dismiss();
     };
@@ -367,7 +389,8 @@ var RouteCreateController = function ($scope, $kinvey, $location, $timeout, $mod
         } else {
             $scope.submittedStart = false;
         }
-        console.log(area.getBounds().contains(start_marker.getPosition()) + "  " + area.getBounds().contains(finish_marker.getPosition()));
+
+        //checks is route area contain start and end markers
         if (!area.getBounds().contains(start_marker.getPosition()) || !area.getBounds().contains(finish_marker.getPosition())) {
             isFormInvalid = true;
             $scope.submittedError = true;
@@ -437,7 +460,6 @@ var RouteCreateController = function ($scope, $kinvey, $location, $timeout, $mod
                 if (!finish_marker) {
                     createFinishMarker(finish_location);
                 } else {
-                    console.log("set position finish");
                     finish_marker.setPosition(finish_location);
                     calcRoute();
                 }
@@ -473,12 +495,14 @@ var RouteCreateController = function ($scope, $kinvey, $location, $timeout, $mod
             getAddressByPosition(start_marker.getPosition(), true);
         });
         if (!area && finish_marker) {
-            console.log("create area");
             createArea(false);
         }
     };
 
+    //create rectangle route area
     var createArea = function (isAreaExist) {
+
+        console.log("create area");
         var bounds;
         if (isAreaExist) {
             bounds = new google.maps.LatLngBounds(
@@ -497,17 +521,19 @@ var RouteCreateController = function ($scope, $kinvey, $location, $timeout, $mod
                     start_marker.getPosition());
             }
         }
-        area = new google.maps.Rectangle({
-            strokeColor: '#5893CC',
-            strokeOpacity: 0.8,
-            strokeWeight: 2,
-            fillColor: '#5893CC',
-            fillOpacity: 0.35,
-            bounds: bounds,
-            draggable: true,
-            editable: true,
-            map: map
-        });
+        if(!area) {
+            area = new google.maps.Rectangle({
+                strokeColor: '#5893CC',
+                strokeOpacity: 0.8,
+                strokeWeight: 2,
+                fillColor: '#5893CC',
+                fillOpacity: 0.35,
+                bounds: bounds,
+                draggable: true,
+                editable: true,
+                map: map
+            });
+        }
         $scope.trip_route.area = area.getBounds();
         google.maps.event.clearListeners(map, 'click');
         google.maps.event.addListener(area, 'bounds_changed', function () {
@@ -516,7 +542,6 @@ var RouteCreateController = function ($scope, $kinvey, $location, $timeout, $mod
     };
 
     var createFinishMarker = function (location) {
-        console.log("create finish");
         finish_marker = new google.maps.Marker({
             position: location,
             map: map,
@@ -528,7 +553,7 @@ var RouteCreateController = function ($scope, $kinvey, $location, $timeout, $mod
             getAddressByPosition(finish_marker.getPosition(), false);
         });
         if (!area && start_marker) {
-            console.log("create area");
+            console.log("create area 1");
             createArea(false);
         }
     };

@@ -88,6 +88,7 @@ controllers.controller('ManageClientsController',
         };
 
         $scope.saveClient = function (index, client) {
+            //check is form valid
             var isFormInvalid = false;
             if (!client.first_name) {
                 isFormInvalid = true;
