@@ -1,0 +1,291 @@
+<!--
+Copyright (c) 2014 Kinvey Inc.
+Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
+in compliance with the License. You may obtain a copy of the License at
+
+http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software distributed under the License
+is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
+or implied. See the License for the specific language governing permissions and limitations under
+the License.
+-->
+<div ng-controller="DispatchController" ng-init="initPage()" ng-show="selectedTab==0">
+<div class="new-btn-div">
+    <div class="btn btn-primary dispatch-btn new-btn" ng-click="createNewDispatch()">New</div>
+    <p class="box-title" ng-click="isNewRequestCollapsed = !isNewRequestCollapsed">New Requests</p>
+</div>
+<ul collapse="isNewRequestCollapsed" ng-repeat="shipment in new_shipments">
+    <li class="list-item">
+        <div class="list-item-div-a">
+            <div class="div-shipment-info">
+                <div class="top-div">
+                    <p class="p-title">Client</p>
+
+                    <p class="p-info" ng-show="!isEdit[$index]">{{shipment.client.first_name + " " +
+                        shipment.client.last_name}}</p>
+
+                    <div ng-show="isEdit[$index]"
+                         class="dropdown-div btn-group" dropdown is-open="isClientsOpen[$index]">
+                        <button type="button" class="dropdown-toggle dropdown-select">
+                            {{shipment.client.first_name + " " + shipment.client.last_name}}<span
+                                style="margin-left: 5px;" class="caret white-caret"></span>
+                        </button>
+                        <ul class="dropdown-menu" role="menu">
+                            <li ng-repeat="client in clients">
+                                <a ng-click="selectClient(client,shipment,$parent.$index)">{{client.first_name
+                                    + " " + client.last_name }}</a></li>
+                        </ul>
+                    </div>
+                </div>
+                <span class="input-with-title-span"
+                      ng-show="isEdit[$index]&&isSubmittedClient[$index]">A client is required.</span>
+
+                <div class="bottom-div" ng-show="!isEdit[$index]">
+                    <p class="p-title">Date</p>
+
+                    <p class="p-info">{{shipment.date}}</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="list-item-div-b">
+            <div class="div-shipment-info">
+                <div class="top-div">
+                    <p class="p-title">Trip</p>
+
+                    <p class="p-info" ng-show="!isEdit[$index]">Begin: {{shipment.route.start}}</p>
+
+                    <p class="p-info" ng-show="!isEdit[$index]">End: {{shipment.route.finish}}</p>
+
+                    <div class="btn-group" dropdown
+                         id="trip-dropdown-div" is-open="isTripsOpen[$index]" ng-show="isEdit[$index]">
+                        <button type="button" id="trip-dropdown-btn" class="dropdown-toggle"
+                                ng-disabled="tripDropdownDisabled[$index]">
+                            <p>Begin: {{shipment.route.start}}</p>
+
+                            <p id="p-end-route">End: {{shipment.route.finish}}</p>
+                            <span style="margin-left: 5px;" class="caret white-caret"></span>
+                        </button>
+                        <ul class="dropdown-menu" role="menu">
+                            <li class="route-li" ng-click="selectTrip(trip,shipment,$parent.$index)"
+                                ng-repeat="trip in trips[$index]">
+                                <a class="route-address-a">Begin: {{trip.route.start}}</a>
+                                <a class="route-address-a">End: {{trip.route.finish}}</a>
+
+                                <div class="divider-line"></div>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                <span class="input-with-title-span" ng-show="isEdit[$index]&&isSubmittedRoute[$index]">A trip is required.</span>
+
+                <div ng-show="!isEdit[$index]" class="bottom-div">
+                    <p class="p-title">Request Time</p>
+
+                    <p class="p-info">{{shipment.request_time}}</p>
+                </div>
+
+            </div>
+        </div>
+        <div class="list-item-div-c">
+            <div class="div-shipment-info">
+                <div class="top-div-shipment-info">
+                    <p class="p-title">Shipment Name</p>
+                    <p ng-show="!isEdit[$index]" class="p-info">{{shipment.info.name}}</p>
+                    <div ng-show="isEdit[$index]"
+                         class="dropdown-div btn-group" dropdown is-open="isShipmentNameOpen[$index]">
+                        <button type="button" class="dropdown-toggle dropdown-select">
+                            {{shipment.info.name}}<span
+                                style="margin-left: 5px;" class="caret white-caret"></span>
+                        </button>
+                        <ul class="dropdown-menu" role="menu">
+                            <li ng-repeat="info in shipment_infos">
+                                <a ng-click="selectShipmentName(shipment,info,$parent.$index)">{{info.name}}</a></li>
+                        </ul>
+                    </div>
+                </div>
+                 <span id="shipment-name-span" class="input-with-title-span"
+                       ng-show="isEdit[$index]&&isSubmittedShipmentName[$index]">A shipment name is required.</span>
+                <div ng-show="!isEdit[$index]||isShipmentNameSelected[$index]" class="bottom-div-shipment-info">
+                    <p class="p-title">Shipment Details</p>
+                    <p class="p-info p-shipment-details">{{shipment.info.details}}</p>
+                </div>
+            </div>
+        </div>
+        <div class="driver-div">
+            <div class="select-driver-div">
+                <p class="p-title">Driver</p>
+
+                <p ng-show="!isEdit[$index]" class="p-info">{{shipment.driver.first_name + " " +
+                    shipment.driver.last_name}}</p>
+
+                <div ng-show="isEdit[$index]" id="dropdown-driver-div" class="btn-group" dropdown
+                     is-open="isDriversOpen[$index]">
+                    <button type="button" class="dropdown-toggle dropdown-select">
+                        {{shipment.driver.last_name + ' ' + shipment.driver.first_name}}<span
+                            style="margin-left: 5px;" class="caret white-caret"></span>
+                    </button>
+                    <ul class="dropdown-menu" role="menu">
+                        <li ng-repeat="driver in drivers">
+                            <a ng-click="selectDriver(driver,$parent.$index)">{{driver.last_name + ' ' +
+                                driver.first_name }}</a></li>
+                    </ul>
+                    <span id="driver-span" class="input-with-title-span"
+                          ng-show="isSubmittedDriver[$index]">A driver is required.</span>
+                </div>
+            </div>
+
+            <div class="edit-save-btns-div">
+                <div class="btn btn-primary dispatch-btn" ng-show="!isEdit[$index]" ng-click="editDispatch($index)">
+                    Edit
+                </div>
+                <div class="btn btn-primary dispatch-btn" ng-show="isEdit[$index]"
+                     ng-click="saveDispatch($index,shipment)">Save
+                </div>
+                <div class="btn btn-primary dispatch-btn" ng-show="isEdit[$index]"
+                     ng-click="cancelDispatch($index,shipment)">Cancel
+                </div>
+                <div class="btn btn-primary dispatch-btn" ng-show="!isEdit[$index]" ng-click="viewRoute(shipment)">
+                    View
+                </div>
+                <div class="btn btn-primary dispatch-btn" ng-show="!isEdit[$index]"
+                     ng-click="startDispatch($index,shipment)">Start
+                </div>
+            </div>
+        </div>
+    </li>
+</ul>
+<div class="new-btn-div">
+    <p class="box-title" ng-click="isOpenRequestCollapsed = !isOpenRequestCollapsed">Open Requests</p>
+</div>
+<ul collapse="isOpenRequestCollapsed" ng-repeat="shipment in open_shipments">
+    <li class="list-item">
+        <div>
+            <div class="list-item-div-a">
+                <div class="top-div">
+                    <p class="p-title">Client</p>
+
+                    <p class="p-info">{{shipment.client.first_name + " " + shipment.client.last_name}}</p>
+                </div>
+                <div class="bottom-div">
+                    <p class="p-title">Date</p>
+
+                    <p class="p-info">{{shipment.date}}</p>
+                </div>
+            </div>
+            <div class="list-item-div-b">
+                <div class="top-div">
+                    <p class="p-title">Trip</p>
+
+                    <p class="p-info">Begin: {{shipment.route.start}}</p>
+
+                    <p class="p-info">End: {{shipment.route.finish}}</p>
+                </div>
+                <div class="bottom-div">
+                    <p class="p-title">Request Time</p>
+
+                    <p class="p-info">{{shipment.request_time}}</p>
+                </div>
+            </div>
+            <div class="list-item-div-c">
+                <div class="div-shipment-info">
+                    <div class="top-div-shipment-info">
+                        <p class="p-title">Shipment Name</p>
+                        <p  class="p-info">{{shipment.info.name}}</p>
+
+                    </div>
+                    <div class="bottom-div-shipment-info">
+                        <p class="p-title">Shipment Details</p>
+                        <p class="p-info p-shipment-details">{{shipment.info.details}}</p>
+
+                    </div>
+                </div>
+            </div>
+            <div class="driver-div">
+                <div class="select-driver-div">
+                    <p class="p-title">Driver</p>
+
+                    <p class="p-info">{{shipment.driver.first_name + " " + shipment.driver.last_name}}</p>
+                </div>
+                <div class="edit-save-btns-div">
+                    <div class="btn btn-primary dispatch-btn view-btn" ng-click="viewRoute(shipment)">
+                        View
+                    </div>
+                </div>
+            </div>
+        </div>
+    </li>
+</ul>
+<div class="new-btn-div">
+    <p class="box-title" ng-click="isInProgressCollapsed = !isInProgressCollapsed">In Progress</p>
+</div>
+<ul collapse="isInProgressCollapsed" ng-repeat="shipment in progress_shipments">
+    <li class="list-item">
+        <div>
+            <div class="list-item-div-a">
+                <div class="top-div">
+                    <p class="p-title">Client</p>
+
+                    <p class="p-info">{{shipment.client.first_name + " " + shipment.client.last_name}}</p>
+                </div>
+                <div class="bottom-div">
+                    <p class="p-title">Date</p>
+
+                    <p class="p-info">{{shipment.date}}</p>
+                </div>
+            </div>
+            <div class="list-item-div-b">
+                <div class="top-div">
+                    <p class="p-title">Trip</p>
+
+                    <p class="p-info">Begin: {{shipment.route.start}}</p>
+
+                    <p class="p-info">End: {{shipment.route.finish}}</p>
+                </div>
+                <div class="bottom-div">
+                    <p class="p-title">Request Time</p>
+
+                    <p class="p-info">{{shipment.request_time}}</p>
+                </div>
+            </div>
+            <div class="list-item-div-c">
+                <div class="top-div-shipment-info">
+                    <p class="p-title">Shipment Name</p>
+                    <p class="p-info">{{shipment.info.name}}</p>
+
+                </div>
+                <div  class="bottom-div-shipment-info">
+                    <p class="p-title">Shipment Details</p>
+                    <p class="p-info p-shipment-details">{{shipment.info.details}}</p>
+
+                </div>
+            </div>
+            <div class="driver-div">
+                <div class="select-driver-div">
+                    <p class="p-title">Driver</p>
+
+                    <p class="p-info">{{shipment.driver.first_name + " " + shipment.driver.last_name}}</p>
+                </div>
+                <div class="edit-save-btns-div">
+                    <div class="btn btn-primary dispatch-btn view-btn" ng-click="viewRoute(shipment)">
+                        View
+                    </div>
+                </div>
+            </div>
+        </div>
+    </li>
+</ul>
+<script type="text/ng-template" id="map.html">
+    <div class="modal-header">
+        <h3 class="modal-title">Shipment route</h3>
+    </div>
+    <div class="modal-body">
+        <div class="map" id="route_map" ng-init="initialize()">
+        </div>
+    </div>
+    <div class="dispatch-btn-group">
+        <button class="btn btn-primary dispatch-btn" ng-click="acceptTrip()">OK</button>
+    </div>
+</script>
+</div>

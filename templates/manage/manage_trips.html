@@ -1,0 +1,151 @@
+<!--
+Copyright (c) 2014 Kinvey Inc.
+Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
+in compliance with the License. You may obtain a copy of the License at
+
+http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software distributed under the License
+is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
+or implied. See the License for the specific language governing permissions and limitations under
+the License.
+-->
+<div ng-show="selectedManageItem==0" ng-init="initPage()" ng-controller="ManageTripsController">
+    <div class="new-btn-div">
+        <div class="btn btn-primary dispatch-btn new-btn" ng-click="addNewTrip()">Add trip</div>
+        <p class="box-title" ng-click="isTripsCollapsed = !isTripsCollapsed">Trips</p>
+    </div>
+    <ul collapse="isTripsCollapsed" ng-repeat="trip in trips">
+        <li class="list-item">
+            <div class="trips-div-a">
+                <div class="trips-inner-div">
+                    <p class="p-title">Client</p>
+
+                    <p class="p-info" ng-show="!isEdit[$index]">{{trip.client.first_name + " " +
+                        trip.client.last_name}}</p>
+
+                    <div ng-show="isEdit[$index]"
+                         class="dropdown-div btn-group" dropdown is-open="isClientsOpen[$index]">
+                        <button type="button" class="dropdown-toggle dropdown-select">
+                            {{trip.client.first_name + " " + trip.client.last_name}}<span
+                                style="margin-left: 5px;" class="caret white-caret"></span>
+                        </button>
+                        <ul class="dropdown-menu" role="menu">
+                            <li ng-repeat="client in clients">
+                                <a ng-click="selectClient(client,trip,$parent.$index)">{{client.first_name
+                                    + " " + client.last_name }}</a></li>
+                        </ul>
+                    </div>
+                <span class="input-with-title-span"
+                      ng-show="isEdit[$index]&&isSubmittedClient[$index]">A client is required.</span>
+                </div>
+            </div>
+
+            <div class="trips-div-b">
+                <div class="trips-inner-div">
+                    <p class="p-title">Trip</p>
+
+                    <p class="p-info" ng-show="isRoute[$index]">Begin: {{trip.route.start}}</p>
+
+                    <p class="p-info" ng-show="isRoute[$index]">End: {{trip.route.finish}}</p>
+                    <button style="display: inline-block" id="select-trip-btn" class="btn btn-primary dispatch-btn" ng-click="selectRoute(trip,$index)"
+                            ng-show="isEdit[$index]">{{routeBtnText[$index]}}
+                    </button>
+                        <span class="input-with-title-span"
+                              ng-show="isEdit[$index]&&isSubmittedRoute[$index]">A trip is required.</span>
+                </div>
+
+            </div>
+            <div class="trips-div-c">
+                <div class="trip-edit-btn-div">
+                    <div class="btn btn-primary dispatch-btn" ng-show="!isEdit[$index]&&isEditPermissions[$index]" ng-click="editTrip($index)">
+                        Edit
+                    </div>
+                    <div id="duplicate-btn" class="btn btn-primary dispatch-btn" ng-show="!isEdit[$index]" ng-click="duplicateTrip($index)">
+                        Duplicate
+                    </div>
+                    <div class="btn btn-primary dispatch-btn" ng-show="isEdit[$index]&&!isRoute[$index]"
+                         ng-click="cancelTrip($index,trip)">Cancel
+                    </div>
+                    <div class="btn btn-primary dispatch-btn" ng-show="isEdit[$index]"
+                         ng-click="saveTrip($index,trip)">Save
+                    </div>
+                    <div class="btn btn-primary dispatch-btn restore-btn" ng-show="!isEdit[$index]&&isEditPermissions[$index]"
+                         ng-click="archiveTrip($index,trip)">Archive
+                    </div>
+                    <div class="btn btn-primary dispatch-btn" ng-show="!isEdit[$index]"
+                         ng-click="viewTrip(trip)">
+                        View
+                    </div>
+                </div>
+            </div>
+        </li>
+    </ul>
+
+
+    <div class="new-btn-div archive-div" ng-show="isShowArchived">
+        <div class="btn btn-primary dispatch-btn new-btn" ng-click="deleteAllTrips()">Delete All</div>
+        <div class="btn btn-primary dispatch-btn new-btn" ng-click="restoreAllTrips()">Restore All</div>
+        <p class="box-title" ng-click="isArchivedTripsCollapsed = !isArchivedTripsCollapsed">Archived Trips</p>
+    </div>
+    <ul collapse="isArchivedTripsCollapsed" ng-repeat="trip in archived_trips">
+        <li class="list-item">
+            <div class="trips-div-a">
+                <div class="trips-inner-div">
+                    <p class="p-title">Client</p>
+                    <p class="p-info">{{trip.client.first_name + " " +
+                        trip.client.last_name}}</p>
+                </div>
+            </div>
+
+            <div class="trips-div-b">
+                <div class="trips-inner-div">
+                    <p class="p-title">Trip</p>
+
+                    <p class="p-info">Begin: {{trip.route.start}}</p>
+
+                    <p class="p-info">End: {{trip.route.finish}}</p>
+
+                </div>
+            </div>
+            <div class="trips-div-c">
+                <div class="trip-edit-btn-div">
+                    <div class="btn btn-primary dispatch-btn restore-btn" ng-click="restoreTrip($index,trip)">Restore
+                    </div>
+                    <div class="btn btn-primary dispatch-btn" ng-click="deleteTrip($index,trip)">Delete
+                    </div>
+                </div>
+            </div>
+        </li>
+    </ul>
+
+
+
+    <script type="text/ng-template" id="route_create_map.html">
+        <div class="modal-header">
+            <h3 class="modal-title">Create route</h3>
+        </div>
+        <div class="modal-body">
+            <div class="map" id="route-map" ng-init="initialize()">
+            </div>
+            <div class="start-finish-container">
+                <div class="input-with-title address-input-with-title">
+                    <h6>Start:</h6>
+                    <input class="sign-input address-input" ng-model="trip_route.start" ng-change="changeField()"/>
+                </div>
+                <span class="input-with-title-span " ng-show="submittedStart">{{start_error}}</span>
+                <div class="input-with-title address-input-with-title">
+                    <h6>Finish:</h6>
+                    <input class="sign-input address-input" ng-model="trip_route.finish" ng-change="changeField()" />
+                </div>
+                <span class="input-with-title-span" ng-show="submittedFinish">{{finish_error}}</span>
+            </div>
+        </div>
+        <div class="dispatch-btn-group">
+            <button class="btn btn-primary dispatch-btn" ng-click="saveRoute()" ng-show="isSave">Save</button>
+            <button class="btn btn-primary dispatch-btn" ng-click="findRoute()" ng-show="!isSave">Find address</button>
+            <button class="btn btn-primary dispatch-btn" ng-click="cancelRoute()">Cancel</button>
+        </div>
+        <span style="margin-top: -20px" class="input-with-title-span" ng-show="submittedError">{{error}}</span>
+    </script>
+</div>

@@ -1,0 +1,64 @@
+<!--
+Copyright (c) 2014 Kinvey Inc.
+Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
+in compliance with the License. You may obtain a copy of the License at
+
+http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software distributed under the License
+is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
+or implied. See the License for the specific language governing permissions and limitations under
+the License.
+-->
+<div  ng-show="selectedTab==1" ng-controller="LogisticsController">
+    <div class="new-btn-div">
+        <p class="box-title">Active Trips</p>
+    </div>
+    <table id="shipment-table" class="table table-condensed">
+        <thead>
+        <tr>
+            <th>Client</th>
+            <th>Pickup Location</th>
+            <th>Drop-off Location</th>
+            <th>Driver</th>
+            <th>Request Time</th>
+            <th>Start Time</th>
+            <th>Status</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr class="shipment-tr" ng-repeat="shipment in shipments">
+            <td>{{shipment.client.last_name + ", " + shipment.client.first_name}}</td>
+            <td>{{shipment.route.start}}</td>
+            <td>{{shipment.route.finish}}</td>
+            <td>{{shipment.driver.last_name + ", " + shipment.driver.first_name}}</td>
+            <td>{{formatTime(shipment._kmd.ect)}}</td>
+            <td>{{shipment.start_time}}</td>
+            <td><a ng-click="showShipmentDetails(shipment)">{{shipment.status}}</a></td>
+        </tr>
+        </tbody>
+    </table>
+    <script type="text/ng-template" id="trip_details.html">
+        <div class="modal-header">
+            <h3 class="modal-title">Trip details</h3>
+        </div>
+        <div class="modal-body">
+            <tabset>
+                <tab>
+                    <tab-heading class="tab-header">Check-Ins</tab-heading>
+                    <ul id="checkins_list" ng-repeat="checkin in checkins">
+                        <li> {{checkin.address}}</li>
+                    </ul>
+                </tab>
+                <tab ng-click="clickMapTab()">
+                    <tab-heading class="tab-header">Map</tab-heading>
+                    <div class="map" id="checkin_map" ng-init="initialize()">
+                    </div>
+                </tab>
+            </tabset>
+        </div>
+        <div class="dispatch-btn-group">
+            <button class="btn btn-primary dispatch-btn" ng-click="closeTripDetails()">OK</button>
+        </div>
+    </script>
+</div>

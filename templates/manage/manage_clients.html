@@ -1,0 +1,96 @@
+<!--
+Copyright (c) 2014 Kinvey Inc.
+Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
+in compliance with the License. You may obtain a copy of the License at
+
+http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software distributed under the License
+is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
+or implied. See the License for the specific language governing permissions and limitations under
+the License.
+-->
+<div ng-show="selectedManageItem==2" ng-controller="ManageClientsController">
+    <div class="new-btn-div">
+        <div class="btn btn-primary dispatch-btn new-btn" ng-click="addNewClient()">Add client</div>
+        <p class="box-title" ng-click="isClientsCollapsed = !isClientsCollapsed">Clients</p>
+    </div>
+    <ul collapse="isClientsCollapsed" ng-repeat="client in clients">
+        <li class="list-item">
+            <div class="clients-div-a">
+                <div class="trips-inner-div">
+                    <p class="p-title">Client First Name</p>
+
+                    <p class="p-info" ng-show="!isEdit[$index]">{{client.first_name}}</p>
+                    <input class="sign-input client-input" ng-model="client.first_name"
+                           ng-show="isEdit[$index]"/>
+
+                <span class="input-with-title-span"
+                      ng-show="isEdit[$index]&&isSubmittedFirstName[$index]">A client first name is required.</span>
+                </div>
+            </div>
+
+            <div class="clients-div-b">
+                <div class="trips-inner-div">
+                    <p class="p-title">Client Last Name</p>
+                    <p class="p-info" ng-show="!isEdit[$index]">{{client.last_name}}</p>
+                    <input class="sign-input client-input" ng-model="client.last_name"
+                           ng-show="isEdit[$index]"/>
+                        <span class="input-with-title-span"
+                              ng-show="isEdit[$index]&&isSubmittedLastName[$index]">A client last name is required.</span>
+                </div>
+
+            </div>
+            <div class="clients-div-c">
+                <div class="client-edit-btn-div">
+                    <div class="btn btn-primary dispatch-btn" ng-show="!isEdit[$index]" ng-click="editClient($index)">
+                        Edit
+                    </div>
+                    <div class="btn btn-primary dispatch-btn" ng-show="isEdit[$index]&&!isClient[$index]"
+                         ng-click="cancelClient($index)">Cancel
+                    </div>
+                    <div class="btn btn-primary dispatch-btn" ng-show="isEdit[$index]"
+                         ng-click="saveClient($index,client)">Save
+                    </div>
+                    <div class="btn btn-primary dispatch-btn restore-btn" ng-show="!isEdit[$index]&&isEditPermissions[$index]"
+                         ng-click="archiveClient($index,client)">Archive
+                    </div>
+                </div>
+            </div>
+        </li>
+    </ul>
+    <div class="new-btn-div archive-div" ng-show="isShowArchived">
+        <div class="btn btn-primary dispatch-btn new-btn" ng-click="deleteAllClients()">Delete All</div>
+        <div class="btn btn-primary dispatch-btn new-btn" ng-click="restoreAllClients()">Restore All</div>
+        <p class="box-title" ng-click="isArchivedClientsCollapsed = !isArchivedClientsCollapsed">Archived Trips</p>
+    </div>
+    <ul collapse="isArchivedClientsCollapsed" ng-repeat="client in archived_clients">
+        <li class="list-item">
+            <div class="clients-div-a">
+                <div class="trips-inner-div">
+                    <p class="p-title">Client First Name</p>
+
+                    <p class="p-info">{{client.first_name}}</p>
+                </div>
+            </div>
+
+            <div class="clients-div-b">
+                <div class="trips-inner-div">
+                    <p class="p-title">Client Last Name</p>
+                    <p class="p-info">{{client.last_name}}</p>
+                </div>
+
+            </div>
+            <div class="clients-div-c">
+                <div class="client-edit-btn-div">
+                    <div class="btn btn-primary dispatch-btn restore-btn"
+                         ng-click="restoreClient($index,client)">Restore
+                    </div>
+                    <div class="btn btn-primary dispatch-btn"
+                         ng-click="deleteClient($index,client)">Delete
+                    </div>
+                </div>
+            </div>
+        </li>
+    </ul>
+</div>

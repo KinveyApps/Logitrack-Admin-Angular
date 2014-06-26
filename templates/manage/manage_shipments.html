@@ -1,0 +1,93 @@
+<!--
+Copyright (c) 2014 Kinvey Inc.
+Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
+in compliance with the License. You may obtain a copy of the License at
+
+http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software distributed under the License
+is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
+or implied. See the License for the specific language governing permissions and limitations under
+the License.
+-->
+<div ng-show="selectedManageItem==1" ng-controller="ManageShipmentsController">
+    <div class="new-btn-div">
+        <div id="add-shipment-btn" class="btn btn-primary dispatch-btn new-btn" ng-click="addNewShipment()">Add shipment</div>
+        <p class="box-title" ng-click="isShipmentsCollapsed = !isShipmentsCollapsed">Shipments</p>
+    </div>
+    <ul collapse="isShipmentsCollapsed" ng-repeat="shipment in shipments">
+        <li class="list-item">
+            <div class="shipments-div-a">
+                <div class="trips-inner-div">
+                    <p class="p-title">Shipment Name</p>
+                    <p class="p-info" ng-show="!isEdit[$index]">{{shipment.name}}</p>
+                    <input class="sign-input client-input" ng-model="shipment.name"
+                           ng-show="isEdit[$index]"/>
+
+                <span class="input-with-title-span"
+                      ng-show="isEdit[$index]&&isSubmittedName[$index]">A shipment name is required.</span>
+                </div>
+            </div>
+
+            <div class="shipments-div-b">
+                <div class="trips-inner-div">
+                    <p class="p-title">Shipment Details</p>
+                    <p class="p-info p-shipment-details-manage" ng-show="!isEdit[$index]">{{shipment.details}}</p>
+                    <textarea id="shipment-details-manage" class="sign-input client-input" ng-model="shipment.details"
+                              ng-show="isEdit[$index]"></textarea>
+                        <span class="input-with-title-span"
+                              ng-show="isEdit[$index]&&isSubmittedDetails[$index]">A shipment details is required.</span>
+                </div>
+            </div>
+            <div class="shipments-div-c">
+                <div class="client-edit-btn-div">
+                    <div class="btn btn-primary dispatch-btn" ng-show="isEdit[$index]&&!isShipment[$index]" ng-click="cancelShipment($index)">
+                        Cancel
+                    </div>
+                    <div class="btn btn-primary dispatch-btn" ng-show="!isEdit[$index]" ng-click="editShipment($index)">
+                        Edit
+                    </div>
+                    <div class="btn btn-primary dispatch-btn" ng-show="isEdit[$index]"
+                         ng-click="saveShipment($index,shipment)">Save
+                    </div>
+                    <div class="btn btn-primary dispatch-btn restore-btn" ng-show="!isEdit[$index]&&isEditPermissions[$index]"
+                         ng-click="archiveShipment($index,shipment)">Archive
+                    </div>
+                </div>
+            </div>
+        </li>
+    </ul>
+    <div class="new-btn-div archive-div" ng-show="isShowArchived">
+        <div class="btn btn-primary dispatch-btn new-btn" ng-click="deleteAllShipments()">Delete All</div>
+        <div class="btn btn-primary dispatch-btn new-btn" ng-click="restoreAllShipments()">Restore All</div>
+        <p class="box-title" ng-click="isArchivedShipmentsCollapsed = !isArchivedShipmentsCollapsed">Archived Trips</p>
+    </div>
+    <ul collapse="isArchivedShipmentsCollapsed" ng-repeat="shipment in archived_shipments">
+        <li class="list-item">
+            <div class="shipments-div-a">
+                <div class="trips-inner-div">
+                    <p class="p-title">Shipment Name</p>
+
+                    <p class="p-info">{{shipment.name}}</p>
+                </div>
+            </div>
+            <div class="shipments-div-b">
+                <div class="trips-inner-div">
+                    <p class="p-title">Shipment Details</p>
+
+                    <p class="p-info p-shipment-details-manage">{{shipment.details}}</p>
+                </div>
+            </div>
+            <div class="shipments-div-c">
+                <div class="client-edit-btn-div">
+                    <div class="btn btn-primary dispatch-btn"
+                         ng-click="deleteShipment($index,shipment)">Delete
+                    </div>
+                    <div class="btn btn-primary dispatch-btn restore-btn"
+                         ng-click="restoreShipment($index,shipment)">Restore
+                    </div>
+                </div>
+            </div>
+        </li>
+    </ul>
+</div>
