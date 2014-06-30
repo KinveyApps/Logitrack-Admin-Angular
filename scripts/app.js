@@ -46,8 +46,8 @@ app.config(['$routeProvider', function ($routeProvider) {
 app.run(['$location', '$kinvey', '$rootScope', '$timeout', function ($location, $kinvey, $rootScope) {
     // Kinvey initialization starts
     var promise = $kinvey.init({
-        appKey: 'kid_VTpS9qbe7q',
-        appSecret: '5ae17c3bd8414d7f917c59a1c14a8fcd'
+        appKey: 'MY_APP_KEY',
+        appSecret: 'MY_APP_SECRET'
     });
     promise.then(function () {
         // Kinvey initialization finished with success
