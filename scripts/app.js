@@ -25,7 +25,7 @@ var app = angular.module('Logitrack-Angular', [ 'kinvey', 'ngRoute', 'controller
 app.config(['$routeProvider', function ($routeProvider) {
     $routeProvider.
         when('/templates/login', {
-            templateUrl: 'templates/login.html',
+            templateUrl: 'templates/user/login.html',
             controller: 'LoginController'
         }).
         when('/templates/main', {
@@ -33,11 +33,11 @@ app.config(['$routeProvider', function ($routeProvider) {
             controller: 'MainController'
         }).
         when('/templates/password_reset', {
-            templateUrl: 'templates/password_reset.html',
+            templateUrl: 'templates/user/password_reset.html',
             controller: 'PasswordResetController'
         }).
         when('/templates/sign_up', {
-            templateUrl: 'templates/sign_up.html',
+            templateUrl: 'templates/user/sign_up.html',
             controller: 'SignUpController'
         });
 }]);
