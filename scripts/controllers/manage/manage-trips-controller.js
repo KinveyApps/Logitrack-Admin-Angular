@@ -340,8 +340,8 @@ var RouteCreateController = function ($scope, $kinvey, $timeout, $modalInstance,
     //builds route between markers
     function calcRoute() {
         var request = {
-            origin: new google.maps.LatLng(start_marker.getPosition().k, start_marker.getPosition().A),
-            destination: new google.maps.LatLng(finish_marker.getPosition().k, finish_marker.getPosition().A),
+            origin: new google.maps.LatLng(start_marker.getPosition().k, start_marker.getPosition().D),
+            destination: new google.maps.LatLng(finish_marker.getPosition().k, finish_marker.getPosition().D),
             travelMode: google.maps.DirectionsTravelMode.DRIVING
         };
         directionsService.route(request, function (response, status) {
@@ -414,9 +414,14 @@ var RouteCreateController = function ($scope, $kinvey, $timeout, $modalInstance,
     };
 
     var getAddressByPosition = function (position, isStart) {
-        console.log(JSON.stringify(position));
-        geocoder.geocode({'latLng': new google.maps.LatLng(position.k, position.A)}, function (results, status) {
+
+        var lat = parseFloat(position.k);
+        var lng = parseFloat(position.D);
+        var latlng = new google.maps.LatLng(lat, lng);
+        console.log("get address by position " + JSON.stringify(position));
+        geocoder.geocode({'latLng': latlng}, function (results, status) {
             if (status == google.maps.GeocoderStatus.OK) {
+                console.log("results " + JSON.stringify(results));
                 setRoute(isStart, position, results[0].formatted_address);
             } else {
                 console.log('Geocoder failed due to: ' + status);
@@ -429,7 +434,7 @@ var RouteCreateController = function ($scope, $kinvey, $timeout, $modalInstance,
         $scope.submittedFinish = false;
         geocoder.geocode({'address': $scope.trip_route.start}, function (results, status) {
             if (status == google.maps.GeocoderStatus.OK) {
-                var start_location = new google.maps.LatLng(results[0].geometry.location.k, results[0].geometry.location.A);
+                var start_location = new google.maps.LatLng(results[0].geometry.location.k, results[0].geometry.location.D);
                 if (!start_marker) {
                     createStartMarker(start_location);
                 } else {
@@ -456,7 +461,7 @@ var RouteCreateController = function ($scope, $kinvey, $timeout, $modalInstance,
         });
         geocoder.geocode({'address': $scope.trip_route.finish}, function (results, status) {
             if (status == google.maps.GeocoderStatus.OK) {
-                var finish_location = new google.maps.LatLng(results[0].geometry.location.k, results[0].geometry.location.A);
+                var finish_location = new google.maps.LatLng(results[0].geometry.location.k, results[0].geometry.location.D);
                 if (!finish_marker) {
                     createFinishMarker(finish_location);
                 } else {
@@ -509,7 +514,7 @@ var RouteCreateController = function ($scope, $kinvey, $timeout, $modalInstance,
                 new google.maps.LatLng(currentTrip.route.area.ya.k, currentTrip.route.area.pa.j),
                 new google.maps.LatLng(currentTrip.route.area.ya.j, currentTrip.route.area.pa.k));
         } else {
-            if (start_marker.getPosition().A < finish_marker.getPosition().A) {
+            if (start_marker.getPosition().D < finish_marker.getPosition().D) {
                 console.log("bounds 1");
                 bounds = new google.maps.LatLngBounds(
                     start_marker.getPosition(),
@@ -563,11 +568,11 @@ var RouteCreateController = function ($scope, $kinvey, $timeout, $modalInstance,
             if (isStart) {
                 $scope.trip_route.start = address;
                 $scope.trip_route.start_lat = position.k;
-                $scope.trip_route.start_long = position.A;
+                $scope.trip_route.start_long = position.D;
             } else {
                 $scope.trip_route.finish = address;
                 $scope.trip_route.finish_lat = position.k;
-                $scope.trip_route.finish_long = position.A;
+                $scope.trip_route.finish_long = position.D;
             }
         }, 100);
     };
