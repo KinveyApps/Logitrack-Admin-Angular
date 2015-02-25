@@ -71,6 +71,7 @@ controllers.controller('MainController',
             $event.preventDefault();
             $event.stopPropagation();
             $scope.status.isopen = !$scope.status.isopen;
+            $scope.$broadcast('UPDATE_CLIENTS');
         }
     }]);
 

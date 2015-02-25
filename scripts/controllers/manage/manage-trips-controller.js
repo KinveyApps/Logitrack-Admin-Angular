@@ -224,6 +224,10 @@ controllers.controller('ManageTripsController',
             );
         };
 
+        $scope.$on('UPDATE_CLIENTS', function () {
+            getClients();
+        });
+
         //shows map where you can create new route and select route area
         $scope.selectRoute = function (trip, index) {
             var modalInstance = $modal.open({
