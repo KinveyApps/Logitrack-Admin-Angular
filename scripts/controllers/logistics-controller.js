@@ -124,8 +124,8 @@ var ShipmentDetailsController = function ($scope, $kinvey, $modalInstance, shipm
     //builds route between markers
     function calcRoute() {
         var request = {
-            origin: new google.maps.LatLng(start_marker.getPosition().k, start_marker.getPosition().A),
-            destination: new google.maps.LatLng(finish_marker.getPosition().k, finish_marker.getPosition().A),
+            origin: new google.maps.LatLng(start_marker.getPosition().lat(), start_marker.getPosition().lng()),
+            destination: new google.maps.LatLng(finish_marker.getPosition().lat(), finish_marker.getPosition().lng()),
             travelMode: google.maps.DirectionsTravelMode.DRIVING
         };
         directionsService.route(request, function (response, status) {

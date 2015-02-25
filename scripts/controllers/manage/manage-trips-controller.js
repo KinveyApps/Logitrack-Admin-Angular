@@ -338,8 +338,8 @@ var RouteCreateController = function ($scope, $kinvey, $timeout, $modalInstance,
     //builds route between markers
     function calcRoute() {
         var request = {
-            origin: new google.maps.LatLng(start_marker.getPosition().k, start_marker.getPosition().D),
-            destination: new google.maps.LatLng(finish_marker.getPosition().k, finish_marker.getPosition().D),
+            origin: new google.maps.LatLng(start_marker.getPosition().lat(), start_marker.getPosition().lng()),
+            destination: new google.maps.LatLng(finish_marker.getPosition().lat(), finish_marker.getPosition().lng()),
             travelMode: google.maps.DirectionsTravelMode.DRIVING
         };
         directionsService.route(request, function (response, status) {
