@@ -294,7 +294,6 @@ var RouteCreateController = function ($scope, $kinvey, $timeout, $modalInstance,
     var start_marker;
     var finish_marker;
     var map;
-    var area;
     var geocoder = new google.maps.Geocoder();
     var directionsDisplay = new google.maps.DirectionsRenderer();
     directionsDisplay.setOptions({
@@ -333,7 +332,6 @@ var RouteCreateController = function ($scope, $kinvey, $timeout, $modalInstance,
             createStartMarker(new google.maps.LatLng($scope.trip_route.start_lat, $scope.trip_route.start_long));
             createFinishMarker(new google.maps.LatLng($scope.trip_route.finish_lat, $scope.trip_route.finish_long));
             calcRoute();
-            createArea(true);
         }
     };
 
@@ -364,7 +362,6 @@ var RouteCreateController = function ($scope, $kinvey, $timeout, $modalInstance,
             calcRoute();
             getAddressByPosition(finish_marker.getPosition(), false);
             $scope.isSave = true;
-            createArea(false);
         }
     };
 
@@ -390,14 +387,6 @@ var RouteCreateController = function ($scope, $kinvey, $timeout, $modalInstance,
             $scope.submittedStart = false;
         }
 
-        //checks is route area contain start and end markers
-        if (!area.getBounds().contains(start_marker.getPosition()) || !area.getBounds().contains(finish_marker.getPosition())) {
-            isFormInvalid = true;
-            $scope.submittedError = true;
-            $scope.error = "The area doesn't contain route points";
-        } else {
-            $scope.submittedError = true;
-        }
         if (isFormInvalid) {
             return;
         }
@@ -499,51 +488,6 @@ var RouteCreateController = function ($scope, $kinvey, $timeout, $modalInstance,
             calcRoute();
             getAddressByPosition(start_marker.getPosition(), true);
         });
-        if (!area && finish_marker) {
-            createArea(false);
-        }
-    };
-
-    //create rectangle route area
-    var createArea = function (isAreaExist) {
-
-        console.log("create area");
-        var bounds;
-        if (isAreaExist) {
-            bounds = new google.maps.LatLngBounds(
-                new google.maps.LatLng(currentTrip.route.area.ya.k, currentTrip.route.area.pa.j),
-                new google.maps.LatLng(currentTrip.route.area.ya.j, currentTrip.route.area.pa.k));
-        } else {
-            if (start_marker.getPosition().D < finish_marker.getPosition().D) {
-                console.log("bounds 1");
-                bounds = new google.maps.LatLngBounds(
-                    start_marker.getPosition(),
-                    finish_marker.getPosition());
-            } else {
-                console.log("bounds 2");
-                bounds = new google.maps.LatLngBounds(
-                    finish_marker.getPosition(),
-                    start_marker.getPosition());
-            }
-        }
-        if(!area) {
-            area = new google.maps.Rectangle({
-                strokeColor: '#5893CC',
-                strokeOpacity: 0.8,
-                strokeWeight: 2,
-                fillColor: '#5893CC',
-                fillOpacity: 0.35,
-                bounds: bounds,
-                draggable: true,
-                editable: true,
-                map: map
-            });
-        }
-        $scope.trip_route.area = area.getBounds();
-        google.maps.event.clearListeners(map, 'click');
-        google.maps.event.addListener(area, 'bounds_changed', function () {
-            $scope.trip_route.area = area.getBounds();
-        });
     };
 
     var createFinishMarker = function (location) {
@@ -557,10 +501,6 @@ var RouteCreateController = function ($scope, $kinvey, $timeout, $modalInstance,
             calcRoute();
             getAddressByPosition(finish_marker.getPosition(), false);
         });
-        if (!area && start_marker) {
-            console.log("create area 1");
-            createArea(false);
-        }
     };
 
     var setRoute = function (isStart, position, address) {
