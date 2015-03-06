@@ -13,7 +13,7 @@
  */
 
 controllers.controller('ManageClientsController',
-    ['$scope', '$kinvey', function ($scope, $kinvey) {
+    ['$scope', '$kinvey','$modal', function ($scope, $kinvey, $modal) {
 
         //scope variables initialization
         $scope.clients = [];
@@ -136,20 +136,16 @@ controllers.controller('ManageClientsController',
         };
 
         $scope.deleteClient = function (index, client) {
-            $scope.archived_clients.splice(index, 1);
-            $scope.isEditArchivedPermissions.splice(index, 1);
-            if ($scope.archived_clients.length === 0) {
-                $scope.isShowArchived = false;
-            }
-            if (client._id !== undefined) {
-                //Kinvey destroy client starts
-                var promise = $kinvey.DataStore.destroy('clients', client._id);
-                promise.then(function (response) {
-                    console.log("delete client with success");
-                }, function (error) {
-                    console.log("delete client with error " + error.description);
-                });
-            }
+            var modalInstance = $modal.open({
+                templateUrl: 'clientDeleteModal.html',
+                controller: ConfirmDeleteController,
+                size: "sm"
+            });
+            modalInstance.result.then(function () {
+                deleteClientFromKinvey(index, client);
+            }, function () {
+                console.log("result canceled");
+            });
         };
 
         $scope.restoreClient = function (index, client) {
@@ -187,12 +183,21 @@ controllers.controller('ManageClientsController',
         };
 
         $scope.deleteAllClients = function () {
-            var length = $scope.archived_clients.length;
-            var i = 0;
-            while (i < length) {
-                $scope.deleteClient(0, $scope.archived_clients[0]);
-                i++;
-            }
+            var modalInstance = $modal.open({
+                templateUrl: 'clientDeleteModal.html',
+                controller: ConfirmDeleteController,
+                size: "sm"
+            });
+            modalInstance.result.then(function () {
+                var length = $scope.archived_clients.length;
+                var i = 0;
+                while (i < length) {
+                    deleteClientFromKinvey(0, $scope.archived_clients[0]);
+                    i++;
+                }
+            }, function () {
+                console.log("result canceled");
+            });
         };
 
         var saveClientOnKinvey = function (client) {
@@ -203,5 +208,33 @@ controllers.controller('ManageClientsController',
             }, function (error) {
                 console.log("save client whit error " + error.description);
             });
+        };
+
+        var deleteClientFromKinvey = function(index, client){
+            $scope.archived_clients.splice(index, 1);
+            $scope.isEditArchivedPermissions.splice(index, 1);
+            if ($scope.archived_clients.length === 0) {
+                $scope.isShowArchived = false;
+            }
+            if (client._id !== undefined) {
+                //Kinvey destroy client starts
+                var promise = $kinvey.DataStore.destroy('clients', client._id);
+                promise.then(function (response) {
+                    console.log("delete client with success");
+                }, function (error) {
+                    console.log("delete client with error " + error.description);
+                });
+            }
         }
     }]);
+
+
+var ConfirmDeleteController = function ($scope, $modalInstance) {
+    //closes popup
+    $scope.ok = function () {
+        $modalInstance.close();
+    };
+    $scope.cancel = function () {
+        $modalInstance.dismiss('cancel');
+    };
+};
