@@ -148,4 +148,17 @@ the License.
         </div>
         <span style="margin-top: -20px" class="input-with-title-span" ng-show="submittedError">{{error}}</span>
     </script>
+
+    <script type="text/ng-template" id="tripDeleteModal.html">
+        <div class="modal-header">
+            <h3 class="modal-title">Trip Delete</h3>
+        </div>
+        <div class="modal-body">
+            <p>Are you sure you would like to delete trip?</p>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-primary" ng-click="ok()">Yes</button>
+            <button class="btn btn-warning" ng-click="cancel()">Cancel</button>
+        </div>
+    </script>
 </div>

@@ -55,20 +55,20 @@ controllers.controller('ManageTripsController',
             }, function (error) {
                 console.log("get trips with error " + error.description);
             });
-        }
+        };
 
         $scope.deleteTrip = function (index, trip) {
-            $scope.archived_trips.splice(index, 1);
-            //Kinvey delete trip starts
-            var promise = $kinvey.DataStore.destroy('shipment', trip._id);
-            promise.then(function (response) {
-                console.log("delete trip with success");
-            }, function (error) {
-                console.log("delete trip with error " + error.description);
+            console.log("delete trip " + JSON.stringify(trip));
+            var modalInstance = $modal.open({
+                templateUrl: 'tripDeleteModal.html',
+                controller: ConfirmDeleteController,
+                size: "sm"
             });
-            if ($scope.archived_trips.length === 0) {
-                $scope.isShowArchived = false;
-            }
+            modalInstance.result.then(function () {
+                deleteTripFromKinvey(index, trip);
+            }, function () {
+                console.log("result canceled");
+            });
         };
 
         $scope.archiveTrip = function (index, trip) {
@@ -118,12 +118,21 @@ controllers.controller('ManageTripsController',
         };
 
         $scope.deleteAllTrips = function () {
-            var length = $scope.archived_trips.length;
-            var i = 0;
-            while (i < length) {
-                $scope.deleteTrip(0, $scope.archived_trips[0]);
-                i++;
-            }
+            var modalInstance = $modal.open({
+                templateUrl: 'tripDeleteModal.html',
+                controller: ConfirmDeleteController,
+                size: "sm"
+            });
+            modalInstance.result.then(function () {
+                var length = $scope.archived_trips.length;
+                var i = 0;
+                while (i < length) {
+                    deleteTripFromKinvey(0, $scope.archived_trips[0]);
+                    i++;
+                }
+            }, function () {
+                console.log("result canceled");
+            });
         };
 
         $scope.addNewTrip = function () {
@@ -291,8 +300,25 @@ controllers.controller('ManageTripsController',
                 }
             );
         };
-    }]);
 
+        var deleteTripFromKinvey = function (index, trip) {
+            console.log("tript paramenter " + JSON.stringify(trip) + "     " + trip._id);
+            $scope.archived_trips.splice(index, 1);
+            //Kinvey delete trip starts
+            var query = new $kinvey.Query();
+            query.equalTo('client._id', trip.client._id);
+            query.equalTo('route._id', trip.route._id);
+            var promise = $kinvey.DataStore.destroy('shipment', trip._id);
+            promise.then(function (response) {
+                console.log("delete trip with success");
+            }, function (error) {
+                console.log("delete trip with error " + error.description);
+            });
+            if ($scope.archived_trips.length === 0) {
+                $scope.isShowArchived = false;
+            }
+        }
+    }]);
 
 var RouteCreateController = function ($scope, $kinvey, $timeout, $modalInstance, currentTrip) {
     var start_marker;
