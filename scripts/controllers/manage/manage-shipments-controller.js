@@ -13,7 +13,7 @@
  */
 
 controllers.controller('ManageShipmentsController',
-    ['$scope', '$kinvey', function ($scope, $kinvey) {
+    ['$scope', '$kinvey', '$modal', function ($scope, $kinvey, $modal) {
 
         //scope variables initialization
         $scope.shipments = [];
@@ -132,20 +132,16 @@ controllers.controller('ManageShipmentsController',
         };
 
         $scope.deleteShipment = function (index, shipment) {
-            $scope.archived_shipments.splice(index, 1);
-            $scope.isEditArchivedPermissions.splice(index, 1);
-            if ($scope.archived_shipments.length === 0) {
-                $scope.isShowArchived = false;
-            }
-            if (shipment._id !== undefined) {
-                //Kinvey destroy shipment info starts
-                var promise = $kinvey.DataStore.destroy('shipment-info', shipment._id);
-                promise.then(function (response) {
-                    console.log("delete shipment with success");
-                }, function (error) {
-                    console.log("delete shipment with error " + error.description);
-                });
-            }
+            var modalInstance = $modal.open({
+                templateUrl: 'shipmentDeleteModal.html',
+                controller: ConfirmDeleteController,
+                size: "sm"
+            });
+            modalInstance.result.then(function () {
+               deleteShipmentInfoFromKinvey(index, shipment);
+            }, function () {
+                console.log("result canceled");
+            });
         };
 
         $scope.restoreShipment = function (index, shipment) {
@@ -183,12 +179,24 @@ controllers.controller('ManageShipmentsController',
         };
 
         $scope.deleteAllShipments = function () {
-            var length = $scope.archived_shipments.length;
-            var i = 0;
-            while (i < length) {
-                $scope.deleteShipment(0, $scope.archived_shipments[0]);
-                i++;
-            }
+
+            var modalInstance = $modal.open({
+                templateUrl: 'shipmentDeleteModal.html',
+                controller: ConfirmDeleteController,
+                size: "sm"
+            });
+            modalInstance.result.then(function () {
+                var length = $scope.archived_shipments.length;
+                var i = 0;
+                while (i < length) {
+                    deleteShipmentInfoFromKinvey(0, $scope.archived_shipments[0]);
+                    i++;
+                }
+            }, function () {
+                console.log("result canceled");
+            });
+
+
         };
 
         var saveShipmentOnKinvey = function (shipment) {
@@ -199,7 +207,24 @@ controllers.controller('ManageShipmentsController',
             }, function (error) {
                 console.log("save shipment whit error " + error.description);
             });
-        }
+        };
+
+        var deleteShipmentInfoFromKinvey = function(index, shipment){
+            $scope.archived_shipments.splice(index, 1);
+            $scope.isEditArchivedPermissions.splice(index, 1);
+            if ($scope.archived_shipments.length === 0) {
+                $scope.isShowArchived = false;
+            }
+            if (shipment._id !== undefined) {
+                //Kinvey destroy shipment info starts
+                var promise = $kinvey.DataStore.destroy('shipment-info', shipment._id);
+                promise.then(function (response) {
+                    console.log("delete shipment with success");
+                }, function (error) {
+                    console.log("delete shipment with error " + error.description);
+                });
+            }
+        };
     }]);
 
 //check if item exist array
