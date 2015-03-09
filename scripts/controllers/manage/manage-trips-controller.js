@@ -339,6 +339,7 @@ var RouteCreateController = function ($scope, $kinvey, $timeout, $modalInstance,
     var start_marker;
     var finish_marker;
     var map;
+    var mapCenter = new google.maps.LatLng(40.111689,-96.943359);
     var geocoder = new google.maps.Geocoder();
     var directionsDisplay = new google.maps.DirectionsRenderer();
     directionsDisplay.setOptions({
@@ -355,8 +356,8 @@ var RouteCreateController = function ($scope, $kinvey, $timeout, $modalInstance,
 
         //map creation
         var mapProp = {
-            zoom: 14,
-            center: new google.maps.LatLng(google.loader.ClientLocation.latitude, google.loader.ClientLocation.longitude)
+            zoom: 3,
+            center: mapCenter
         };
         if (!map) {
             map = new google.maps.Map(document.getElementById("route-map"), mapProp);
