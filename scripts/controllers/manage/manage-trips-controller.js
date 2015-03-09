@@ -16,45 +16,7 @@ controllers.controller('ManageTripsController',
     ['$scope', '$kinvey', "$modal", function ($scope, $kinvey, $modal) {
 
         $scope.initPage = function() {
-            //scope variables initialization
-            $scope.isEdit = [];
-            $scope.trips = [];
-            $scope.archived_trips = [];
-            $scope.isClientsOpen = [];
-            $scope.isSubmittedClient = [];
-            $scope.isSubmittedRoute = [];
-            $scope.isRoute = [];
-            $scope.routeBtnText = [];
-            $scope.isEditPermissions = [];
-            $scope.isShowArchived = false;
-            getClients();
-
-            //Kinvey get shipments starts
-            var promise = $kinvey.DataStore.find('shipment', null, {relations: {route: "route", client: "clients"}});
-            promise.then(function (response) {
-                for (var i in response) {
-                    //checks is trip archived or not
-                    if (!response[i].route.isInTrash) {
-                        if (!isTripExistInArray(response[i], $scope.trips)) {
-                            $scope.trips.push(response[i]);
-                            $scope.isRoute.push(true);
-                            $scope.routeBtnText.push("Edit route");
-                            if (response[i].user_status == "new") {
-                                $scope.isEditPermissions.push(true);
-                            } else {
-                                $scope.isEditPermissions.push(false);
-                            }
-                        }
-                    } else {
-                        if (!isTripExistInArray(response[i], $scope.archived_trips)) {
-                            $scope.archived_trips.push(response[i]);
-                            $scope.isShowArchived = true;
-                        }
-                    }
-                }
-            }, function (error) {
-                console.log("get trips with error " + error.description);
-            });
+            initTrips();
         };
 
         $scope.deleteTrip = function (index, trip) {
@@ -237,6 +199,10 @@ controllers.controller('ManageTripsController',
             getClients();
         });
 
+        $scope.$on('REFRESH_TRIPS', function () {
+            initTrips();
+        });
+
         //shows map where you can create new route and select route area
         $scope.selectRoute = function (trip, index) {
             var modalInstance = $modal.open({
@@ -322,6 +288,48 @@ controllers.controller('ManageTripsController',
             if ($scope.archived_trips.length === 0) {
                 $scope.isShowArchived = false;
             }
+        };
+
+        function initTrips(){
+            //scope variables initialization
+            $scope.isEdit = [];
+            $scope.trips = [];
+            $scope.archived_trips = [];
+            $scope.isClientsOpen = [];
+            $scope.isSubmittedClient = [];
+            $scope.isSubmittedRoute = [];
+            $scope.isRoute = [];
+            $scope.routeBtnText = [];
+            $scope.isEditPermissions = [];
+            $scope.isShowArchived = false;
+            getClients();
+
+            //Kinvey get shipments starts
+            var promise = $kinvey.DataStore.find('shipment', null, {relations: {route: "route", client: "clients"}});
+            promise.then(function (response) {
+                for (var i in response) {
+                    //checks is trip archived or not
+                    if (!response[i].route.isInTrash) {
+                        if (!isTripExistInArray(response[i], $scope.trips)) {
+                            $scope.trips.push(response[i]);
+                            $scope.isRoute.push(true);
+                            $scope.routeBtnText.push("Edit route");
+                            if (response[i].user_status == "new") {
+                                $scope.isEditPermissions.push(true);
+                            } else {
+                                $scope.isEditPermissions.push(false);
+                            }
+                        }
+                    } else {
+                        if (!isTripExistInArray(response[i], $scope.archived_trips)) {
+                            $scope.archived_trips.push(response[i]);
+                            $scope.isShowArchived = true;
+                        }
+                    }
+                }
+            }, function (error) {
+                console.log("get trips with error " + error.description);
+            });
         }
     }]);
 

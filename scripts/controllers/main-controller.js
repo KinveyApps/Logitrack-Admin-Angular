@@ -72,6 +72,14 @@ controllers.controller('MainController',
             $event.stopPropagation();
             $scope.status.isopen = !$scope.status.isopen;
             $scope.$broadcast('UPDATE_CLIENTS');
+        };
+
+        $scope.refreshData = function(){
+            $scope.$broadcast('REFRESH_DISPATCHES');
+            $scope.$broadcast('REFRESH_CLIENTS');
+            $scope.$broadcast('REFRESH_LOGISTICS');
+            $scope.$broadcast('REFRESH_TRIPS');
+            $scope.$broadcast('REFRESH_SHIPMENTS');
         }
     }]);
 

@@ -15,20 +15,12 @@
 controllers.controller('LogisticsController',
     ['$scope', '$kinvey', "$modal", function ($scope, $kinvey, $modal) {
 
-        var query = new $kinvey.Query();
-        query.equalTo('user_status', 'in progress');
+       initLogistics();
 
-        //Kinvey get all shipments with status "in progress"
-        var promise = $kinvey.DataStore.find('shipment', query, {relations: { route: "route",
-            client: "clients",
-            driver: "user",
-            info: "shipment-info"}});
-        promise.then(function (response) {
-            $scope.shipments = response;
-            console.log("responce " + JSON.stringify(response));
-        }, function (error) {
-            console.log("get shipment error " + error.description);
+        $scope.$on('REFRESH_LOGISTICS', function () {
+            initLogistics();
         });
+
 
         //converts time in right format
         $scope.formatTime = function (time_data) {
@@ -56,6 +48,23 @@ controllers.controller('LogisticsController',
                 }
             });
         };
+
+        function initLogistics(){
+            var query = new $kinvey.Query();
+            query.equalTo('user_status', 'in progress').or().equalTo('user_status', 'paused');
+
+            //Kinvey get all shipments with status "in progress"
+            var promise = $kinvey.DataStore.find('shipment', query, {relations: { route: "route",
+                client: "clients",
+                driver: "user",
+                info: "shipment-info"}});
+            promise.then(function (response) {
+                $scope.shipments = response;
+                console.log("responce " + JSON.stringify(response));
+            }, function (error) {
+                console.log("get shipment error " + error.description);
+            });
+        }
     }]);
 
 

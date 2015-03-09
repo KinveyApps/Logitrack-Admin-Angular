@@ -15,61 +15,11 @@
 controllers.controller('ManageShipmentsController',
     ['$scope', '$kinvey', '$modal', function ($scope, $kinvey, $modal) {
 
-        //scope variables initialization
-        $scope.shipments = [];
-        $scope.archived_shipments = [];
-        $scope.isEdit = [];
-        $scope.isShipment = [];
-        $scope.isEditPermissions = [];
-        $scope.isEditArchivedPermissions = [];
-        $scope.isSubmittedName = [];
-        $scope.isSubmittedDetails = [];
-        $scope.isShowArchived = false;
+        initShipments();
 
-        //Kinvey get shipment info starts
-        var promise = $kinvey.DataStore.find('shipment', null, {relations: {info: "shipment-info"}});
-        promise.then(
-            function (response) {
-                for (var i in response) {
-                    if (response[i].info) {
-                        //check if info is archived or not
-                        if (response[i].info.isInTrash) {
-                            if (!isItemExistInArray(response[i].info, $scope.archived_shipments)) {
-                                $scope.archived_shipments.push(response[i].info);
-                                $scope.isEditArchivedPermissions.push(false);
-                                $scope.isShowArchived = true;
-                            }
-                        } else if (!isItemExistInArray(response[i].info, $scope.shipments)) {
-                            $scope.shipments.push(response[i].info);
-                            $scope.isEditPermissions.push(false);
-                            $scope.isShipment.push(true);
-                        }
-                    }
-                }
-                //get shipment info that haven`t assigned dispatches
-                var promise = $kinvey.DataStore.find('shipment-info', null);
-                promise.then(function (response) {
-                    for (var i in response) {
-                        if (response[i].isInTrash) {
-                            if (!isItemExistInArray(response[i], $scope.archived_shipments)) {
-                                $scope.archived_shipments.push(response[i]);
-                                $scope.isEditArchivedPermissions.push(true);
-                                $scope.isShowArchived = true;
-                            }
-                        } else if (!isItemExistInArray(response[i], $scope.shipments)) {
-                            $scope.shipments.push(response[i]);
-                            $scope.isEditPermissions.push(true);
-                            $scope.isShipment.push(true);
-                        }
-                    }
-                }, function (error) {
-                    console.log("get shipment info error " + error.description);
-                });
-            },
-            function (error) {
-                console.log("get shipment info error " + error.description);
-            }
-        );
+        $scope.$on('REFRESH_SHIPMENTS', function () {
+            initShipments();
+        });
 
         $scope.addNewShipment = function () {
             $scope.shipments.unshift({});
@@ -225,6 +175,64 @@ controllers.controller('ManageShipmentsController',
                 });
             }
         };
+
+        function initShipments(){
+            //scope variables initialization
+            $scope.shipments = [];
+            $scope.archived_shipments = [];
+            $scope.isEdit = [];
+            $scope.isShipment = [];
+            $scope.isEditPermissions = [];
+            $scope.isEditArchivedPermissions = [];
+            $scope.isSubmittedName = [];
+            $scope.isSubmittedDetails = [];
+            $scope.isShowArchived = false;
+
+            //Kinvey get shipment info starts
+            var promise = $kinvey.DataStore.find('shipment', null, {relations: {info: "shipment-info"}});
+            promise.then(
+                function (response) {
+                    for (var i in response) {
+                        if (response[i].info) {
+                            //check if info is archived or not
+                            if (response[i].info.isInTrash) {
+                                if (!isItemExistInArray(response[i].info, $scope.archived_shipments)) {
+                                    $scope.archived_shipments.push(response[i].info);
+                                    $scope.isEditArchivedPermissions.push(false);
+                                    $scope.isShowArchived = true;
+                                }
+                            } else if (!isItemExistInArray(response[i].info, $scope.shipments)) {
+                                $scope.shipments.push(response[i].info);
+                                $scope.isEditPermissions.push(false);
+                                $scope.isShipment.push(true);
+                            }
+                        }
+                    }
+                    //get shipment info that haven`t assigned dispatches
+                    var promise = $kinvey.DataStore.find('shipment-info', null);
+                    promise.then(function (response) {
+                        for (var i in response) {
+                            if (response[i].isInTrash) {
+                                if (!isItemExistInArray(response[i], $scope.archived_shipments)) {
+                                    $scope.archived_shipments.push(response[i]);
+                                    $scope.isEditArchivedPermissions.push(true);
+                                    $scope.isShowArchived = true;
+                                }
+                            } else if (!isItemExistInArray(response[i], $scope.shipments)) {
+                                $scope.shipments.push(response[i]);
+                                $scope.isEditPermissions.push(true);
+                                $scope.isShipment.push(true);
+                            }
+                        }
+                    }, function (error) {
+                        console.log("get shipment info error " + error.description);
+                    });
+                },
+                function (error) {
+                    console.log("get shipment info error " + error.description);
+                }
+            );
+        }
     }]);
 
 //check if item exist array

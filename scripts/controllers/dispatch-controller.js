@@ -16,70 +16,16 @@ controllers.controller('DispatchController',
     ['$scope', '$kinvey', "$modal", function ($scope, $kinvey, $modal) {
         //dispatch tab initialization
         $scope.initPage = function () {
-
-            //scope variables initialization
-            $scope.isEdit = [];
-            $scope.isClientsOpen = [];
-            $scope.isDriversOpen = [];
-            $scope.isTripsOpen = [];
-            $scope.tripDropdownDisabled = [];
-            $scope.isSubmittedClient = [];
-            $scope.isSubmittedRoute = [];
-            $scope.isSubmittedDriver = [];
-            $scope.isSubmittedShipmentName = [];
-            $scope.isShipmentNameOpen = [];
-            $scope.isShipmentNameSelected = [];
-            $scope.trips = [];
-            $scope.new_shipments = [];
-            $scope.open_shipments = [];
-            $scope.progress_shipments = [];
-
-            //Kinvey get shipments starts
-            var promise = $kinvey.DataStore.find('shipment', null, {relations: { route: "route",
-                client: "clients",
-                driver: "user",
-                info: "shipment-info"}});
-            promise.then(
-                function (response) {
-                    for (var i in response) {
-                        switch (response[i].user_status) {
-                            case "open":
-                                $scope.open_shipments.push(response[i]);
-                                setFormatDateTime(response[i]);
-                                break;
-                            case "in progress":
-                                $scope.progress_shipments.push(response[i]);
-                                setFormatDateTime(response[i]);
-                                break;
-                        }
-                    }
-                },
-                function (error) {
-                    console.log("get shipment error " + JSON.stringify(error.description));
-                }
-            );
-            getClients();
-            getShipmentInfos();
-
-            var query = new $kinvey.Query();
-            query.equalTo('status', 'driver');
-
-            //Kinvey get users with status 'driver' starts
-            var promise = $kinvey.User.find(query);
-            promise.then(
-                function (response) {
-                    console.log("get drivers success");
-                    $scope.drivers = response;
-                },
-                function (error) {
-                    console.log("get drivers error " + error.description);
-                });
+           initDispatches();
         };
 
         $scope.$on('UPDATE_CLIENTS', function () {
             getClients();
         });
 
+        $scope.$on('REFRESH_DISPATCHES', function () {
+            initDispatches();
+        });
 
         $scope.selectDriver = function (driver, index) {
             $scope.isDriversOpen[index] = !$scope.isDriversOpen[index];
@@ -313,7 +259,67 @@ controllers.controller('DispatchController',
             }, function (error) {
                 console.log("delete trip with error " + error.description);
             });
-        }
+        };
+
+        function initDispatches(){
+            //scope variables initialization
+            $scope.isEdit = [];
+            $scope.isClientsOpen = [];
+            $scope.isDriversOpen = [];
+            $scope.isTripsOpen = [];
+            $scope.tripDropdownDisabled = [];
+            $scope.isSubmittedClient = [];
+            $scope.isSubmittedRoute = [];
+            $scope.isSubmittedDriver = [];
+            $scope.isSubmittedShipmentName = [];
+            $scope.isShipmentNameOpen = [];
+            $scope.isShipmentNameSelected = [];
+            $scope.trips = [];
+            $scope.new_shipments = [];
+            $scope.open_shipments = [];
+            $scope.progress_shipments = [];
+
+            //Kinvey get shipments starts
+            var promise = $kinvey.DataStore.find('shipment', null, {relations: { route: "route",
+                client: "clients",
+                driver: "user",
+                info: "shipment-info"}});
+            promise.then(
+                function (response) {
+                    for (var i in response) {
+                        switch (response[i].user_status) {
+                            case "open":
+                                $scope.open_shipments.push(response[i]);
+                                setFormatDateTime(response[i]);
+                                break;
+                            case "in progress":
+                                $scope.progress_shipments.push(response[i]);
+                                setFormatDateTime(response[i]);
+                                break;
+                        }
+                    }
+                },
+                function (error) {
+                    console.log("get shipment error " + JSON.stringify(error.description));
+                }
+            );
+            getClients();
+            getShipmentInfos();
+
+            var query = new $kinvey.Query();
+            query.equalTo('status', 'driver');
+
+            //Kinvey get users with status 'driver' starts
+            var promise = $kinvey.User.find(query);
+            promise.then(
+                function (response) {
+                    console.log("get drivers success");
+                    $scope.drivers = response;
+                },
+                function (error) {
+                    console.log("get drivers error " + error.description);
+                });
+        };
     }]);
 
 var MapController = function ($scope, $kinvey, $modalInstance, currentTrip) {

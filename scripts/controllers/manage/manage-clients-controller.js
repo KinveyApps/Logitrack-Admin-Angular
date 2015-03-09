@@ -15,64 +15,11 @@
 controllers.controller('ManageClientsController',
     ['$scope', '$kinvey','$modal', function ($scope, $kinvey, $modal) {
 
-        //scope variables initialization
-        $scope.clients = [];
-        $scope.archived_clients = [];
-        $scope.isEdit = [];
-        $scope.isClient = [];
-        $scope.isEditPermissions = [];
-        $scope.isEditArchivedPermissions = [];
-        $scope.isSubmittedFirstName = [];
-        $scope.isSubmittedLastName = [];
-        $scope.isShowArchived = false;
+        initClients();
 
-        //get all clients and check is client archived or not
-        var promise = $kinvey.DataStore.find('shipment', null, {relations: {client: "clients"}});
-        promise.then(
-            function (response) {
-                for (var i in response) {
-                    //checks if clients is archived
-                    if (response[i].client.isInTrash) {
-                        if (!isItemExistInArray(response[i].client, $scope.archived_clients)) {
-                            $scope.archived_clients.push(response[i].client);
-                            $scope.isEditArchivedPermissions.push(false);
-                            $scope.isShowArchived = true;
-                        }
-                    } else {
-                        if (!isItemExistInArray(response[i].client, $scope.clients)) {
-                            $scope.clients.push(response[i].client);
-                            $scope.isEditPermissions.push(false);
-                            $scope.isClient.push(true);
-                        }
-                    }
-                }
-                //Kinvey get clients that haven`t assigned trip starts
-                var promise = $kinvey.DataStore.find('clients', null);
-                promise.then(
-                    function (response) {
-                        for (var i in response) {
-                            if (response[i].isInTrash) {
-                                if (!isItemExistInArray(response[i], $scope.archived_clients)) {
-                                    $scope.archived_clients.push(response[i]);
-                                    $scope.isEditArchivedPermissions.push(true);
-                                    $scope.isShowArchived = true;
-                                }
-                            } else if (!isItemExistInArray(response[i], $scope.clients)) {
-                                $scope.clients.push(response[i]);
-                                $scope.isEditPermissions.push(true);
-                                $scope.isClient.push(true);
-                            }
-                        }
-                    }, function (error) {
-                        console.log("get clients error " + error.description);
-                    }
-                );
-            },
-            function (error) {
-                console.log("get clients error " + error.description);
-            }
-        );
-
+        $scope.$on('REFRESH_CLIENTS', function () {
+            initClients();
+        });
 
         $scope.addNewClient = function () {
             $scope.clients.unshift({});
@@ -225,6 +172,66 @@ controllers.controller('ManageClientsController',
                     console.log("delete client with error " + error.description);
                 });
             }
+        };
+
+        function initClients(){
+            //scope variables initialization
+            $scope.clients = [];
+            $scope.archived_clients = [];
+            $scope.isEdit = [];
+            $scope.isClient = [];
+            $scope.isEditPermissions = [];
+            $scope.isEditArchivedPermissions = [];
+            $scope.isSubmittedFirstName = [];
+            $scope.isSubmittedLastName = [];
+            $scope.isShowArchived = false;
+
+            //get all clients and check is client archived or not
+            var promise = $kinvey.DataStore.find('shipment', null, {relations: {client: "clients"}});
+            promise.then(
+                function (response) {
+                    for (var i in response) {
+                        //checks if clients is archived
+                        if (response[i].client.isInTrash) {
+                            if (!isItemExistInArray(response[i].client, $scope.archived_clients)) {
+                                $scope.archived_clients.push(response[i].client);
+                                $scope.isEditArchivedPermissions.push(false);
+                                $scope.isShowArchived = true;
+                            }
+                        } else {
+                            if (!isItemExistInArray(response[i].client, $scope.clients)) {
+                                $scope.clients.push(response[i].client);
+                                $scope.isEditPermissions.push(false);
+                                $scope.isClient.push(true);
+                            }
+                        }
+                    }
+                    //Kinvey get clients that haven`t assigned trip starts
+                    var promise = $kinvey.DataStore.find('clients', null);
+                    promise.then(
+                        function (response) {
+                            for (var i in response) {
+                                if (response[i].isInTrash) {
+                                    if (!isItemExistInArray(response[i], $scope.archived_clients)) {
+                                        $scope.archived_clients.push(response[i]);
+                                        $scope.isEditArchivedPermissions.push(true);
+                                        $scope.isShowArchived = true;
+                                    }
+                                } else if (!isItemExistInArray(response[i], $scope.clients)) {
+                                    $scope.clients.push(response[i]);
+                                    $scope.isEditPermissions.push(true);
+                                    $scope.isClient.push(true);
+                                }
+                            }
+                        }, function (error) {
+                            console.log("get clients error " + error.description);
+                        }
+                    );
+                },
+                function (error) {
+                    console.log("get clients error " + error.description);
+                }
+            );
         }
     }]);
 

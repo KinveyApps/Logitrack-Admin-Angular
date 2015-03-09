@@ -464,3 +464,10 @@
 #add-shipment-btn{
     width: 130px
 }
+
+.refresh-btn{
+    position: absolute;
+    right: 200px;
+    top: 35px;
+    z-index: 2000;
+}
