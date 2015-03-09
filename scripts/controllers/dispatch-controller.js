@@ -279,6 +279,7 @@ controllers.controller('DispatchController',
             $scope.new_shipments = [];
             $scope.open_shipments = [];
             $scope.progress_shipments = [];
+            $scope.paused_shipments = [];
 
             //Kinvey get shipments starts
             var promise = $kinvey.DataStore.find('shipment', null, {relations: { route: "route",
@@ -297,6 +298,10 @@ controllers.controller('DispatchController',
                                 $scope.progress_shipments.push(response[i]);
                                 setFormatDateTime(response[i]);
                                 break;
+                            case "paused":
+                                $scope.paused_shipments.push(response[i]);
+                                setFormatDateTime(response[i]);
+                                $scope
                         }
                     }
                 },
