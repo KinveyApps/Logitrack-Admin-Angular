@@ -167,6 +167,9 @@ controllers.controller('ManageClientsController',
                 //Kinvey destroy client starts
                 var promise = $kinvey.DataStore.destroy('clients', client._id);
                 promise.then(function (response) {
+                    $scope.$broadcast('REFRESH_DISPATCHES');
+                    $scope.$broadcast('REFRESH_TRIPS');
+                    $scope.$broadcast('REFRESH_LOGISTICS');
                     console.log("delete client with success");
                 }, function (error) {
                     console.log("delete client with error " + error.description);

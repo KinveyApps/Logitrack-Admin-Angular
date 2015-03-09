@@ -255,6 +255,7 @@ controllers.controller('DispatchController',
             var promise = $kinvey.DataStore.destroy('shipment', shipment._id);
             promise.then(function (response) {
                 console.log("delete trip with success");
+                $scope.$broadcast('REFRESH_LOGISTICS');
                 $scope.open_shipments.splice(index, 1);
             }, function (error) {
                 console.log("delete trip with error " + error.description);

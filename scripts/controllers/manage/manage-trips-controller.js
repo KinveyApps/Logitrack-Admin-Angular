@@ -282,6 +282,8 @@ controllers.controller('ManageTripsController',
             var promise = $kinvey.DataStore.clean('shipment', query);
             promise.then(function (response) {
                 console.log("delete trip with success");
+                $scope.$broadcast('REFRESH_DISPATCHES');
+                $scope.$broadcast('REFRESH_LOGISTICS');
             }, function (error) {
                 console.log("delete trip with error " + error.description);
             });
