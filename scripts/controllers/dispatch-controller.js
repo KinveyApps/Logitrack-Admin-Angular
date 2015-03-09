@@ -220,6 +220,21 @@ controllers.controller('DispatchController',
             );
         };
 
+        $scope.deleteDispatch = function(index, shipment){
+            console.log("delete click " + index);
+            console.log("delete trip ");
+            var modalInstance = $modal.open({
+                templateUrl: 'dispatchDeleteModal.html',
+                controller: ConfirmDeleteController,
+                size: "sm"
+            });
+            modalInstance.result.then(function () {
+                deleteDispatchFromKinvey(index, shipment);
+            }, function () {
+                console.log("result canceled");
+            });
+        };
+
         //shows popup map with route
         $scope.viewRoute = function (shipment) {
             var modalInstance = $modal.open({
@@ -287,6 +302,18 @@ controllers.controller('DispatchController',
             minutes = minutes < 10 ? '0' + minutes : minutes;
             shipment.request_time = hours + ':' + minutes + ' ' + ampm;
         };
+
+        var deleteDispatchFromKinvey = function(index, shipment){
+            console.log("shipment " + JSON.stringify(shipment));
+            //Kinvey delete trip starts
+            var promise = $kinvey.DataStore.destroy('shipment', shipment._id);
+            promise.then(function (response) {
+                console.log("delete trip with success");
+                $scope.open_shipments.splice(index, 1);
+            }, function (error) {
+                console.log("delete trip with error " + error.description);
+            });
+        }
     }]);
 
 var MapController = function ($scope, $kinvey, $modalInstance, currentTrip) {

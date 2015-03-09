@@ -209,6 +209,9 @@ the License.
                     <p class="p-info">{{shipment.driver.first_name + " " + shipment.driver.last_name}}</p>
                 </div>
                 <div class="edit-save-btns-div">
+                    <div class="btn btn-primary dispatch-btn" ng-click="deleteDispatch($index, shipment)">
+                        Delete
+                    </div>
                     <div class="btn btn-primary dispatch-btn view-btn" ng-click="viewRoute(shipment)">
                         View
                     </div>
@@ -288,4 +291,16 @@ the License.
         <button class="btn btn-primary dispatch-btn" ng-click="acceptTrip()">OK</button>
     </div>
 </script>
+    <script type="text/ng-template" id="dispatchDeleteModal.html">
+        <div class="modal-header">
+            <h3 class="modal-title">Dispatch Delete</h3>
+        </div>
+        <div class="modal-body">
+            <p>Are you sure you would like to delete dispatch?</p>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-primary" ng-click="ok()">Yes</button>
+            <button class="btn btn-warning" ng-click="cancel()">No</button>
+        </div>
+    </script>
 </div>
