@@ -86,7 +86,7 @@ controllers.controller('ManageTripsController',
             $scope.isEditPermissions.splice(index, 1);
 
             $scope.archived_trips.unshift(trip);
-            saveTripOnKinvey(JSON.parse(JSON.stringify(trip)));
+            saveTripOnKinvey(JSON.parse(JSON.stringify(trip)), 0, true);
         };
 
         $scope.restoreTrip = function (index, trip) {
@@ -105,7 +105,7 @@ controllers.controller('ManageTripsController',
                 $scope.isShowArchived = false;
             }
             getClients();
-            saveTripOnKinvey(JSON.parse(JSON.stringify(trip)));
+            saveTripOnKinvey(JSON.parse(JSON.stringify(trip)), 0, false);
         };
 
         $scope.restoreAllTrips = function () {
@@ -173,7 +173,7 @@ controllers.controller('ManageTripsController',
             $scope.isEdit[index] = !$scope.isEdit[index];
             var savedTrip = JSON.parse(JSON.stringify(trip));
             savedTrip.user_status = "new";
-            saveTripOnKinvey(savedTrip);
+            saveTripOnKinvey(savedTrip, index, false);
         };
 
         $scope.cancelTrip = function (index) {
@@ -287,13 +287,18 @@ controllers.controller('ManageTripsController',
         };
 
 
-        var saveTripOnKinvey = function (trip) {
+        var saveTripOnKinvey = function (trip, index, isArchivedTrip) {
             //Kinvey save shipment starts
             var promise = $kinvey.DataStore.save("shipment", trip, {relations: { route: 'route',
                 client: "clients" }});
             promise.then(
                 function (responce) {
                     console.log("update shipment success " + JSON.stringify(responce));
+                    if(isArchivedTrip){
+                        $scope.archived_trips[index] = responce;
+                    }else{
+                        $scope.trips[index] = responce;
+                    }
                 },
                 function (error) {
                     console.log("update shipment error " + error.description);
@@ -308,7 +313,7 @@ controllers.controller('ManageTripsController',
             var query = new $kinvey.Query();
             query.equalTo('client._id', trip.client._id);
             query.equalTo('route._id', trip.route._id);
-            var promise = $kinvey.DataStore.destroy('shipment', trip._id);
+            var promise = $kinvey.DataStore.clean('shipment', query);
             promise.then(function (response) {
                 console.log("delete trip with success");
             }, function (error) {
