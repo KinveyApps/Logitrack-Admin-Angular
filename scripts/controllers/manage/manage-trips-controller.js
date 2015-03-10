@@ -311,21 +311,23 @@ controllers.controller('ManageTripsController',
             promise.then(function (response) {
                 for (var i in response) {
                     //checks is trip archived or not
-                    if (!response[i].route.isInTrash) {
-                        if (!isTripExistInArray(response[i], $scope.trips)) {
-                            $scope.trips.push(response[i]);
-                            $scope.isRoute.push(true);
-                            $scope.routeBtnText.push("Edit route");
-                            if (response[i].user_status == "new") {
-                                $scope.isEditPermissions.push(true);
-                            } else {
-                                $scope.isEditPermissions.push(false);
+                    if(response[i].route) {
+                        if (!response[i].route.isInTrash) {
+                            if (!isTripExistInArray(response[i], $scope.trips)) {
+                                $scope.trips.push(response[i]);
+                                $scope.isRoute.push(true);
+                                $scope.routeBtnText.push("Edit route");
+                                if (response[i].user_status == "new") {
+                                    $scope.isEditPermissions.push(true);
+                                } else {
+                                    $scope.isEditPermissions.push(false);
+                                }
                             }
-                        }
-                    } else {
-                        if (!isTripExistInArray(response[i], $scope.archived_trips)) {
-                            $scope.archived_trips.push(response[i]);
-                            $scope.isShowArchived = true;
+                        } else {
+                            if (!isTripExistInArray(response[i], $scope.archived_trips)) {
+                                $scope.archived_trips.push(response[i]);
+                                $scope.isShowArchived = true;
+                            }
                         }
                     }
                 }

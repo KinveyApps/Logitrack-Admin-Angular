@@ -195,17 +195,19 @@ controllers.controller('ManageClientsController',
                 function (response) {
                     for (var i in response) {
                         //checks if clients is archived
-                        if (response[i].client.isInTrash) {
-                            if (!isItemExistInArray(response[i].client, $scope.archived_clients)) {
-                                $scope.archived_clients.push(response[i].client);
-                                $scope.isEditArchivedPermissions.push(false);
-                                $scope.isShowArchived = true;
-                            }
-                        } else {
-                            if (!isItemExistInArray(response[i].client, $scope.clients)) {
-                                $scope.clients.push(response[i].client);
-                                $scope.isEditPermissions.push(false);
-                                $scope.isClient.push(true);
+                        if (response[i].client) {
+                            if (response[i].client.isInTrash) {
+                                if (!isItemExistInArray(response[i].client, $scope.archived_clients)) {
+                                    $scope.archived_clients.push(response[i].client);
+                                    $scope.isEditArchivedPermissions.push(false);
+                                    $scope.isShowArchived = true;
+                                }
+                            } else {
+                                if (!isItemExistInArray(response[i].client, $scope.clients)) {
+                                    $scope.clients.push(response[i].client);
+                                    $scope.isEditPermissions.push(false);
+                                    $scope.isClient.push(true);
+                                }
                             }
                         }
                     }
