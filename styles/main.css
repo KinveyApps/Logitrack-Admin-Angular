@@ -276,7 +276,7 @@
 .dropdown-div,#dropdown-driver-div{
     margin-top: 10px;
     height: 25px;
-    position: absolute;
+    position: absolute !important;
 }
 
 #dropdown-driver-div{
