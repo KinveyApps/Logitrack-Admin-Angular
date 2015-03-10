@@ -331,6 +331,7 @@ controllers.controller('DispatchController',
 var MapController = function ($scope, $kinvey, $modalInstance, currentTrip) {
     var start_marker;
     var finish_marker;
+    var user_marker;
     var map;
     var directionsDisplay = new google.maps.DirectionsRenderer();
     directionsDisplay.setOptions({
@@ -363,6 +364,17 @@ var MapController = function ($scope, $kinvey, $modalInstance, currentTrip) {
             icon: 'images/finish_marker.png'
         });
         calcRoute();
+        var isTripActive = currentTrip.user_status == "paused" || currentTrip.user_status == "in progress";
+
+        if(isTripActive && currentTrip.status && currentTrip.status != "Not tracked" && currentTrip.driver.position){
+
+            user_marker = new google.maps.Marker({
+                position: new google.maps.LatLng(currentTrip.driver.position.lat, currentTrip.driver.position.lon),
+                map: map,
+                icon: 'images/user_marker.png'
+            });
+        }
+
         window.setTimeout(function () {
             google.maps.event.trigger(map, 'resize');
         }, 100);
