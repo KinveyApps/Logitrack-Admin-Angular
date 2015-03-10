@@ -46,7 +46,6 @@ controllers.controller('ManageTripsController',
             $scope.isRoute.splice(index, 1);
             $scope.routeBtnText.splice(index, 1);
             $scope.isEditPermissions.splice(index, 1);
-
             $scope.archived_trips.unshift(trip);
             saveTripOnKinvey(JSON.parse(JSON.stringify(trip)), 0, true);
         };
@@ -307,30 +306,40 @@ controllers.controller('ManageTripsController',
             getClients();
 
             //Kinvey get shipments starts
-            var promise = $kinvey.DataStore.find('shipment', null, {relations: {route: "route", client: "clients"}});
-            promise.then(function (response) {
-                for (var i in response) {
-                    //checks is trip archived or not
-                    if(response[i].route) {
-                        if (!response[i].route.isInTrash) {
-                            if (!isTripExistInArray(response[i], $scope.trips)) {
-                                $scope.trips.push(response[i]);
-                                $scope.isRoute.push(true);
-                                $scope.routeBtnText.push("Edit route");
-                                if (response[i].user_status == "new") {
-                                    $scope.isEditPermissions.push(true);
-                                } else {
-                                    $scope.isEditPermissions.push(false);
+            var query = new $kinvey.Query();
+            query.equalTo('user_status', 'paused').or().equalTo("user_status", "in progress");
+
+            var promise = $kinvey.DataStore.find('shipment', query, {relations: {route: "route", client: "clients"}});
+            promise.then(function (activeShipments) {
+                var newQuery = new $kinvey.Query();
+                newQuery.equalTo('user_status', "new");
+                var promise = $kinvey.DataStore.find('shipment', newQuery, {relations: {route: "route", client: "clients"}});
+                promise.then(function (response) {
+                    for (var i in response) {
+                        //checks is trip archived or not
+                        if (response[i].route) {
+                            if (!response[i].route.isInTrash) {
+                                if (!isTripExistInArray(response[i], $scope.trips)) {
+                                    $scope.trips.push(response[i]);
+                                    $scope.isRoute.push(true);
+                                    $scope.routeBtnText.push("Edit route");
+                                    if (isTripExistInArray(response[i], activeShipments)) {
+                                        $scope.isEditPermissions.push(false);
+                                    } else {
+                                        $scope.isEditPermissions.push(true);
+                                    }
                                 }
-                            }
-                        } else {
-                            if (!isTripExistInArray(response[i], $scope.archived_trips)) {
-                                $scope.archived_trips.push(response[i]);
-                                $scope.isShowArchived = true;
+                            } else {
+                                if (!isTripExistInArray(response[i], $scope.archived_trips)) {
+                                    $scope.archived_trips.push(response[i]);
+                                    $scope.isShowArchived = true;
+                                }
                             }
                         }
                     }
-                }
+                }, function (error) {
+                    console.log("get trips with error " + error.description);
+                });
             }, function (error) {
                 console.log("get trips with error " + error.description);
             });

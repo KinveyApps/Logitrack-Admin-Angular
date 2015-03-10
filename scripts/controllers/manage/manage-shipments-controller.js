@@ -192,7 +192,9 @@ controllers.controller('ManageShipmentsController',
             $scope.isShowArchived = false;
 
             //Kinvey get shipment info starts
-            var promise = $kinvey.DataStore.find('shipment', null, {relations: {info: "shipment-info"}});
+            var query = new $kinvey.Query();
+            query.equalTo('user_status', 'paused').or().equalTo('user_status', 'in progress');
+            var promise = $kinvey.DataStore.find('shipment', query, {relations: {info: "shipment-info"}});
             promise.then(
                 function (response) {
                     for (var i in response) {

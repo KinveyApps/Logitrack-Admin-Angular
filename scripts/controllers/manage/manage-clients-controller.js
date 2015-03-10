@@ -190,7 +190,9 @@ controllers.controller('ManageClientsController',
             $scope.isShowArchived = false;
 
             //get all clients and check is client archived or not
-            var promise = $kinvey.DataStore.find('shipment', null, {relations: {client: "clients"}});
+            var query = new $kinvey.Query();
+            query.equalTo('user_status', 'paused').or().equalTo('user_status', 'in progress');
+            var promise = $kinvey.DataStore.find('shipment', query, {relations: {client: "clients"}});
             promise.then(
                 function (response) {
                     for (var i in response) {

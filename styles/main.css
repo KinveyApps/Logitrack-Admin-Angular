@@ -157,8 +157,7 @@
     width:230px;
     height: 30px;
     display: block;
-    position: absolute;
-    top:65px;
+    margin-top: -10px;
 }
 .edit-save-btns-div div{
     display: inline-block;
@@ -170,7 +169,6 @@
 .driver-div{
     width: 230px;
     height: 100px;
-    position: relative;
     float: right;
     margin-right: 20px;
 }
@@ -220,7 +218,6 @@
 .btn-group {
     display: inline-block;
     margin-right: 20px;
-    position: absolute !important;
 }
 
 .dispatch-btn-group button {
@@ -275,13 +272,11 @@
     background-color: rgb(229, 227, 223);
 }
 
-.dropdown-div{
-    position: absolute;
-}
 
 .dropdown-div,#dropdown-driver-div{
     margin-top: 10px;
-    height: 25px
+    height: 25px;
+    position: absolute;
 }
 
 #dropdown-driver-div{
