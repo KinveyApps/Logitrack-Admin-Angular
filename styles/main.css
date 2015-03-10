@@ -220,6 +220,7 @@
 .btn-group {
     display: inline-block;
     margin-right: 20px;
+    position: absolute !important;
 }
 
 .dispatch-btn-group button {
@@ -272,6 +273,10 @@
     position: relative;
     -webkit-transform: translateZ(0px);
     background-color: rgb(229, 227, 223);
+}
+
+.dropdown-div{
+    position: absolute;
 }
 
 .dropdown-div,#dropdown-driver-div{
