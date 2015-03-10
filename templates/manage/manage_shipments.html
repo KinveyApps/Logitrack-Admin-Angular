@@ -15,8 +15,8 @@ the License.
         <div id="add-shipment-btn" class="btn btn-primary dispatch-btn new-btn" ng-click="addNewShipment()">Add shipment</div>
         <p class="box-title" ng-click="isShipmentsCollapsed = !isShipmentsCollapsed">Shipments</p>
     </div>
-    <ul collapse="isShipmentsCollapsed" ng-repeat="shipment in shipments">
-        <li class="list-item">
+    <ul collapse="isShipmentsCollapsed">
+        <li class="list-item" ng-repeat="shipment in shipments">
             <div class="shipments-div-a">
                 <div class="trips-inner-div">
                     <p class="p-title">Shipment Name</p>
@@ -62,8 +62,8 @@ the License.
         <div class="btn btn-primary dispatch-btn new-btn" ng-click="restoreAllShipments()">Restore All</div>
         <p class="box-title" ng-click="isArchivedShipmentsCollapsed = !isArchivedShipmentsCollapsed">Archived Trips</p>
     </div>
-    <ul collapse="isArchivedShipmentsCollapsed" ng-repeat="shipment in archived_shipments">
-        <li class="list-item">
+    <ul collapse="isArchivedShipmentsCollapsed">
+        <li class="list-item" ng-repeat="shipment in archived_shipments">
             <div class="shipments-div-a">
                 <div class="trips-inner-div">
                     <p class="p-title">Shipment Name</p>

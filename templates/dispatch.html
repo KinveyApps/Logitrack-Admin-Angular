@@ -15,8 +15,8 @@ the License.
     <div class="btn btn-primary dispatch-btn new-btn" ng-click="createNewDispatch()">New</div>
     <p class="box-title" ng-click="isNewRequestCollapsed = !isNewRequestCollapsed">New Requests</p>
 </div>
-<ul collapse="isNewRequestCollapsed" ng-repeat="shipment in new_shipments">
-    <li class="list-item">
+<ul collapse="isNewRequestCollapsed">
+    <li class="list-item" ng-repeat="shipment in new_shipments">
         <div class="list-item-div-a">
             <div class="div-shipment-info">
                 <div class="top-div">
@@ -159,8 +159,8 @@ the License.
 <div class="new-btn-div">
     <p class="box-title" ng-click="isOpenRequestCollapsed = !isOpenRequestCollapsed">Open Requests</p>
 </div>
-<ul collapse="isOpenRequestCollapsed" ng-repeat="shipment in open_shipments">
-    <li class="list-item">
+<ul collapse="isOpenRequestCollapsed">
+    <li class="list-item" ng-repeat="shipment in open_shipments">
         <div>
             <div class="list-item-div-a">
                 <div class="top-div">
@@ -223,8 +223,8 @@ the License.
 <div class="new-btn-div">
     <p class="box-title" ng-click="isInProgressCollapsed = !isInProgressCollapsed">In Progress</p>
 </div>
-<ul collapse="isInProgressCollapsed" ng-repeat="shipment in progress_shipments">
-    <li class="list-item">
+<ul collapse="isInProgressCollapsed">
+    <li class="list-item" ng-repeat="shipment in progress_shipments">
         <div>
             <div class="list-item-div-a">
                 <div class="top-div">
@@ -283,8 +283,8 @@ the License.
     <div class="new-btn-div">
         <p class="box-title" ng-click="isPausedCollapsed = !isPausedCollapsed">Paused</p>
     </div>
-    <ul collapse="isPausedCollapsed" ng-repeat="shipment in paused_shipments">
-        <li class="list-item">
+    <ul collapse="isPausedCollapsed">
+        <li class="list-item" ng-repeat="shipment in paused_shipments">
             <div>
                 <div class="list-item-div-a">
                     <div class="top-div">

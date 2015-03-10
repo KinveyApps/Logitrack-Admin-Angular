@@ -15,8 +15,8 @@ the License.
         <div class="btn btn-primary dispatch-btn new-btn" ng-click="addNewClient()">Add client</div>
         <p class="box-title" ng-click="isClientsCollapsed = !isClientsCollapsed">Clients</p>
     </div>
-    <ul collapse="isClientsCollapsed" ng-repeat="client in clients">
-        <li class="list-item">
+    <ul collapse="isClientsCollapsed">
+        <li class="list-item" ng-repeat="client in clients">
             <div class="clients-div-a">
                 <div class="trips-inner-div">
                     <p class="p-title">Client First Name</p>
@@ -64,8 +64,8 @@ the License.
         <div class="btn btn-primary dispatch-btn new-btn" ng-click="restoreAllClients()">Restore All</div>
         <p class="box-title" ng-click="isArchivedClientsCollapsed = !isArchivedClientsCollapsed">Archived Trips</p>
     </div>
-    <ul collapse="isArchivedClientsCollapsed" ng-repeat="client in archived_clients">
-        <li class="list-item">
+    <ul collapse="isArchivedClientsCollapsed">
+        <li class="list-item" ng-repeat="client in archived_clients">
             <div class="clients-div-a">
                 <div class="trips-inner-div">
                     <p class="p-title">Client First Name</p>
