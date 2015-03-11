@@ -36,7 +36,7 @@ the License.
                                     + " " + client.last_name }}</a></li>
                         </ul>
                     </div>
-                <span class="input-with-title-span"
+                <span class="input-with-title-span warning-client-span"
                       ng-show="isEdit[$index]&&isSubmittedClient[$index]">A client is required.</span>
                 </div>
             </div>
@@ -48,7 +48,7 @@ the License.
                     <p class="p-info" ng-show="isRoute[$index]">Begin: {{trip.route.start}}</p>
 
                     <p class="p-info" ng-show="isRoute[$index]">End: {{trip.route.finish}}</p>
-                    <button style="display: inline-block" id="select-trip-btn" class="btn btn-primary dispatch-btn" ng-click="selectRoute(trip,$index)"
+                    <button id="select-trip-btn" class="btn btn-primary dispatch-btn" ng-click="selectRoute(trip,$index)"
                             ng-show="isEdit[$index]">{{routeBtnText[$index]}}
                     </button>
                         <span class="input-with-title-span"

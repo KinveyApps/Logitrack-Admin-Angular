@@ -15,7 +15,7 @@ the License.
     <div class="btn btn-primary dispatch-btn new-btn" ng-click="createNewDispatch()">New</div>
     <p class="box-title" ng-click="isNewRequestCollapsed = !isNewRequestCollapsed" ng-class="{'collapsed-box':isNewRequestCollapsed}">New Requests</p>
 </div>
-<ul collapse="isNewRequestCollapsed">
+<ul collapse="isNewRequestCollapsed" class="new-dispatch-list">
     <li class="list-item" ng-repeat="shipment in new_shipments">
         <div class="list-item-div-a">
             <div class="div-shipment-info">
@@ -105,7 +105,7 @@ the License.
                         </ul>
                     </div>
                 </div>
-                 <span id="shipment-name-span" class="input-with-title-span"
+                 <span class="input-with-title-span"
                        ng-show="isEdit[$index]&&isSubmittedShipmentName[$index]">A shipment name is required.</span>
                 <div ng-show="!isEdit[$index]||isShipmentNameSelected[$index]" class="bottom-div-shipment-info">
                     <p class="p-title">Shipment Details</p>

@@ -92,11 +92,20 @@ h6{
 }
 .input-with-title-span{
     text-align: center;
-    margin-left: auto;
-    margin-right: auto;
-    width: 100%;
+    margin-left: 5px;
+    /* margin-right: auto; */
+    float: left;
+    /* width: 100%; */
+}
+
+.warning-client-span{
+    margin-top: 35px;
 }
 
 #profile-edit-page form{
     margin-top: 50px;
+}
+
+.new-dispatch-list{
+    overflow: inherit !important;
 }

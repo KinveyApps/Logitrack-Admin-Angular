@@ -372,6 +372,7 @@ body{
 
 #select-trip-btn{
     margin-top: 10px;
+    display: block;
 }
 
 .trip-edit-btn-div,.client-edit-btn-div{
@@ -452,10 +453,6 @@ body{
 
 .archive-div{
     margin-top: 60px;
-}
-
-#shipment-name-span{
-    margin-top: 20px;
 }
 
 .p-shipment-details,.p-shipment-details-manage{
