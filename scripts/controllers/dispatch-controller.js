@@ -342,15 +342,16 @@ var MapController = function ($scope, $kinvey, $modalInstance, currentTrip) {
 
     //map popup initialization
     $scope.initialize = function () {
+        var mapCenter =new google.maps.LatLng((currentTrip.route.start_lat + currentTrip.route.finish_lat) / 2, (currentTrip.route.start_long + currentTrip.route.finish_long) / 2);
 
         //map creation
         var mapProp = {
             zoom: 14,
-            center: new google.maps.LatLng((currentTrip.route.start_lat + currentTrip.route.finish_lat) / 2, (currentTrip.route.start_long + currentTrip.route.finish_long) / 2)
+            center: mapCenter
         };
+
         if (!map) {
-            console.log("map create " + map + " ");
-            map = new google.maps.Map(document.getElementById("route_map"), mapProp);
+            map = new google.maps.Map(document.getElementById("view_route_map"), mapProp);
         }
 
         //markers creation
@@ -378,7 +379,8 @@ var MapController = function ($scope, $kinvey, $modalInstance, currentTrip) {
 
         window.setTimeout(function () {
             google.maps.event.trigger(map, 'resize');
-        }, 100);
+            map.setCenter(mapCenter);
+        }, 1);
     };
 
     //builds route between markers

@@ -398,7 +398,7 @@ controllers.controller('ManageTripsController',
 var RouteCreateController = function ($scope, $kinvey, $timeout, $modalInstance, currentTrip) {
     var start_marker;
     var finish_marker;
-    var map;
+    var tripMap;
     var mapCenter = new google.maps.LatLng(40.111689,-96.943359);
     var geocoder = new google.maps.Geocoder();
     var directionsDisplay = new google.maps.DirectionsRenderer();
@@ -419,17 +419,15 @@ var RouteCreateController = function ($scope, $kinvey, $timeout, $modalInstance,
             zoom: 3,
             center: mapCenter
         };
-        if (!map) {
-            map = new google.maps.Map(document.getElementById("route-map"), mapProp);
+        if (!tripMap) {
+            console.log("map create " + tripMap + " ");
+            tripMap = new google.maps.Map(document.getElementById("create-route-map"), mapProp);
         }
-        $timeout(function () {
-            google.maps.event.trigger(map, 'resize');
-        }, 100);
 
         //checks if we create new route or edit existing one
         if (!currentTrip.route) {
             $scope.isSave = false;
-            google.maps.event.addListener(map, 'click', function (event) {
+            google.maps.event.addListener(tripMap, 'click', function (event) {
                 placeMarker(event.latLng);
             });
         } else {
@@ -439,6 +437,11 @@ var RouteCreateController = function ($scope, $kinvey, $timeout, $modalInstance,
             createFinishMarker(new google.maps.LatLng($scope.trip_route.finish_lat, $scope.trip_route.finish_long));
             calcRoute();
         }
+
+        $timeout(function () {
+            google.maps.event.trigger(tripMap, 'resize');
+            tripMap.setCenter(mapCenter);
+        }, 1);
     };
 
     //builds route between markers
@@ -452,7 +455,7 @@ var RouteCreateController = function ($scope, $kinvey, $timeout, $modalInstance,
             if (status == google.maps.DirectionsStatus.OK) {
                 current_direction_route = response;
                 directionsDisplay.setDirections(response);
-                directionsDisplay.setMap(map);
+                directionsDisplay.setMap(tripMap);
                 $scope.trip_route.distance = directionsDisplay.getDirections().routes[0].legs[0].distance.value;
             }
         });
@@ -586,7 +589,7 @@ var RouteCreateController = function ($scope, $kinvey, $timeout, $modalInstance,
     var createStartMarker = function (location) {
         start_marker = new google.maps.Marker({
             position: location,
-            map: map,
+            map: tripMap,
             draggable: true,
             icon: 'images/start_marker.png'
         });
@@ -599,7 +602,7 @@ var RouteCreateController = function ($scope, $kinvey, $timeout, $modalInstance,
     var createFinishMarker = function (location) {
         finish_marker = new google.maps.Marker({
             position: location,
-            map: map,
+            map: tripMap,
             draggable: true,
             icon: 'images/finish_marker.png'
         });
