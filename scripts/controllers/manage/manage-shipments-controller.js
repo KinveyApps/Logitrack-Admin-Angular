@@ -13,7 +13,7 @@
  */
 
 controllers.controller('ManageShipmentsController',
-    ['$scope', '$kinvey', '$modal', function ($scope, $kinvey, $modal) {
+    ['$scope', '$kinvey', '$modal', '$rootScope', function ($scope, $kinvey, $modal, $rootScope) {
 
         initShipments();
 
@@ -169,9 +169,9 @@ controllers.controller('ManageShipmentsController',
                 //Kinvey destroy shipment info starts
                 var promise = $kinvey.DataStore.destroy('shipment-info', shipment._id);
                 promise.then(function (response) {
-                    $scope.$broadcast('REFRESH_DISPATCHES');
-                    $scope.$broadcast('REFRESH_TRIPS');
-                    $scope.$broadcast('REFRESH_LOGISTICS');
+                    $rootScope.$broadcast('REFRESH_DISPATCHES');
+                    $rootScope.$broadcast('REFRESH_TRIPS');
+                    $rootScope.$broadcast('REFRESH_LOGISTICS');
                     console.log("delete shipment with success");
                 }, function (error) {
                     console.log("delete shipment with error " + error.description);

@@ -13,7 +13,7 @@
  */
 
 controllers.controller('ManageClientsController',
-    ['$scope', '$kinvey','$modal', function ($scope, $kinvey, $modal) {
+    ['$scope', '$kinvey','$modal', '$rootScope', function ($scope, $kinvey, $modal, $rootScope) {
 
         initClients();
 
@@ -167,9 +167,9 @@ controllers.controller('ManageClientsController',
                 //Kinvey destroy client starts
                 var promise = $kinvey.DataStore.destroy('clients', client._id);
                 promise.then(function (response) {
-                    $scope.$broadcast('REFRESH_DISPATCHES');
-                    $scope.$broadcast('REFRESH_TRIPS');
-                    $scope.$broadcast('REFRESH_LOGISTICS');
+                    $rootScope.$broadcast('REFRESH_DISPATCHES');
+                    $rootScope.$broadcast('REFRESH_TRIPS');
+                    $rootScope.$broadcast('REFRESH_LOGISTICS');
                     console.log("delete client with success");
                 }, function (error) {
                     console.log("delete client with error " + error.description);

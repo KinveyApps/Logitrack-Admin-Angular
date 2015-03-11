@@ -13,7 +13,7 @@
  */
 
 controllers.controller('ManageTripsController',
-    ['$scope', '$kinvey', "$modal", function ($scope, $kinvey, $modal) {
+    ['$scope', '$kinvey', "$modal", '$rootScope', function ($scope, $kinvey, $modal, $rootScope) {
 
         $scope.initPage = function() {
             initTrips();
@@ -281,8 +281,8 @@ controllers.controller('ManageTripsController',
             var promise = $kinvey.DataStore.clean('shipment', query);
             promise.then(function (response) {
                 console.log("delete trip with success");
-                $scope.$broadcast('REFRESH_DISPATCHES');
-                $scope.$broadcast('REFRESH_LOGISTICS');
+                $rootScope.$broadcast('REFRESH_DISPATCHES');
+                $rootScope.$broadcast('REFRESH_LOGISTICS');
             }, function (error) {
                 console.log("delete trip with error " + error.description);
             });
