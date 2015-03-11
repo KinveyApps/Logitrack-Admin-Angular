@@ -22,12 +22,22 @@ controllers.controller('ManageClientsController',
         });
 
         $scope.addNewClient = function () {
-            $scope.clients.unshift({});
-            $scope.isEdit.unshift(true);
-            $scope.isClient.unshift(false);
-            $scope.isEditPermissions.unshift(true);
-            $scope.isSubmittedFirstName.unshift(false);
-            $scope.isSubmittedLastName.unshift(false);
+            if($scope.isNewClientExists){
+                $scope.clients[0] = {};
+                $scope.isEdit[0] = true;
+                $scope.isClient[0] = false;
+                $scope.isEditPermissions[0] = true;
+                $scope.isSubmittedFirstName[0] = false;
+                $scope.isSubmittedLastName[0] = false;
+            }else {
+                $scope.clients.unshift({});
+                $scope.isEdit.unshift(true);
+                $scope.isClient.unshift(false);
+                $scope.isEditPermissions.unshift(true);
+                $scope.isSubmittedFirstName.unshift(false);
+                $scope.isSubmittedLastName.unshift(false);
+                $scope.isNewClientExists = true;
+            }
         };
 
         $scope.editClient = function (index) {
@@ -55,6 +65,9 @@ controllers.controller('ManageClientsController',
             $scope.isEdit[index] = !$scope.isEdit[index];
             $scope.isClient[index] = true;
 
+            if(index == 0 && $scope.isNewClientExists){
+                $scope.isNewClientExists = false;
+            }
             //Kinvey update client starts
             var promise = $kinvey.DataStore.save("clients", client);
             promise.then(function (response) {
@@ -112,6 +125,7 @@ controllers.controller('ManageClientsController',
         };
 
         $scope.cancelClient = function (index) {
+            $scope.isNewClientExists = false;
             $scope.clients.splice(index, 1);
             $scope.isEdit.splice(index, 1);
             $scope.isClient.splice(index, 1);
@@ -188,6 +202,7 @@ controllers.controller('ManageClientsController',
             $scope.isSubmittedFirstName = [];
             $scope.isSubmittedLastName = [];
             $scope.isShowArchived = false;
+            $scope.isNewClientExists = false;
 
             //get all clients and check is client archived or not
             var query = new $kinvey.Query();

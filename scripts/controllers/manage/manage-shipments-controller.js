@@ -21,13 +21,24 @@ controllers.controller('ManageShipmentsController',
             initShipments();
         });
 
+
         $scope.addNewShipment = function () {
-            $scope.shipments.unshift({});
-            $scope.isEdit.unshift(true);
-            $scope.isShipment.unshift(false);
-            $scope.isEditPermissions.unshift(true);
-            $scope.isSubmittedName.unshift(false);
-            $scope.isSubmittedDetails.unshift(false);
+            if($scope.isNewShipmentExists){
+                $scope.shipments[0]={};
+                $scope.isEdit[0] = true;
+                $scope.isShipment[0] = false;
+                $scope.isEditPermissions[0] = true;
+                $scope.isSubmittedName[0] = false;
+                $scope.isSubmittedDetails[0] = false;
+            }else {
+                $scope.shipments.unshift({});
+                $scope.isEdit.unshift(true);
+                $scope.isShipment.unshift(false);
+                $scope.isEditPermissions.unshift(true);
+                $scope.isSubmittedName.unshift(false);
+                $scope.isSubmittedDetails.unshift(false);
+                $scope.isNewShipmentExists = true;
+            }
         };
 
         $scope.editShipment = function (index) {
@@ -55,6 +66,9 @@ controllers.controller('ManageShipmentsController',
             $scope.isEdit[index] = !$scope.isEdit[index];
             $scope.isShipment[index] = true;
 
+            if(index == 0 && $scope.isNewShipmentExists){
+                $scope.isNewShipmentExists = false;
+            }
             //Kinvey update shipment info starts
             var promise = $kinvey.DataStore.save("shipment-info", shipment);
             promise.then(function (response) {
@@ -117,6 +131,7 @@ controllers.controller('ManageShipmentsController',
             $scope.isSubmittedDetails.splice(index, 1);
             $scope.isSubmittedName.splice(index, 1);
             $scope.isEditPermissions.splice(index, 1);
+            $scope.isNewShipmentExists = false;
         };
 
         $scope.restoreAllShipments = function () {
@@ -190,6 +205,7 @@ controllers.controller('ManageShipmentsController',
             $scope.isSubmittedName = [];
             $scope.isSubmittedDetails = [];
             $scope.isShowArchived = false;
+            $scope.isNewShipmentExists = false;
 
             //Kinvey get shipment info starts
             var query = new $kinvey.Query();

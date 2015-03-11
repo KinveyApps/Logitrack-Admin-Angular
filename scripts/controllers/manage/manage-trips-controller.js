@@ -54,19 +54,19 @@ controllers.controller('ManageTripsController',
             trip.route.isInTrash = false;
             $scope.archived_trips.splice(index, 1);
 
-            $scope.trips.unshift(trip);
-            $scope.isEdit.unshift(false);
-            $scope.isClientsOpen.unshift(false);
-            $scope.isSubmittedClient.unshift(false);
-            $scope.isSubmittedRoute.unshift(false);
-            $scope.isRoute.unshift(true);
-            $scope.isEditPermissions.unshift(true);
-            $scope.routeBtnText.unshift("Edit route");
+            $scope.trips.push(trip);
+            $scope.isEdit.push(false);
+            $scope.isClientsOpen.push(false);
+            $scope.isSubmittedClient.push(false);
+            $scope.isSubmittedRoute.push(false);
+            $scope.isRoute.push(true);
+            $scope.isEditPermissions.push(true);
+            $scope.routeBtnText.push("Edit route");
             if ($scope.archived_trips.length === 0) {
                 $scope.isShowArchived = false;
             }
             getClients();
-            saveTripOnKinvey(JSON.parse(JSON.stringify(trip)), 0, false);
+            saveTripOnKinvey(JSON.parse(JSON.stringify(trip)), $scope.length - 1, false);
         };
 
         $scope.restoreAllTrips = function () {
@@ -97,14 +97,26 @@ controllers.controller('ManageTripsController',
         };
 
         $scope.addNewTrip = function () {
-            $scope.trips.unshift({});
-            $scope.isEdit.unshift(true);
-            $scope.isClientsOpen.unshift(false);
-            $scope.isSubmittedClient.unshift(false);
-            $scope.isSubmittedRoute.unshift(false);
-            $scope.isRoute.unshift(false);
-            $scope.isEditPermissions.unshift(true);
-            $scope.routeBtnText.unshift("Select route");
+            if($scope.isNewTripExists){
+                $scope.trips[0] = {};
+                $scope.isEdit[0] = true;
+                $scope.isClientsOpen[0] = false;
+                $scope.isSubmittedClient[0] = false;
+                $scope.isSubmittedRoute[0] = false;
+                $scope.isRoute[0] = false;
+                $scope.isEditPermissions[0] = true;
+                $scope.routeBtnText[0] = "Select route";
+            }else {
+                $scope.trips.unshift({});
+                $scope.isEdit.unshift(true);
+                $scope.isClientsOpen.unshift(false);
+                $scope.isSubmittedClient.unshift(false);
+                $scope.isSubmittedRoute.unshift(false);
+                $scope.isRoute.unshift(false);
+                $scope.isEditPermissions.unshift(true);
+                $scope.routeBtnText.unshift("Select route");
+                $scope.isNewTripExists = true;
+            }
             getClients();
         };
 
@@ -131,6 +143,9 @@ controllers.controller('ManageTripsController',
             if (isFormInvalid) {
                 return;
             }
+            if(index == 0 && $scope.isNewTripExists){
+                $scope.isNewTripExists = false;
+            }
             $scope.isEdit[index] = !$scope.isEdit[index];
             var savedTrip = JSON.parse(JSON.stringify(trip));
             savedTrip.user_status = "new";
@@ -138,6 +153,8 @@ controllers.controller('ManageTripsController',
         };
 
         $scope.cancelTrip = function (index) {
+
+            $scope.isNewTripExists = false;
             $scope.trips.splice(index, 1);
             $scope.isClientsOpen.splice(index, 1);
             $scope.isEdit.splice(index, 1);
@@ -303,6 +320,7 @@ controllers.controller('ManageTripsController',
             $scope.routeBtnText = [];
             $scope.isEditPermissions = [];
             $scope.isShowArchived = false;
+            $scope.isNewTripExists = false;
             getClients();
 
             //Kinvey get shipments starts
