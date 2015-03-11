@@ -13,7 +13,7 @@ the License.
 <div ng-show="selectedManageItem==2" ng-controller="ManageClientsController">
     <div class="new-btn-div">
         <div class="btn btn-primary dispatch-btn new-btn" ng-click="addNewClient()">Add client</div>
-        <p class="box-title" ng-click="isClientsCollapsed = !isClientsCollapsed">Clients</p>
+        <p class="box-title" ng-click="isClientsCollapsed = !isClientsCollapsed" ng-class="{'collapsed-box':isClientsCollapsed}">Clients</p>
     </div>
     <ul collapse="isClientsCollapsed">
         <li class="list-item" ng-repeat="client in clients">

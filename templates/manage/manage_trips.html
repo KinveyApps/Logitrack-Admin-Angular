@@ -13,7 +13,7 @@ the License.
 <div ng-show="selectedManageItem==0" ng-init="initPage()" ng-controller="ManageTripsController">
     <div class="new-btn-div">
         <div class="btn btn-primary dispatch-btn new-btn" ng-click="addNewTrip()">Add trip</div>
-        <p class="box-title" ng-click="isTripsCollapsed = !isTripsCollapsed">Trips</p>
+        <p class="box-title" ng-click="isTripsCollapsed = !isTripsCollapsed" ng-class="{'collapsed-box':isTripsCollapsed}">Trips</p>
     </div>
     <ul collapse="isTripsCollapsed">
         <li class="list-item" ng-repeat="trip in trips">

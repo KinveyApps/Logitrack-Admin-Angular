@@ -13,7 +13,7 @@ the License.
 <div ng-controller="DispatchController" ng-init="initPage()" ng-show="selectedTab==0">
 <div class="new-btn-div">
     <div class="btn btn-primary dispatch-btn new-btn" ng-click="createNewDispatch()">New</div>
-    <p class="box-title" ng-click="isNewRequestCollapsed = !isNewRequestCollapsed">New Requests</p>
+    <p class="box-title" ng-click="isNewRequestCollapsed = !isNewRequestCollapsed" ng-class="{'collapsed-box':isNewRequestCollapsed}">New Requests</p>
 </div>
 <ul collapse="isNewRequestCollapsed">
     <li class="list-item" ng-repeat="shipment in new_shipments">
@@ -157,7 +157,7 @@ the License.
     </li>
 </ul>
 <div class="new-btn-div">
-    <p class="box-title" ng-click="isOpenRequestCollapsed = !isOpenRequestCollapsed">Open Requests</p>
+    <p class="box-title" ng-click="isOpenRequestCollapsed = !isOpenRequestCollapsed" ng-class="{'collapsed-box':isOpenRequestCollapsed}">Open Requests</p>
 </div>
 <ul collapse="isOpenRequestCollapsed">
     <li class="list-item" ng-repeat="shipment in open_shipments">
@@ -221,7 +221,7 @@ the License.
     </li>
 </ul>
 <div class="new-btn-div">
-    <p class="box-title" ng-click="isInProgressCollapsed = !isInProgressCollapsed">In Progress</p>
+    <p class="box-title" ng-click="isInProgressCollapsed = !isInProgressCollapsed" ng-class="{'collapsed-box':isInProgressCollapsed}">In Progress</p>
 </div>
 <ul collapse="isInProgressCollapsed">
     <li class="list-item" ng-repeat="shipment in progress_shipments">
@@ -281,7 +281,7 @@ the License.
 </ul>
 
     <div class="new-btn-div">
-        <p class="box-title" ng-click="isPausedCollapsed = !isPausedCollapsed">Paused</p>
+        <p class="box-title" ng-click="isPausedCollapsed = !isPausedCollapsed" ng-class="{'collapsed-box':isPausedCollapsed}">Paused</p>
     </div>
     <ul collapse="isPausedCollapsed">
         <li class="list-item" ng-repeat="shipment in paused_shipments">

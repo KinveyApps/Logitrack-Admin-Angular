@@ -12,8 +12,9 @@ the License.
 -->
 <div  ng-show="selectedTab==1" ng-controller="LogisticsController">
     <div class="new-btn-div">
-        <p class="box-title">Active Trips</p>
+        <p class="box-title" ng-click="isLogisticsCollapsed = !isLogisticsCollapsed" ng-class="{'collapsed-box':isLogisticsCollapsed}">Active Trips</p>
     </div>
+    <div collapse="isLogisticsCollapsed">
     <table id="shipment-table" class="table table-condensed">
         <thead>
         <tr>
@@ -39,6 +40,7 @@ the License.
         </tr>
         </tbody>
     </table>
+    </div>
     <script type="text/ng-template" id="trip_details.html">
         <div class="modal-header">
             <h3 class="modal-title">Trip details</h3>

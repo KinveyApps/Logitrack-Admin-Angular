@@ -13,7 +13,7 @@ the License.
 <div ng-show="selectedManageItem==1" ng-controller="ManageShipmentsController">
     <div class="new-btn-div">
         <div id="add-shipment-btn" class="btn btn-primary dispatch-btn new-btn" ng-click="addNewShipment()">Add shipment</div>
-        <p class="box-title" ng-click="isShipmentsCollapsed = !isShipmentsCollapsed">Shipments</p>
+        <p class="box-title" ng-click="isShipmentsCollapsed = !isShipmentsCollapsed" ng-class="{'collapsed-box':isShipmentsCollapsed}">Shipments</p>
     </div>
     <ul collapse="isShipmentsCollapsed">
         <li class="list-item" ng-repeat="shipment in shipments">
