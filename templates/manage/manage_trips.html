@@ -64,6 +64,9 @@ the License.
                     <div id="duplicate-btn" class="btn btn-primary dispatch-btn" ng-show="!isEdit[$index]" ng-click="duplicateTrip($index)">
                         Duplicate
                     </div>
+                    <div class="btn btn-primary dispatch-btn" ng-show="isEdit[$index]&&isRoute[$index]"
+                         ng-click="cancelExistedTrip($index,trip)">Cancel
+                    </div>
                     <div class="btn btn-primary dispatch-btn" ng-show="isEdit[$index]&&!isRoute[$index]"
                          ng-click="cancelTrip($index,trip)">Cancel
                     </div>

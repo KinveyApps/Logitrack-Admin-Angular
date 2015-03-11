@@ -44,6 +44,9 @@ the License.
                     <div class="btn btn-primary dispatch-btn" ng-show="isEdit[$index]&&!isShipment[$index]" ng-click="cancelShipment($index)">
                         Cancel
                     </div>
+                    <div class="btn btn-primary dispatch-btn" ng-show="isEdit[$index]&&isShipment[$index]"
+                         ng-click="cancelExistedShipment($index,shipment)">Cancel
+                    </div>
                     <div class="btn btn-primary dispatch-btn" ng-show="!isEdit[$index]" ng-click="editShipment($index)">
                         Edit
                     </div>

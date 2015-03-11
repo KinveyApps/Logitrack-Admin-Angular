@@ -17,6 +17,7 @@ controllers.controller('ManageClientsController',
 
         initClients();
 
+        var all_clients = [];
         $scope.$on('REFRESH_CLIENTS', function () {
             initClients();
         });
@@ -72,6 +73,7 @@ controllers.controller('ManageClientsController',
             var promise = $kinvey.DataStore.save("clients", client);
             promise.then(function (response) {
                 console.log("save client whit success");
+                setClientById(response);
                 $scope.clients[index] = response;
             }, function (error) {
                 console.log("save client whit error " + error.description);
@@ -161,10 +163,17 @@ controllers.controller('ManageClientsController',
             });
         };
 
+        $scope.cancelExistedClient = function(index,client){
+            console.log("get client by ID " + JSON.stringify(getClientById(client._id)));
+            $scope.clients[index] = getClientById(client._id);
+            $scope.isEdit[index] = !$scope.isEdit[index];
+        };
+
         var saveClientOnKinvey = function (client) {
             //Kinvey update client starts
             var promise = $kinvey.DataStore.save("clients", client);
             promise.then(function (response) {
+                setClientById(response);
                 console.log("save client whit success");
             }, function (error) {
                 console.log("save client whit error " + error.description);
@@ -195,6 +204,7 @@ controllers.controller('ManageClientsController',
             //scope variables initialization
             $scope.clients = [];
             $scope.archived_clients = [];
+            all_clients = [];
             $scope.isEdit = [];
             $scope.isClient = [];
             $scope.isEditPermissions = [];
@@ -232,6 +242,7 @@ controllers.controller('ManageClientsController',
                     var promise = $kinvey.DataStore.find('clients', null);
                     promise.then(
                         function (response) {
+                            all_clients = JSON.parse(JSON.stringify(response));
                             for (var i in response) {
                                 if (response[i].isInTrash) {
                                     if (!isItemExistInArray(response[i], $scope.archived_clients)) {
@@ -254,6 +265,33 @@ controllers.controller('ManageClientsController',
                     console.log("get clients error " + error.description);
                 }
             );
+        }
+
+        function getClientById(id) {
+            for (var i = 0; i < all_clients.length; i++) {
+                if (all_clients[i]._id == id) {
+                    return JSON.parse(JSON.stringify(all_clients[i]));
+                }
+            }
+        }
+
+        function removeClientById(id) {
+            for (var i = 0; i < all_clients.length; i++) {
+                if (all_clients[i]._id == id) {
+                    all_clients.splice(i, 1);
+                }
+            }
+        }
+
+        function setClientById(client){
+            console.log("client " + JSON.stringify(client));
+            for (var i = 0; i < all_clients.length; i++) {
+                if (all_clients[i]._id == client._id) {
+                    all_clients[i] = JSON.parse(JSON.stringify(client));
+                    return;
+                }
+            }
+            all_clients.push(JSON.parse(JSON.stringify(client)));
         }
     }]);
 

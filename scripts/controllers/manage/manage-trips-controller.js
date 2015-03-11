@@ -15,6 +15,8 @@
 controllers.controller('ManageTripsController',
     ['$scope', '$kinvey', "$modal", '$rootScope', function ($scope, $kinvey, $modal, $rootScope) {
 
+        var all_trips = [];
+
         $scope.initPage = function() {
             initTrips();
         };
@@ -195,6 +197,7 @@ controllers.controller('ManageTripsController',
                 client: "clients" }});
             promise.then(
                 function (responce) {
+                    setTripById(responce);
                     $scope.trips.splice(index, 0, responce);
                     $scope.isEdit.splice(index, 0, false);
                     $scope.isClientsOpen.splice(index, 0, false);
@@ -243,6 +246,12 @@ controllers.controller('ManageTripsController',
             });
         };
 
+        $scope.cancelExistedTrip = function(index,trip){
+
+            $scope.trips[index] = getTripById(trip._id);
+            $scope.isEdit[index] = !$scope.isEdit[index];
+        };
+
         var getClients = function () {
             $scope.clients = [];
 
@@ -275,6 +284,7 @@ controllers.controller('ManageTripsController',
                 client: "clients" }});
             promise.then(
                 function (responce) {
+                    setTripById(responce);
                     console.log("update shipment success " + JSON.stringify(responce));
                     if(isArchivedTrip){
                         $scope.archived_trips[index] = responce;
@@ -312,6 +322,7 @@ controllers.controller('ManageTripsController',
             //scope variables initialization
             $scope.isEdit = [];
             $scope.trips = [];
+            all_trips = [];
             $scope.archived_trips = [];
             $scope.isClientsOpen = [];
             $scope.isSubmittedClient = [];
@@ -333,6 +344,7 @@ controllers.controller('ManageTripsController',
                 newQuery.equalTo('user_status', "new");
                 var promise = $kinvey.DataStore.find('shipment', newQuery, {relations: {route: "route", client: "clients"}});
                 promise.then(function (response) {
+                    all_trips = JSON.parse(JSON.stringify(response));
                     for (var i in response) {
                         //checks is trip archived or not
                         if (response[i].route) {
@@ -362,6 +374,25 @@ controllers.controller('ManageTripsController',
                 console.log("get trips with error " + error.description);
             });
         }
+
+        function getTripById(id) {
+            for (var i = 0; i < all_trips.length; i++) {
+                if (all_trips[i]._id == id) {
+                    return JSON.parse(JSON.stringify(all_trips[i]));
+                }
+            }
+        }
+
+        function setTripById(trip){
+            for (var i = 0; i < all_trips.length; i++) {
+                if (all_trips[i]._id == trip._id) {
+                    all_trips[i] = JSON.parse(JSON.stringify(trip));
+                    return;
+                }
+            }
+            all_trips.push(JSON.parse(JSON.stringify(trip)));
+        }
+
     }]);
 
 var RouteCreateController = function ($scope, $kinvey, $timeout, $modalInstance, currentTrip) {

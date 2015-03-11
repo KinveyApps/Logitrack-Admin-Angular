@@ -15,6 +15,8 @@
 controllers.controller('ManageShipmentsController',
     ['$scope', '$kinvey', '$modal', '$rootScope', function ($scope, $kinvey, $modal, $rootScope) {
 
+        var all_shipments = [];
+
         initShipments();
 
         $scope.$on('REFRESH_SHIPMENTS', function () {
@@ -73,6 +75,7 @@ controllers.controller('ManageShipmentsController',
             var promise = $kinvey.DataStore.save("shipment-info", shipment);
             promise.then(function (response) {
                 console.log("save shipment whit success");
+                setShipmentById(response);
                 $scope.shipments[index] = response;
             }, function (error) {
                 console.log("save shipment whit error " + error.description);
@@ -160,14 +163,18 @@ controllers.controller('ManageShipmentsController',
             }, function () {
                 console.log("result canceled");
             });
+        };
 
-
+        $scope.cancelExistedShipment = function(index,shipment){
+            $scope.shipments[index] = getShipmentById(shipment._id);
+            $scope.isEdit[index] = !$scope.isEdit[index];
         };
 
         var saveShipmentOnKinvey = function (shipment) {
             //Kinvey update shipment info starts
             var promise = $kinvey.DataStore.save("shipment-info", shipment);
             promise.then(function (response) {
+                setShipmentById(response);
                 console.log("save shipment whit success");
             }, function (error) {
                 console.log("save shipment whit error " + error.description);
@@ -199,6 +206,7 @@ controllers.controller('ManageShipmentsController',
             $scope.shipments = [];
             $scope.archived_shipments = [];
             $scope.isEdit = [];
+            all_shipments = [];
             $scope.isShipment = [];
             $scope.isEditPermissions = [];
             $scope.isEditArchivedPermissions = [];
@@ -232,6 +240,7 @@ controllers.controller('ManageShipmentsController',
                     //get shipment info that haven`t assigned dispatches
                     var promise = $kinvey.DataStore.find('shipment-info', null);
                     promise.then(function (response) {
+                        all_shipments = JSON.parse(JSON.stringify(response));
                         for (var i in response) {
                             if (response[i].isInTrash) {
                                 if (!isItemExistInArray(response[i], $scope.archived_shipments)) {
@@ -253,6 +262,24 @@ controllers.controller('ManageShipmentsController',
                     console.log("get shipment info error " + error.description);
                 }
             );
+        }
+
+        function getShipmentById(id) {
+            for (var i = 0; i < all_shipments.length; i++) {
+                if (all_shipments[i]._id == id) {
+                    return JSON.parse(JSON.stringify(all_shipments[i]));
+                }
+            }
+        }
+
+        function setShipmentById(shipment){
+            for (var i = 0; i < all_shipments.length; i++) {
+                if (all_shipments[i]._id == shipment._id) {
+                    all_shipments[i] = JSON.parse(JSON.stringify(shipment));
+                    return;
+                }
+            }
+            all_shipments.push(JSON.parse(JSON.stringify(shipment)));
         }
     }]);
 
