@@ -36,15 +36,16 @@ controllers.controller('DispatchController',
         $scope.createNewDispatch = function () {
             getClients();
             getShipmentInfos();
-            $scope.new_shipments.unshift({user_status: "new"});
-            $scope.isEdit.unshift(true);
-            $scope.isClientsOpen.unshift(false);
-            $scope.isDriversOpen.unshift(false);
-            $scope.isTripsOpen.unshift(false);
-            $scope.isShipmentNameOpen.unshift(false);
-            $scope.isShipmentNameSelected.unshift(false);
-            $scope.trips.unshift({});
-            $scope.tripDropdownDisabled.unshift(true);
+            $scope.isNewRequestCollapsed = false;
+            $scope.new_shipments[0] = {user_status: "new"};
+            $scope.isEdit[0]=true;
+            $scope.isClientsOpen[0] = false;
+            $scope.isDriversOpen[0] = false;
+            $scope.isTripsOpen[0] = false;
+            $scope.isShipmentNameOpen[0] = false;
+            $scope.isShipmentNameSelected[0] = false;
+            $scope.trips[0] = {};
+            $scope.tripDropdownDisabled[0] = true;
             $scope.selected_client = "Select client";
             $scope.selected_trip = "Select trip";
         };
