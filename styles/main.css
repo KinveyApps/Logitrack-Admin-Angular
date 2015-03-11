@@ -1,3 +1,7 @@
+body{
+    min-width:1140px;
+}
+
 .menu-div {
     float: right;
     margin-top: 5px;
@@ -114,6 +118,7 @@
 .list-item-div-a,.list-item-div-b,.list-item-div-c{
     height: 100px;
     display: inline-block;
+    float: left;
 }
 
 .list-item-div-a{
@@ -124,10 +129,9 @@
     width: 40%;
 }
 .list-item-div-c{
-    width: 15%;
+    width: 21%;
 }
 .div-shipment-info{
-    position: absolute;
     height: 100px;
 }
 
@@ -182,8 +186,8 @@
 }
 
 .driver-div{
-    width: 230px;
-    height: 100px;
+    max-width: 230px;
+    min-height: 120px;
     float: right;
     margin-right: 20px;
 }
@@ -300,7 +304,8 @@
 
 #trip-dropdown-div{
     margin-top: 10px;
-    height: 40px
+    height: 40px;
+    position: absolute !important;
 }
 
 #p-end-route{
