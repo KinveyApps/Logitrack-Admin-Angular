@@ -160,6 +160,7 @@ controllers.controller('DispatchController',
                     $scope.new_shipments.splice(index, 1);
                     $scope.open_shipments.unshift(responce);
                     setFormatDateTime(responce);
+                    $scope.isNewRequestCollapsed = true;
                 },
                 function (error) {
                     console.log("update shipment error " + error.description);
