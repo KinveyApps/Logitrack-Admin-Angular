@@ -282,6 +282,7 @@ controllers.controller('DispatchController',
             $scope.open_shipments = [];
             $scope.progress_shipments = [];
             $scope.paused_shipments = [];
+            $scope.isNewRequestCollapsed = true;
 
             //Kinvey get shipments starts
             var promise = $kinvey.DataStore.find('shipment', null, {relations: { route: "route",
