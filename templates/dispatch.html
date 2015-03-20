@@ -28,8 +28,7 @@ the License.
                     <div ng-show="isEdit[$index]"
                          class="dropdown-div btn-group" dropdown is-open="isClientsOpen[$index]">
                         <button type="button" class="dropdown-toggle dropdown-select">
-                            {{shipment.client.first_name + " " + shipment.client.last_name}}<span
-                                style="margin-left: 5px;" class="caret white-caret"></span>
+                            {{shipment.client.first_name + " " + shipment.client.last_name}}
                         </button>
                         <ul class="dropdown-menu" role="menu">
                             <li ng-repeat="client in clients">
@@ -65,7 +64,6 @@ the License.
                             <p>Begin: {{shipment.route.start}}</p>
 
                             <p id="p-end-route">End: {{shipment.route.finish}}</p>
-                            <span style="margin-left: 5px;" class="caret white-caret"></span>
                         </button>
                         <ul class="dropdown-menu" role="menu">
                             <li class="route-li" ng-click="selectTrip(trip,shipment,$parent.$index)"
@@ -96,8 +94,7 @@ the License.
                     <div ng-show="isEdit[$index]"
                          class="dropdown-div btn-group" dropdown is-open="isShipmentNameOpen[$index]">
                         <button type="button" class="dropdown-toggle dropdown-select">
-                            {{shipment.info.name}}<span
-                                style="margin-left: 5px;" class="caret white-caret"></span>
+                            {{shipment.info.name}}
                         </button>
                         <ul class="dropdown-menu" role="menu">
                             <li ng-repeat="info in shipment_infos">
@@ -123,8 +120,7 @@ the License.
                 <div ng-show="isEdit[$index]" id="dropdown-driver-div" class="btn-group" dropdown
                      is-open="isDriversOpen[$index]">
                     <button type="button" class="dropdown-toggle dropdown-select">
-                        {{shipment.driver.last_name + ' ' + shipment.driver.first_name}}<span
-                            style="margin-left: 5px;" class="caret white-caret"></span>
+                        {{shipment.driver.last_name + ' ' + shipment.driver.first_name}}
                     </button>
                     <ul class="dropdown-menu" role="menu">
                         <li ng-repeat="driver in drivers">

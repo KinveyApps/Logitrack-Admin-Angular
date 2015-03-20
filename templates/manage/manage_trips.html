@@ -27,8 +27,7 @@ the License.
                     <div ng-show="isEdit[$index]"
                          class="dropdown-div btn-group" dropdown is-open="isClientsOpen[$index]">
                         <button type="button" class="dropdown-toggle dropdown-select">
-                            {{trip.client.first_name + " " + trip.client.last_name}}<span
-                                style="margin-left: 5px;" class="caret white-caret"></span>
+                            {{trip.client.first_name + " " + trip.client.last_name}}
                         </button>
                         <ul class="dropdown-menu" role="menu">
                             <li ng-repeat="client in clients">

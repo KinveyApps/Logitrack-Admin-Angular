@@ -244,11 +244,6 @@ body{
     background-color: #5893CC;
 }
 
-.white-caret {
-    border-top-color: white !important;
-    border-bottom-color: white !important;
-}
-
 .divider-line {
     height: 1px;
     line-height: 1px;
