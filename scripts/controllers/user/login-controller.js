@@ -69,9 +69,19 @@ controllers.controller('LoginController',
         }
         $scope.forgetPassword = function () {
             $location.path('/templates/password_reset');
-        }
+        };
         $scope.registerUser = function () {
             $location.path('/templates/sign_up');
+        };
+
+        $scope.micLogin = function(){
+            var promise = $kinvey.User.MIC.loginWithAuthorizationCodeLoginPage('http://localhost:63342/Logitrack-Admin-Angular/index.html');
+            promise.then(function(user) {
+                $scope.submittedError = false;
+                $location.path('/templates/main');
+            }, function(err) {
+                alert("error " + JSON.stringify(err));
+            });
         }
     }]);
 
