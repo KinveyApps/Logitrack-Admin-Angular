@@ -76,24 +76,9 @@ controllers.controller('LoginController',
 
         $scope.micLogin = function(){
             var promise = $kinvey.User.MIC.loginWithAuthorizationCodeLoginPage('http://localhost:63342/Logitrack-Admin-Angular/index.html');
-            promise.then(function(user) {
-                //if (user._socialIdentity && user._socialIdentity.kinveyAuth && user._socialIdentity.kinveyAuth.id.indexOf("admin") != -1) {
-                    $scope.submittedError = false;
-                    $location.path('/templates/main');
-                //}
-                //else {
-                //    $scope.submittedError = true;
-                //    $scope.errorDescription = "You don't have required permissions";
-                //    var promise = $kinvey.User.MIC.logout();
-                //    promise.then(
-                //        function () {
-                //            console.log("Sign out with success");
-                //        },
-                //        function (error) {
-                //            console.log("Sign out error " + error.description);
-                //        }
-                //    );
-                //}
+            promise.then(function (user) {
+                $scope.submittedError = false;
+                $location.path('/templates/main');
             }, function(err) {
                 alert("error " + JSON.stringify(err));
             });
