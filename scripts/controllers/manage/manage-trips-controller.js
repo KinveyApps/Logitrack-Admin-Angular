@@ -513,8 +513,8 @@ var RouteCreateController = function ($scope, $kinvey, $timeout, $modalInstance,
 
     var getAddressByPosition = function (position, isStart) {
 
-        var lat = parseFloat(position.k);
-        var lng = parseFloat(position.D);
+        var lat = parseFloat(position.A);
+        var lng = parseFloat(position.F);
         var latlng = new google.maps.LatLng(lat, lng);
         console.log("get address by position " + JSON.stringify(position));
         geocoder.geocode({'latLng': latlng}, function (results, status) {
@@ -532,7 +532,7 @@ var RouteCreateController = function ($scope, $kinvey, $timeout, $modalInstance,
         $scope.submittedFinish = false;
         geocoder.geocode({'address': $scope.trip_route.start}, function (results, status) {
             if (status == google.maps.GeocoderStatus.OK) {
-                var start_location = new google.maps.LatLng(results[0].geometry.location.k, results[0].geometry.location.D);
+                var start_location = new google.maps.LatLng(results[0].geometry.location.A, results[0].geometry.location.F);
                 if (!start_marker) {
                     createStartMarker(start_location);
                 } else {
@@ -559,7 +559,7 @@ var RouteCreateController = function ($scope, $kinvey, $timeout, $modalInstance,
         });
         geocoder.geocode({'address': $scope.trip_route.finish}, function (results, status) {
             if (status == google.maps.GeocoderStatus.OK) {
-                var finish_location = new google.maps.LatLng(results[0].geometry.location.k, results[0].geometry.location.D);
+                var finish_location = new google.maps.LatLng(results[0].geometry.location.A, results[0].geometry.location.F);
                 if (!finish_marker) {
                     createFinishMarker(finish_location);
                 } else {
@@ -616,12 +616,12 @@ var RouteCreateController = function ($scope, $kinvey, $timeout, $modalInstance,
         $timeout(function () {
             if (isStart) {
                 $scope.trip_route.start = address;
-                $scope.trip_route.start_lat = position.k;
-                $scope.trip_route.start_long = position.D;
+                $scope.trip_route.start_lat = position.A;
+                $scope.trip_route.start_long = position.F;
             } else {
                 $scope.trip_route.finish = address;
-                $scope.trip_route.finish_lat = position.k;
-                $scope.trip_route.finish_long = position.D;
+                $scope.trip_route.finish_lat = position.A;
+                $scope.trip_route.finish_long = position.F;
             }
         }, 100);
     };
